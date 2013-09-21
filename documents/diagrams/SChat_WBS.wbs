@@ -17,21 +17,31 @@
 		<tasks>
 			<task ID="0" UniqueID="0" OutlineLevel="0" Name="SChat_WBS" Duration="1d" RemainingDuration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes"/>
 			<task ID="1" UniqueID="1" OutlineLevel="1" WBS="1.0" Name="Secure Chat" Duration="1d" RemainingDuration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
-			<task ID="2" UniqueID="14" OutlineLevel="2" Name="User Interface" Duration="1d" RemainingDuration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
-			<task ID="3" UniqueID="19" OutlineLevel="3" Name="Android App" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
-			<task ID="4" UniqueID="17" OutlineLevel="3" Name="Nachrichtenverwaltung" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
-			<task ID="5" UniqueID="15" OutlineLevel="3" Name="Kontaktverwaltung" Duration="1d" RemainingDuration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
-			<task ID="6" UniqueID="5" OutlineLevel="2" Name="Verbindung" Duration="1d" RemainingDuration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
-			<task ID="7" UniqueID="6" OutlineLevel="3" Name="Server Konfiguration" Duration="1d" RemainingDuration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
-			<task ID="8" UniqueID="9" OutlineLevel="3" Name="Client Server Verbindung" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
-			<task ID="9" UniqueID="20" OutlineLevel="3" Name="Nachrichten Verschickung" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
-			<task ID="10" UniqueID="18" OutlineLevel="3" Name="Verbindungs Testing" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
-			<task ID="11" UniqueID="4" OutlineLevel="2" Name="Verschl&#252;sselung" Duration="1d" RemainingDuration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
-			<task ID="12" UniqueID="13" OutlineLevel="3" Name="Sessionkey Generation" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
-			<task ID="13" UniqueID="11" OutlineLevel="3" Name="Public/Private Key Generation" Duration="1d" RemainingDuration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
-			<task ID="14" UniqueID="12" OutlineLevel="3" Name="Nachrichten Signatur" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="2" UniqueID="26" OutlineLevel="2" Name="Projektmanagement" Duration="1d" RemainingDuration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="3" UniqueID="27" OutlineLevel="3" Name="Projektstart" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="4" UniqueID="30" OutlineLevel="3" Name="Projektkoordination" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="5" UniqueID="29" OutlineLevel="3" Name="Projektcontrolling" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="6" UniqueID="28" OutlineLevel="3" Name="Projektabschluss" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="7" UniqueID="14" OutlineLevel="2" Name="User Interface" Duration="1d" RemainingDuration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="8" UniqueID="19" OutlineLevel="3" Name="Android App" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="9" UniqueID="17" OutlineLevel="3" Name="Nachrichtenverwaltung" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="10" UniqueID="15" OutlineLevel="3" Name="Kontaktverwaltung" Duration="1d" RemainingDuration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="11" UniqueID="5" OutlineLevel="2" Name="Verbindung" Duration="1d" RemainingDuration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="12" UniqueID="6" OutlineLevel="3" Name="Server Konfiguration" Duration="1d" RemainingDuration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="13" UniqueID="9" OutlineLevel="3" Name="Client Server Verbindung" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="14" UniqueID="20" OutlineLevel="3" Name="Nachrichten Verschickung" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="15" UniqueID="18" OutlineLevel="3" Name="Verbindungs Testing" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="16" UniqueID="4" OutlineLevel="2" Name="Verschl&#252;sselung" Duration="1d" RemainingDuration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="17" UniqueID="11" OutlineLevel="3" Name="Public/Private Key Generation" Duration="1d" RemainingDuration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="18" UniqueID="13" OutlineLevel="3" Name="Sessionkey Generation" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="19" UniqueID="12" OutlineLevel="3" Name="Nachrichten Signatur" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="20" UniqueID="21" OutlineLevel="2" Name="Testing" Duration="1d" RemainingDuration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="21" UniqueID="25" OutlineLevel="3" Name="Funktionentest" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="22" UniqueID="23" OutlineLevel="3" Name="Performancetest" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="23" UniqueID="24" OutlineLevel="3" Name="Sicherheitstest" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
+			<task ID="24" UniqueID="22" OutlineLevel="3" Name="Gesamtsystemtest" Duration="1d" Start="2013-09-23T08:00" Finish="2013-09-23T17:00" EarlyStart="2013-09-23T08:00" EarlyFinish="2013-09-23T17:00" LateStart="2013-09-23T08:00" LateFinish="2013-09-23T17:00" Critical="yes" EffortDriven="yes" FixedCostAccrual="Prorated"/>
 		</tasks>
-		<outline current="20"/>
+		<outline current="11"/>
 	</proj>
 	<printInfo mode="scale" orient="landscape" pagesWide="1" pagesHigh="1" scale="100%" bw="no" enlarge="no" byColumn="no" adjustPageBreaks="no" marginTop="36pt" marginLeft="36pt" marginBottom="36pt" marginRight="36pt"/>
 	<pageLayouts>
@@ -476,6 +486,18 @@
 	<treediff id="1">
 		<item before="210.3pt"/>
 	</treediff>
+	<treediff id="27">
+		<item listmode="stemleft"/>
+	</treediff>
+	<treediff id="30">
+		<item calign="branch_nearest" listmode="stemleft"/>
+	</treediff>
+	<treediff id="29">
+		<item calign="branch_nearest" listmode="stemleft"/>
+	</treediff>
+	<treediff id="28">
+		<item calign="branch_nearest" listmode="stemleft"/>
+	</treediff>
 	<treediff id="19">
 		<item calign="branch_nearest" listmode="stemleft"/>
 	</treediff>
@@ -500,13 +522,25 @@
 	<treediff id="18">
 		<item calign="branch_nearest" listmode="stemleft"/>
 	</treediff>
-	<treediff id="13">
-		<item calign="branch_nearest" listmode="stemleft"/>
-	</treediff>
 	<treediff id="11">
 		<item listmode="stemleft"/>
 	</treediff>
+	<treediff id="13">
+		<item calign="branch_nearest" listmode="stemleft"/>
+	</treediff>
 	<treediff id="12">
+		<item listmode="stemleft"/>
+	</treediff>
+	<treediff id="25">
+		<item calign="branch_nearest" listmode="stemleft"/>
+	</treediff>
+	<treediff id="23">
+		<item listmode="stemleft"/>
+	</treediff>
+	<treediff id="24">
+		<item calign="branch_nearest" listmode="stemleft"/>
+	</treediff>
+	<treediff id="22">
 		<item listmode="stemleft"/>
 	</treediff>
 </wbs_diff>
