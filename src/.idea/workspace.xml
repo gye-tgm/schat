@@ -21,11 +21,46 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5f9f11b5-382c-49ba-b8b2-59a0a1b29070" name="Default" comment="">
+      <change type="DELETED" beforePath="D:\projects\schat\src\.idea\.name" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\.idea\compiler.xml" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\.idea\encodings.xml" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\.idea\misc.xml" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\.idea\modules.xml" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\.idea\uiDesigner.xml" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\.idea\vcs.xml" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\AndroidManifest.xml" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\ant.properties" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\build.xml" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\gen\schat\activities\BuildConfig.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\gen\schat\activities\Manifest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\gen\schat\activities\R.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\local.properties" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\out\production\SChat\SChat.apk" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\out\production\SChat\SChat.unaligned.apk" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\out\production\SChat\conrol\SChat\BuildConfig.class" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\out\production\SChat\conrol\SChat\R$attr.class" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\out\production\SChat\conrol\SChat\R$drawable.class" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\out\production\SChat\conrol\SChat\R$layout.class" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\out\production\SChat\conrol\SChat\R$string.class" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\out\production\SChat\conrol\SChat\R.class" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\proguard-project.txt" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\project.properties" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\res\drawable-hdpi\ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\res\drawable-ldpi\ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\res\drawable-mdpi\ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\res\drawable-xhdpi\ic_launcher.png" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\res\layout\layout_chat.xml" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\res\layout\layout_loading_screen.xml" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\res\layout\layout_main_menu.xml" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\res\values\strings.xml" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\src\schat\activities\Activity_Chat.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\src\schat\activities\Activity_LoadingScreen.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\projects\schat\src\src\schat\activities\Activity_MainMenu.java" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="SChat.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Dummy.txt" changelist="5f9f11b5-382c-49ba-b8b2-59a0a1b29070" time="1380541049861" ignored="false" />
+    <file path="/Dummy.txt" changelist="5f9f11b5-382c-49ba-b8b2-59a0a1b29070" time="1380541068432" ignored="false" />
     <file path="/MyActivity.java" changelist="5f9f11b5-382c-49ba-b8b2-59a0a1b29070" time="1379582380861" ignored="false" />
     <file path="/LoadingScreen.java" changelist="5f9f11b5-382c-49ba-b8b2-59a0a1b29070" time="1379589730115" ignored="false" />
     <file path="/Chat.java" changelist="5f9f11b5-382c-49ba-b8b2-59a0a1b29070" time="1379589752728" ignored="false" />
@@ -96,98 +131,7 @@
     <favorites_list name="SChat" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="AndroidManifest.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="19" selection-start="671" selection-end="671" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Activity_MainMenu.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/schat/activities/Activity_MainMenu.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="13" selection-start="248" selection-end="248" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Activity_Chat.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/schat/activities/Activity_Chat.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="30" selection-start="117" selection-end="117" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ant.properties" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ant.properties">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="proguard-project.txt" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/proguard-project.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="project.properties" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/project.properties">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="8" column="1" selection-start="325" selection-end="325" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="R.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gen/schat/activities/R.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SChat.iml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/SChat.iml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="5" selection-start="703" selection-end="703" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="workspace.xml" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="354" column="20" selection-start="17716" selection-end="17716" vertical-scroll-proportion="0.89115644">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name=".name" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.idea/.name">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -506,7 +450,11 @@
       <created>1380541056237</created>
       <updated>1380541056237</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="workspace.xml">
+      <created>1380541070138</created>
+      <updated>1380541070138</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
@@ -539,15 +487,15 @@
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.53480476" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24318182" sideWeight="0.2725724" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.53321975" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2139219" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3293718" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3293718" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.6712095" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24318182" sideWeight="0.60306644" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24318182" sideWeight="0.60306644" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32027256" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25757575" sideWeight="0.9437819" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -601,7 +549,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="generated the android project and added the basic Activites and layouts" />
+    <option name="LAST_COMMIT_MESSAGE" value="workspace.xml" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -618,6 +566,7 @@
     <MESSAGE value="Version 0.0.1" />
     <MESSAGE value="git ignore" />
     <MESSAGE value="generated the android project and added the basic Activites and layouts" />
+    <MESSAGE value="workspace.xml" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -671,23 +620,23 @@
         <state line="1" column="0" selection-start="26" selection-end="26" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/schat/activities/Activity_Chat.java">
+    <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="30" selection-start="117" selection-end="117" vertical-scroll-proportion="0.0">
+        <state line="16" column="30" selection-start="811" selection-end="811" vertical-scroll-proportion="0.39087948">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/schat/activities/Activity_MainMenu.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="13" selection-start="248" selection-end="248" vertical-scroll-proportion="0.0">
+        <state line="12" column="13" selection-start="248" selection-end="248" vertical-scroll-proportion="0.3355049">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
+    <entry file="file://$PROJECT_DIR$/src/schat/activities/Activity_Chat.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="19" selection-start="671" selection-end="671" vertical-scroll-proportion="0.0">
+        <state line="6" column="30" selection-start="117" selection-end="117" vertical-scroll-proportion="0.067073174">
           <folding />
         </state>
       </provider>
@@ -706,23 +655,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/SChat.iml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="5" selection-start="703" selection-end="703" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/.name">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/project.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="1" selection-start="325" selection-end="325" vertical-scroll-proportion="0.0">
+        <state line="8" column="1" selection-start="325" selection-end="325" vertical-scroll-proportion="0.41463414">
           <folding />
         </state>
       </provider>
@@ -734,9 +669,23 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/SChat.iml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="5" selection-start="703" selection-end="703" vertical-scroll-proportion="0.93292683">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="354" column="20" selection-start="17716" selection-end="17716" vertical-scroll-proportion="0.89115644">
+        <state line="635" column="37" selection-start="34124" selection-end="34124" vertical-scroll-proportion="0.053968254">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/.name">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
