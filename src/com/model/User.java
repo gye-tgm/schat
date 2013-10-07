@@ -1,4 +1,4 @@
-package com.example.SChat;
+package com.model;
 
 import java.security.KeyPair;
 
@@ -21,9 +21,9 @@ public class User {
      *
      * @param receiver
      * @param message
-     * @throws IllegalArgumentException will be thrown iff the message is too long
      * @return 0 if the process was done successfully
-     *      an error code otherwise
+     *         an error code otherwise
+     * @throws IllegalArgumentException will be thrown iff the message is too long
      */
     public int sendMessage(User receiver, String message) throws IllegalArgumentException {
         if (message.length() > MAX_MESSAGE_LENGTH)

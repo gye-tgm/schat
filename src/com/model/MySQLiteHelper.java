@@ -1,4 +1,4 @@
-package com.example.SChat;
+package com.model;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
