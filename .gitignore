@@ -1,6 +1,6 @@
 # IDEA Ignores http://web.archive.org/web/20120629000805/http://devnet.jetbrains.net/docs/DOC-1186
-# *.iml
-# *.ipr
+*.iml
+*.ipr
 *.iws
 .idea/
 local.properties
