@@ -6,6 +6,7 @@
 local.properties
 .idea/workspace.xml
 .idea/tasks.xml
+.DS_Store
 
 # Generic Android ignores
 bin/
