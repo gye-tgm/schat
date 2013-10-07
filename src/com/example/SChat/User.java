@@ -21,13 +21,13 @@ public class User {
      *
      * @param receiver
      * @param message
-     * @return
      * @throws IllegalArgumentException will be thrown iff the message is too long
+     * @return 0 if the process was done successfully
+     *      an error code otherwise
      */
     public int sendMessage(User receiver, String message) throws IllegalArgumentException {
         if (message.length() > MAX_MESSAGE_LENGTH)
             throw new IllegalArgumentException();
-
         /* ~ todo ~ */
         return SENDING_SUCCESSFUL;
     }
