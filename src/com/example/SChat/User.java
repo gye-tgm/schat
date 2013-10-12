@@ -6,8 +6,8 @@ public class User {
     private KeyPair keyPair;
     private String name;
 
-    public User() {
-
+    public User(String name) {
+        this.name = name;
     }
 
     public static int MAX_MESSAGE_LENGTH = 256;
@@ -30,5 +30,13 @@ public class User {
 
         /* ~ todo ~ */
         return SENDING_SUCCESSFUL;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
