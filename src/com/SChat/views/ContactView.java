@@ -2,7 +2,7 @@ package com.SChat.views;
 
 import android.content.Context;
 import android.widget.TextView;
-import com.example.SChat.User;
+import com.model.User;
 
 /**
  * @version 7.10.2013
