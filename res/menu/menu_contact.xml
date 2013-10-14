@@ -4,10 +4,8 @@
 
     <item android:id="@+id/option_editContact"
           android:title="Edit"/>
-    />
 
     <item android:id="@+id/option_deleteContact"
           android:title="Delete"/>
-    />
 
 </menu>
