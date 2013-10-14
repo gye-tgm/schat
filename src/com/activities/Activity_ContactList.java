@@ -1,4 +1,4 @@
-package com.example.SChat;
+package com.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
