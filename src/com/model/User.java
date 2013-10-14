@@ -6,6 +6,10 @@ public class User {
     private KeyPair keyPair;
     private String name;
 
+    /**
+     * Constructor with a specified name
+     * @param name the name of the user
+     */
     public User(String name) {
         this.name = name;
     }
@@ -32,10 +36,16 @@ public class User {
         return SENDING_SUCCESSFUL;
     }
 
+    /**
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @param name the value of the name
+     */
     public void setName(String name) {
         this.name = name;
     }
