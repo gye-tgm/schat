@@ -1,4 +1,4 @@
-package com.SChat.views;
+package com.activities;
 
 import android.content.Context;
 import android.widget.TextView;
