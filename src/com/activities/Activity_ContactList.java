@@ -1,6 +1,7 @@
 package com.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.AdapterView;
@@ -31,6 +32,11 @@ public class Activity_ContactList extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_contactlist);
+
+
+        //Test Intent Chat
+        Intent i = new Intent(this, Activity_Chat.class);
+        startActivity(i);
 
         /* make all GUI-element available */
         contactList = (ListView) findViewById(R.id.view_contactList);
