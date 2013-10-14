@@ -1,4 +1,4 @@
-package com.model;
+package com.data;
 
 import java.security.KeyPair;
 
@@ -8,6 +8,7 @@ public class User {
 
     /**
      * Constructor with a specified name
+     *
      * @param name the name of the user
      */
     public User(String name) {

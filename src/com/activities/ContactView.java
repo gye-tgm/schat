@@ -2,7 +2,7 @@ package com.activities;
 
 import android.content.Context;
 import android.widget.TextView;
-import com.model.User;
+import com.data.User;
 
 /**
  * @version 7.10.2013
