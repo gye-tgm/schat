@@ -39,7 +39,7 @@ public class Activity_ContactList extends Activity {
         startActivity(i);
 
         /* make all GUI-element available */
-        contactList = (ListView) findViewById(R.id.view_contactList);
+        contactList = (ListView) findViewById(R.id.view_contactlist);
         registerForContextMenu(contactList); // register all list items for the context menu
 
         contacts = new ArrayList<String>();

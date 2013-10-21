@@ -36,7 +36,7 @@ import java.net.*;
 public class SChatClient {
     // public SChatClient(String hostName, int portNumber) {
     public static void main(String[] args){
-        String hostName = "localhost";
+        String hostName = "85.10.240.108";
         int portNumber = 1234;
         try {
             Socket kkSocket = new Socket(hostName, portNumber);
