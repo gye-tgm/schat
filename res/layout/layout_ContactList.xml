@@ -8,7 +8,7 @@
     <ListView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/view_contactList"
+            android:id="@+id/view_contactlist"
             android:layout_gravity="center"
             android:clickable="false"/>
 

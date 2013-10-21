@@ -20,8 +20,9 @@ public class ContactList extends ArrayList<User> {
         // else
         //  add user to this list
         //  add user to the db
-        //  return successfull
+        //  return successful
         add(user);
+
 
         return 0;
     }
