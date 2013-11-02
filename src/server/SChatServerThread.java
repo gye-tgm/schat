@@ -3,7 +3,9 @@ package server;
 import com.data.ChatMessage;
 import com.data.User;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
@@ -23,37 +25,44 @@ public class SChatServerThread extends Thread {
         server.addUser(client.getId(), clientSocket);
     }
 
-    public User getClientInformation(){
-        try(
-            ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream())){
+    public User getClientInformation() {
+        User user = null;
+        try {
+            ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
             int id = in.readInt();
             String name = in.readUTF();
-            return new User(id, name);
+            user = new User(id, name);
+            in.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return user;
     }
 
     public void run() {
-        try (ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
-             ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream())){
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
             ChatMessage message = null;
-            while((message = (ChatMessage) in.readObject()) != null){
+            while ((message = (ChatMessage) in.readObject()) != null) {
                 sendMessage(message);
             }
             clientSocket.close();
+            out.close();
+            in.close();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
-    public void sendMessage(ChatMessage message){
+
+    public void sendMessage(ChatMessage message) {
         Socket receiverSocket = server.getSocket(message.getReceiver().getId());
-        try(ObjectOutputStream out = new ObjectOutputStream(receiverSocket.getOutputStream())){
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(receiverSocket.getOutputStream());
             out.writeObject(message);
-            out.flush();
+            out.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

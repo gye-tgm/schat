@@ -24,11 +24,14 @@ public class SChatClientListener extends Thread {
     }
 
     public void run(){
-        try (ObjectInputStream in = new ObjectInputStream(socket.getInputStream())){
+        ObjectInputStream in = null;
+        try {
+            in = new ObjectInputStream(socket.getInputStream());
             while(!interrupted()){
                 ChatMessage message = (ChatMessage) in.readObject();
                 notifyUser(message);
             }
+            in.close();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {

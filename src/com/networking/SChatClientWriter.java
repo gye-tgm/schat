@@ -18,9 +18,13 @@ public class SChatClientWriter {
     }
 
     public void send(ChatMessage message){
-        try (ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())){
-            out.writeObject(message);
-            out.flush();
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            try{
+                out.writeObject(message);
+            }finally{
+                out.close();
+            }
         } catch (IOException e) {
             e.printStackTrace(); // TODO: return an error code indicating that the sending has failed; or other solution
         }
