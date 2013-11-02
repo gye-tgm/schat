@@ -37,6 +37,10 @@ public class User {
         return SENDING_SUCCESSFUL;
     }
 
+    public void receiveMessage(ChatMessage message){
+
+    }
+
     /**
      * @return the name
      */
