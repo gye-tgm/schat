@@ -5,6 +5,7 @@ import java.security.KeyPair;
 public class User {
     private KeyPair keyPair;
     private String name;
+    private int id;
 
     /**
      * Constructor with a specified name
@@ -14,6 +15,16 @@ public class User {
     public User(String name) {
         this.name = name;
     }
+
+    /**
+     * Constructor with a specified id
+     *
+     * @param id the id of the user
+     */
+    public User(int id) {
+        this.id = id;
+    }
+
 
     public static int MAX_MESSAGE_LENGTH = 256;
     public static int SENDING_SUCCESSFUL = 0;
@@ -38,7 +49,7 @@ public class User {
     }
 
     public void receiveMessage(ChatMessage message){
-
+        System.out.println("New message: " + message.toString());
     }
 
     /**
@@ -53,5 +64,13 @@ public class User {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
