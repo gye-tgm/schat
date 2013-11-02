@@ -1,5 +1,6 @@
 package com.data;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 /**
@@ -8,7 +9,7 @@ import java.util.Calendar;
  * @author Elias Frantar (0.1)
  * @version 14.10.2013: 0.1
  */
-public class ChatMessage {
+public class ChatMessage implements Serializable {
     private User sender;
     private User receiver;
 
@@ -49,18 +50,6 @@ public class ChatMessage {
     public void setActualTime() {
         timestamp = Calendar.getInstance();
     }
-
-    /**
-     * Returns this chat message as a byte stream ready to send.
-     *
-     * @return the byte stream of this message
-     */
-    public byte[] getByteStream() {
-        byte[] data = null;
-
-        return data;
-    }
-
 
     public User getSender() {
         return sender;
