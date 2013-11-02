@@ -17,8 +17,7 @@ public class SChatClientTest {
         User me = null;
         SChatClient client = null;
         try{
-            me = new User(args[0]);
-            me.setId(Integer.parseInt(args[1]));
+            me = new User(Integer.parseInt(args[1]), args[0]);
         }catch(Exception e){
             System.err.println("usage: java SChatClientTest <user name> <id>");
             System.exit(1);
