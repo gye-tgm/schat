@@ -25,6 +25,10 @@ public class User {
         this.id = id;
     }
 
+    public User(int id, String name){
+        this.id = id;
+        this.name = name;
+    }
 
     public static int MAX_MESSAGE_LENGTH = 256;
     public static int SENDING_SUCCESSFUL = 0;
