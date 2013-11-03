@@ -1,6 +1,7 @@
 package com.data;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
@@ -81,5 +82,19 @@ public class ChatMessage implements Serializable {
 
     public void setTimestamp(Calendar timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String toString(){
+        StringBuilder result = new StringBuilder("");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+
+        result.append("Timestamp: ");
+        result.append(getTimestamp() == null ? "Unknown" : sdf.format(getTimestamp().getTime()));
+        result.append('\n');
+
+        result.append("From: " + (sender.getName() == null ? "Unknown" : sender.getName()) + "\n");
+        result.append("To: " + (receiver.getName() == null ? "Unknown" : receiver.getName()) + "\n");
+        result.append("Message: " + message + "\n");
+        return result.toString();
     }
 }
