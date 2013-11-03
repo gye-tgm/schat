@@ -17,22 +17,25 @@ public class SChatServerThread extends Thread {
     private final SChatServer server;
     private Socket clientSocket;
     private User client;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
 
-    public SChatServerThread(Socket clientSocket, SChatServer server) {
+    public SChatServerThread(Socket clientSocket, SChatServer server) throws IOException {
         this.clientSocket = clientSocket;
         this.server = server;
+        this.in = new ObjectInputStream(clientSocket.getInputStream());
+        this.out = new ObjectOutputStream(clientSocket.getOutputStream());
         this.client = getClientInformation();
-        server.addUser(client.getId(), clientSocket);
+        server.addUser(client.getId(), out);
+        System.out.println(client.getId() + " " + client.getName());
     }
 
     public User getClientInformation() {
         User user = null;
         try {
-            ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
             int id = in.readInt();
             String name = in.readUTF();
             user = new User(id, name);
-            in.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -41,15 +44,11 @@ public class SChatServerThread extends Thread {
 
     public void run() {
         try {
-            ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
-            ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
             ChatMessage message = null;
             while ((message = (ChatMessage) in.readObject()) != null) {
                 sendMessage(message);
             }
             clientSocket.close();
-            out.close();
-            in.close();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -57,12 +56,11 @@ public class SChatServerThread extends Thread {
         }
     }
 
-    public void sendMessage(ChatMessage message) {
-        Socket receiverSocket = server.getSocket(message.getReceiver().getId());
+    public void sendMessage(ChatMessage message) throws IOException {
+        ObjectOutputStream recOut = server.getObjectOutputStreamById(message.getReceiver().getId());
         try {
-            ObjectOutputStream out = new ObjectOutputStream(receiverSocket.getOutputStream());
-            out.writeObject(message);
-            out.close();
+            recOut.writeObject(message);
+            recOut.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
