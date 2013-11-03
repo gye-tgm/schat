@@ -3,6 +3,7 @@ package com.networking;
 import com.data.ChatMessage;
 import com.data.User;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
@@ -33,7 +34,7 @@ public class SChatClientListener extends Thread {
             }
             in.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Connection to the server closed.");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

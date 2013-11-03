@@ -48,11 +48,17 @@ public class SChatServerThread extends Thread {
             while ((message = (ChatMessage) in.readObject()) != null) {
                 sendMessage(message);
             }
-            clientSocket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Connection to " + client.getId() + " closed.");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                clientSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            server.eraseUser(client.getId());
         }
     }
 

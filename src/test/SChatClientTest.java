@@ -19,15 +19,25 @@ public class SChatClientTest {
         User me = null;
         SChatClient client = null;
         try {
-            me = new User(Integer.parseInt(args[1]), args[0]);
+            me = new User(Integer.parseInt(args[0]), args[1]);
         } catch (Exception e) {
-            System.err.println("usage: java SChatClientTest <user name> <id>");
+            System.err.println("usage: java SChatClientTest <id> <user name> (<host name> <port>)");
             System.exit(1);
         }
+
+        String hostName = SChatClient.SERVER_NAME;
+        int portNumber = SChatClient.PORT_ADDRESS;
+
+        if(args.length == 4){
+            hostName = args[2];
+            portNumber = Integer.parseInt(args[3]);
+        }
+
         try {
-            client = new SChatClient(me);
+            client = new SChatClient(hostName, portNumber, me);
         } catch (IOException e) {
-            System.err.println("Client Server Connection I/O Exception");
+            System.err.println("Could not connect to the server successfully.");
+            e.printStackTrace();
             System.exit(1);
         }
         try {
