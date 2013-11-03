@@ -6,8 +6,8 @@ import java.security.*;
 
 /**
  * This class contains all essential methods for en- and decryption.
- * @author Elias Frantar (0.2)
- * @version 29.10.2013 (0.2)
+ * @author Elias Frantar (0.3)
+ * @version 2.11.2013 (0.3)
  */
 public class Cryptography {
 
@@ -152,6 +152,17 @@ public class Cryptography {
         }
 
         return key;
+    }
+
+    /**
+     * Generates a new Initialization Vector for the in CryptoConstants specified symmetric algorithm.
+     * @return the IV
+     */
+    public static IvParameterSpec gen_symm_IV() {
+
+        IvParameterSpec iv = null;
+
+        return iv;
     }
 
 }
