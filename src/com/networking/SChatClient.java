@@ -3,12 +3,13 @@ package com.networking;
 import com.data.ChatMessage;
 import com.data.User;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.net.Socket;
 
 /**
  * This class manages the network communication between the client and the server
  * from the client's point of view.
+ *
  * @author Gary Ye
  */
 public class SChatClient extends Thread {
@@ -39,7 +40,7 @@ public class SChatClient extends Thread {
         socket.close();
     }
 
-    public void sendMessage(ChatMessage message){
+    public void sendMessage(ChatMessage message) {
         sender.send(message);
     }
 
