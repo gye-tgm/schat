@@ -1,9 +1,10 @@
 package com.data;
 
+import java.io.Serializable;
 import java.security.KeyPair;
 
-public class User {
-    private KeyPair keyPair;
+public class User implements Serializable{
+    private transient KeyPair keyPair;
     private String name;
     private int id;
 
