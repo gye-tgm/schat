@@ -1,6 +1,8 @@
 package server;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -11,7 +13,7 @@ import java.util.HashMap;
  * @author Gary Ye
  */
 public class SChatServer {
-    private HashMap<Integer, Socket> clients;
+    private HashMap<Integer, ObjectOutputStream> clients;
 
     /**
      * Initializes a new KnockKnock Server and also
@@ -36,15 +38,16 @@ public class SChatServer {
         }
     }
 
-    public void addUser(int id, Socket socket) {
-        clients.put(id, socket);
+    public void addUser(int id, ObjectOutputStream out) {
+        clients.put(id, out);
+        System.out.println("User with id = " + id + " added!");
     }
 
     public void eraseUser(int id) {
         clients.remove(id);
     }
 
-    public Socket getSocket(int id) {
+    public ObjectOutputStream getObjectOutputStreamById(int id) {
         return clients.get(id);
     }
 }
