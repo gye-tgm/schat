@@ -31,7 +31,9 @@ public class SChatClient extends Thread {
         this.sender = new SChatClientWriter(socket);
 
         listener.start();
+        sender.introduceToServer(client);
     }
+
 
     public void closeConnection() throws IOException {
         socket.close();
