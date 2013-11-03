@@ -7,6 +7,9 @@ import com.networking.SChatClient;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Tests the SChatClient implementation.
@@ -41,7 +44,8 @@ public class SChatClientTest {
                         message.append(messageSplit[i]);
                         message.append(" \n".charAt(i + 1 == messageSplit.length ? 1 : 0));
                     }
-                    client.sendMessage(new ChatMessage(me, new User(id), message.toString()));
+                    ChatMessage chatMessage = new ChatMessage(me, new User(id), message.toString(), Calendar.getInstance());
+                    client.sendMessage(chatMessage);
                 } catch (Exception e) {
                     System.err.println("usage: <id> <message>");
                 }
