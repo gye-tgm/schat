@@ -4,6 +4,7 @@ import server.SChatServer;
 
 /**
  * SChat Server tester
+ *
  * @author Gary Ye
  */
 public class SChatServerTest {
