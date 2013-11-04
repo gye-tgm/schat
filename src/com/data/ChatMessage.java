@@ -1,5 +1,7 @@
 package com.data;
 
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
@@ -8,7 +10,7 @@ import java.util.Calendar;
  * @author Elias Frantar (0.1)
  * @version 14.10.2013: 0.1
  */
-public class ChatMessage {
+public class ChatMessage implements Serializable {
     private User sender;
     private User receiver;
 
@@ -50,18 +52,6 @@ public class ChatMessage {
         timestamp = Calendar.getInstance();
     }
 
-    /**
-     * Returns this chat message as a byte stream ready to send.
-     *
-     * @return the byte stream of this message
-     */
-    public byte[] getByteStream() {
-        byte[] data = null;
-
-        return data;
-    }
-
-
     public User getSender() {
         return sender;
     }
@@ -92,5 +82,19 @@ public class ChatMessage {
 
     public void setTimestamp(Calendar timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String toString(){
+        StringBuilder result = new StringBuilder("");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+
+        result.append("Timestamp: ");
+        result.append(getTimestamp() == null ? "Unknown" : sdf.format(getTimestamp().getTime()));
+        result.append('\n');
+
+        result.append("From: " + (sender.getName() == null ? "Unknown" : sender.getName()) + "\n");
+        result.append("To: " + (receiver.getName() == null ? "Unknown" : receiver.getName()) + "\n");
+        result.append("Message: " + message + "\n");
+        return result.toString();
     }
 }

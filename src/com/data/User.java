@@ -1,10 +1,12 @@
 package com.data;
 
+import java.io.Serializable;
 import java.security.KeyPair;
 
-public class User {
-    private KeyPair keyPair;
+public class User implements Serializable{
+    private transient KeyPair keyPair;
     private String name;
+    private int id;
 
     /**
      * Constructor with a specified name
@@ -12,6 +14,20 @@ public class User {
      * @param name the name of the user
      */
     public User(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Constructor with a specified id
+     *
+     * @param id the id of the user
+     */
+    public User(int id) {
+        this.id = id;
+    }
+
+    public User(int id, String name){
+        this.id = id;
         this.name = name;
     }
 
@@ -37,6 +53,10 @@ public class User {
         return SENDING_SUCCESSFUL;
     }
 
+    public void receiveMessage(ChatMessage message){
+        System.out.println("New message: " + message.toString());
+    }
+
     /**
      * @return the name
      */
@@ -49,5 +69,13 @@ public class User {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
