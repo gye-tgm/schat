@@ -15,7 +15,7 @@ public class S_ChatMessage implements Serializable {
     private ChatMessage message;
 
     private String encrypted_message; // the encrypted message
-    private String tag; // the MAC authentification tag
+    private String tag; // the MAC authentication tag
 
     /**
      * Creates a new secure message instance which allows to encrypt the given message.
@@ -38,7 +38,7 @@ public class S_ChatMessage implements Serializable {
     }
 
     /**
-     * Decrypts this message and and intializes the plain values of the message.
+     * Decrypts this message and and initializes the plain values of the message.
      * @param sym_key the key to use for symmetric encryption
      * @param MAC_key the key to use for MAC
      */
