@@ -6,7 +6,6 @@ import com.data.User;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
-import java.io.Serializable;
 import java.util.Calendar;
 
 /**
@@ -106,7 +105,7 @@ public class S_ChatMessage {
 
     /**
      * Returns the whole message in byte data
-     * @return the byte of this message
+     * @return the bytes of this message
      */
     public byte[] getBytes() {
         return S_ChatMessage.concat(getDataBytes(), tag);
