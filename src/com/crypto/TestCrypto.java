@@ -1,11 +1,11 @@
 package com.crypto;
 
-import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.Charset;
+import java.math.BigInteger;
+import java.util.Calendar;
+
+import com.data.ChatMessage;
+import com.data.User;
 
 /**
  *
@@ -13,22 +13,38 @@ import java.nio.charset.Charset;
 public class TestCrypto {
 
     public static void main(String[] args) {
-        String message = "This is a simple Test if this program works!";
-        String key = "aaaaaaaaaaaaaaaa";
-        String iv = "bbbbbbbbbbbbbbbb";
 
-        System.out.println("message: " + message);
-        System.out.println("key: " + key);
+        String text = "This is a simple Test!";
 
-        SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(), "AES");
-        IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
+        User sender = new User("Alice");
+        User receiver = new User("Bob");
 
-        byte[] encrypted = Cryptography.symm_crypt(skeySpec, ivspec, message.getBytes(), Cipher.ENCRYPT_MODE);
+        SecretKey skey = Cryptography.gen_symm_key();
+        SecretKey mackey = Cryptography.gen_MAC_key();
 
-        System.out.println(new String(encrypted, Charset.defaultCharset()));
+        ChatMessage message = new ChatMessage(sender, receiver, text);
+        message.setActualTime();
+        S_ChatMessage secret_message = new S_ChatMessage(message, skey);
 
-        byte[] decrypted = Cryptography.symm_crypt(skeySpec, ivspec, encrypted, Cipher.DECRYPT_MODE);
+        System.out.println("\n");
+        System.out.print(secret_message.toString());
 
-        System.out.println(new String(decrypted, Charset.defaultCharset()));
+        byte[] mac = secret_message.getTag(mackey);
+        System.out.println("Message Authentication Code: " + toHex(mac) + "\n");
+
+        message = secret_message.decrypt(skey, mackey, mac);
+        System.out.println("\n" + message.toString());
+
     }
+
+    /**
+     * Converts a byte[] to a hex-String
+     * @param bytes the byte[]to convert
+     * @return the corresponding hex-String
+     */
+    private static String toHex(byte[] bytes) {
+        BigInteger bi = new BigInteger(1, bytes);
+        return String.format("%0" + (bytes.length << 1) + "X", bi);
+    }
+
 }

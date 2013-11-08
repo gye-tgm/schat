@@ -67,7 +67,7 @@ public class Cryptography {
 
         try {
             Cipher cipher = Cipher.getInstance(CryptoConstants.asymm_Alg);
-            cipher.init(Cipher.ENCRYPT_MODE, key);
+            cipher.init(Cipher.DECRYPT_MODE, key);
             encrypted_data = cipher.doFinal(data);
         }
         catch(Exception e) {
@@ -155,12 +155,40 @@ public class Cryptography {
     }
 
     /**
+     * Randomly generates a key for the in CryptoConstants specified MAC algorithm.
+     * @return the key
+     */
+    public static SecretKey gen_MAC_key() {
+
+        SecretKey key = null;
+
+        try {
+            KeyGenerator generator = KeyGenerator.getInstance(CryptoConstants.MAC_alg);
+            generator.init(CryptoConstants.symm_keylength);
+            key = generator.generateKey();
+        }
+        catch(Exception e) {
+        }
+
+        return key;
+    }
+
+    /**
      * Generates a new Initialization Vector for the in CryptoConstants specified symmetric algorithm.
      * @return the IV
      */
     public static IvParameterSpec gen_symm_IV() {
 
         IvParameterSpec iv = null;
+
+        try {
+            SecureRandom random = new SecureRandom();
+            byte iv_bytes[] = new byte[16];//generate random 16 byte IV AES is always 16bytes
+            random.nextBytes(iv_bytes);
+            iv = new IvParameterSpec(iv_bytes);
+        }
+        catch(Exception e) {
+        }
 
         return iv;
     }
