@@ -9,7 +9,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:id="@+id/view_chat" android:layout_gravity="center" android:clickable="false"/>
+            android:divider="@android:color/transparent"
+            android:dividerHeight="10.0sp"
+            android:id="@+id/view_chat"
+            android:layout_gravity="center"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:clickable="false"/>
 
     <RelativeLayout
             android:layout_height="wrap_content"
