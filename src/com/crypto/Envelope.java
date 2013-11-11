@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * Objects of this class will be transmitted through the web. This class contains an encrypted message and their corresponding MAC.
@@ -48,6 +49,22 @@ public class Envelope implements Serializable {
         oos.close();
 
         return baos.toByteArray();
+    }
+
+    /**
+     * Checks if the message has been tampered or if some sending-error has occured.
+     * @param mac_key the key to compute the mac
+     * @return true if MAC was valid; false otherwise
+     */
+    public boolean verifyMAC(SecretKey mac_key) {
+        boolean verified = false;
+        try {
+            if(Arrays.equals(signature, sign(this.message, mac_key)))
+                verified = true;
+        }
+        catch(IOException e) {  // if something fails, the MAC is wrong
+        }
+        return verified;
     }
 
     /* we only want getters because there should never be invalid message/MAC pairs in this class */
