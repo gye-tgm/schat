@@ -4,13 +4,14 @@ import javax.crypto.SecretKey;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 /**
  * Objects of this class will be transmitted through the web. This class contains an encrypted message and their corresponding MAC.
  * @author Elias Frantar
  * @version 11.11.2013
  */
-public class Envelope {
+public class Envelope implements Serializable {
 
     private S_Message message; // the encrypted message
     private byte[] signature; // the MAC
