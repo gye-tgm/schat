@@ -14,6 +14,7 @@ public class TestCrypto {
 
     public static void main(String[] args) {
 
+        /*
         String text = "This is a simple Test!";
 
         User sender = new User("Alice");
@@ -33,7 +34,7 @@ public class TestCrypto {
         System.out.println("Message Authentication Code: " + toHex(mac) + "\n");
 
         message = secret_message.decrypt(skey, mackey, mac);
-        System.out.println("\n" + message.toString());
+        System.out.println("\n" + message.toString()); */
 
     }
 

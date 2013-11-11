@@ -1,16 +1,19 @@
 package com.crypto;
 
+import com.data.User;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import java.io.*;
+import java.util.Calendar;
 
 /**
  *  This class represents an encrypted message.
  *  @author Elias Frantar
  *  @version 11.11.2013
  */
-public class S_ChatMessage extends S_Content {
+public class S_ChatMessage extends S_Message {
 
     private byte[] iv;
 
@@ -21,15 +24,22 @@ public class S_ChatMessage extends S_Content {
      * Creates a new secure_Chatmessage-instance from a plain message which will be encrypted using the given keys.
      * @param message the Chatmessage which should be encrypted
      * @param symm_key the key for the symmetric encryption
+     * @param sender the sender of this message
+     * @param receiver the receiver of this message
+     * @param timestamp the time this message was created and sent
      */
-    public S_ChatMessage(String message, SecretKey symm_key) {
+    public S_ChatMessage(String message, SecretKey symm_key, User sender, User receiver, Calendar timestamp) {
 
         message_type = Type.CHATMESSAGE; // this is a Chat-message and will always stay one
+
+        setSender(sender);
+        setReceiver(receiver);
+        setTimestamp(timestamp);
 
         IvParameterSpec ivspec = Cryptography.gen_symm_IV();
         iv = ivspec.getIV();
 
-        encrypt(message, symm_key, ivspec);
+        encrypted_message = encrypt(message, symm_key, ivspec);
     }
 
     /**
@@ -37,9 +47,10 @@ public class S_ChatMessage extends S_Content {
      * @param message the message to encrypt
      * @param symm_key the key to use for symmetric encryption
      * @param iv the initialization vector of the symmetric encryption
+     * @return the encrypted message as a byte[]
      */
-    private void encrypt(String message, SecretKey symm_key, IvParameterSpec iv) {
-        encrypted_message = Cryptography.symm_crypt(symm_key, iv, message.getBytes(), Cipher.ENCRYPT_MODE);
+    private byte[] encrypt(String message, SecretKey symm_key, IvParameterSpec iv) {
+        return Cryptography.symm_crypt(symm_key, iv, message.getBytes(), Cipher.ENCRYPT_MODE);
     }
 
     /**
