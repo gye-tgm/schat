@@ -20,12 +20,13 @@ import java.util.ArrayList;
 
 public class ChatAdapter extends ArrayAdapter<String> {
     private final Context context;
-    private final ArrayList<String> values;
+    private final ArrayList<String> messages, timestamps;
 
-    public ChatAdapter(Context context, ArrayList<String> values) {
-        super(context, R.layout.layout_chathistory_list, values);
+    public ChatAdapter(Context context, ArrayList<String> messages, ArrayList<String> timestamps) {
+        super(context, R.layout.layout_chathistory_list, messages);
         this.context = context;
-        this.values = values;
+        this.messages = messages;
+        this.timestamps = timestamps;
     }
 
     @Override
@@ -35,8 +36,8 @@ public class ChatAdapter extends ArrayAdapter<String> {
         View rowView = inflater.inflate(R.layout.layout_chathistory_list, parent, false);
         TextView msg = (TextView) rowView.findViewById(R.id.msg);
         TextView time = (TextView) rowView.findViewById(R.id.timestamp);
-        msg.setText(values.get(position));
-        time.setText("1:00");
+        msg.setText(messages.get(position));
+        time.setText(timestamps.get(position));
         return rowView;
     }
 }
