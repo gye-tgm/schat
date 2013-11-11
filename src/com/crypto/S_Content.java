@@ -1,6 +1,9 @@
 package com.crypto;
 
+import com.data.User;
+
 import java.io.Serializable;
+import java.util.Calendar;
 
 /**
  * This is the super-class of all secure contents that can be send in a message. It contains a definition of all different secure message types.
@@ -26,5 +29,11 @@ public abstract class S_Content implements Serializable { // there should not ex
     public Type getType() {
         return message_type;
     }
+
+    /**
+     * Returns a String of this secret message properly formatted
+     * @return the formatted String
+     */
+    public abstract String toString();
 
 }
