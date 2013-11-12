@@ -5,10 +5,10 @@ package com.data;
  * User: Wolfram
  * Date: 11.11.13
  * Time: 14:56
- * To change this template use File | Settings | File Templates.
  */
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +34,9 @@ public class ChatAdapter extends ArrayAdapter<String> {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.layout_chathistory_list, parent, false);
+        if (messages.get(position).contains("ä")) {
+            rowView.setBackgroundColor(Color.RED);
+        }
         TextView msg = (TextView) rowView.findViewById(R.id.msg);
         TextView time = (TextView) rowView.findViewById(R.id.timestamp);
         msg.setText(messages.get(position));
