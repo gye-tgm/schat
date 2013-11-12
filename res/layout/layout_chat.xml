@@ -28,8 +28,7 @@
                 android:id="@+id/line"
                 android:layout_height="1dp"
                 android:layout_width="fill_parent"
-                android:background="#00ff00"
-                />
+                android:background="#00ff00"/>
         <LinearLayout android:layout_height="wrap_content"
                       android:layout_width="fill_parent"
                       android:layout_below="@id/line">
@@ -40,8 +39,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="0.75"
                     android:maxLines="5"
-                    android:scrollbars="vertical"
-                    />
+                    android:scrollbars="vertical"/>
             <Button
                     android:id="@+id/send"
                     android:layout_height="wrap_content"
@@ -53,4 +51,3 @@
     </RelativeLayout>
 
 </LinearLayout>
-
