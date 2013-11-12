@@ -8,11 +8,16 @@ import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Toast;
 import com.data.ChatAdapter;
+import com.data.ChatArrayList;
+import com.data.ChatMessage;
+import com.data.User;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Random;
 
 /**
@@ -23,16 +28,20 @@ import java.util.Random;
  */
 public class Activity_Chat extends Activity {
     private ListView messageHistory;
-    private ArrayList<String> messages, timestamps; // the stored messages and timestamps
-    private ArrayAdapter<String> messagesAdapter; // to automatically update the ListView with onDataSetChanged
+    private ChatArrayList messages; // the stored messages and timestamps
+    private ArrayList<String> test; //for some reason required in ChatAdapter.java
+    private ChatAdapter messagesAdapter; // to automatically update the ListView with onDataSetChanged
+    private User you, notyou;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_chat);
         messageHistory = (ListView) findViewById(R.id.view_chat);
-        messages = new ArrayList<>();
-        timestamps = new ArrayList<>();
-        messagesAdapter = new ChatAdapter(this, messages, timestamps);
+        messages = new ChatArrayList();
+        test = messages.toStringArrayList();
+        messagesAdapter = new ChatAdapter(this, messages, test);
+        you = new User("Wolfram");
+        notyou = new User("Gary");
         messageHistory.setAdapter(messagesAdapter); // set the data of the list
         registerForContextMenu(messageHistory); // register all list items for the context menu
         loadMessages();
@@ -77,10 +86,12 @@ public class Activity_Chat extends Activity {
         for (int j = 0; j < 20; j++) {
             int saize = (int) (Math.random() * 100 + 1);
             String print = "";
+            ChatMessage dummy = null;
             for (int i = 0; i < saize; i++) {
                 print += (alphabet.charAt(r.nextInt(alphabet.length())));
+                dummy = (i % 2 == 0) ? new ChatMessage(you, notyou, print) : new ChatMessage(notyou, you, print);
             }
-            sendMessage(print);
+            testSendMessage(dummy);
         }
     }
 
@@ -94,32 +105,56 @@ public class Activity_Chat extends Activity {
         inflater.inflate(R.menu.menu_message, menu);
     }
 
+    /**
+     * Checks if the Message is empty, if so shows a Toast, else sends a Message via sendMessage()
+     *
+     * @param v ButtonView
+     */
     public void sendMessagePressed(View v) {
         EditText text = (EditText) findViewById(R.id.eingabe);
-        if (text.equals("")) {
+        String tmp = text.getText().toString().trim();
+        if (tmp.equals("")) {
             Toast.makeText(this, "No empty Messages", Toast.LENGTH_SHORT).show();
         } else {
-            sendMessage(text.getText().toString().trim());
+            sendMessage(tmp);
             text.setText("");
         }
     }
 
+    /**
+     * Adds a Message to local messages, updates the View and scrolls to bottom of the list.
+     * For some reason the test ArrayList is needed for the ChatAdapter.java
+     *
+     * @param text New Messages Text
+     */
     public void sendMessage(String text) {
-        messages.add(text);
-        Calendar c = Calendar.getInstance();
-        String min = "" + c.get(Calendar.MINUTE);
-        if (Integer.parseInt(min) < 10) {
-            min = "0" + min;
-        }
-        timestamps.add("" + c.get(Calendar.HOUR_OF_DAY) + ":" + min + " | " + c.get(Calendar.DATE) + "." + c.get(Calendar.MONTH));
+        messages.add(new ChatMessage(notyou, you, text));
+        test.add(text);
         messagesAdapter.notifyDataSetChanged();
         messageHistory.setSelection(messagesAdapter.getCount() - 1);
     }
 
+    /**
+     * Used for Testing only, user has no acces to this
+     * Sends a message with defined ChatMessage
+     *
+     * @param newChatMessage
+     */
+    public void testSendMessage(ChatMessage newChatMessage) {
+        messages.add(newChatMessage);
+        test.add(newChatMessage.getMessage());
+        messagesAdapter.notifyDataSetChanged();
+        messageHistory.setSelection(messagesAdapter.getCount() - 1);
+    }
+
+    /**
+     * Used to copy a Messages Text
+     *
+     * @param pos
+     */
     public void copyText(int pos) {
-        // TODO
         ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("label", messages.get(pos));
+        ClipData clip = ClipData.newPlainText("S/Chat", messages.get(pos).getMessage());
         clipboard.setPrimaryClip(clip);
     }
 }
