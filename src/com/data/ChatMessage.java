@@ -1,7 +1,6 @@
 package com.data;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
@@ -15,8 +14,7 @@ public class ChatMessage implements Serializable {
     private User receiver;
 
     private String message;
-
-    private Calendar timestamp;
+    private String timestamp;
 
     /**
      * Creates a new message from the given parameters
@@ -26,30 +24,23 @@ public class ChatMessage implements Serializable {
      * @param message  the actual message
      */
     public ChatMessage(User sender, User receiver, String message) {
+        //this(sender, receiver, message);
         this.sender = sender;
         this.receiver = receiver;
         this.message = message;
+        setActualTime();
     }
-
-    /**
-     * Creates a new message from the given parameters
-     *
-     * @param sender    the sender of this message
-     * @param receiver  the receiver of this message
-     * @param message   the actual message
-     * @param timestamp the date and time the message was sent
-     */
-    public ChatMessage(User sender, User receiver, String message, Calendar timestamp) {
-        this(sender, receiver, message);
-        this.timestamp = timestamp;
-    }
-
 
     /**
      * Initializes the timestamp with the current date and time.
      */
     public void setActualTime() {
-        timestamp = Calendar.getInstance();
+        Calendar c = Calendar.getInstance();
+        String min = "" + c.get(Calendar.MINUTE);
+        if (Integer.parseInt(min) < 10) {
+            min = "0" + min;
+        }
+        timestamp = "" + c.get(Calendar.HOUR_OF_DAY) + ":" + min + " | " + c.get(Calendar.DATE) + "." + c.get(Calendar.MONTH);
     }
 
     public User getSender() {
@@ -76,20 +67,22 @@ public class ChatMessage implements Serializable {
         this.message = message;
     }
 
-    public Calendar getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Calendar timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 
-    public String toString(){
+    public String toString() {
         StringBuilder result = new StringBuilder("");
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+        //SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
 
         result.append("Timestamp: ");
-        result.append(getTimestamp() == null ? "Unknown" : sdf.format(getTimestamp().getTime()));
+        //result.append(getTimestamp() == null ? "Unknown" : sdf.format(getTimestamp().getTime()));
+        result.append(getTimestamp()); //Timestamp can't be null
+
         result.append('\n');
 
         result.append("From: " + (sender.getName() == null ? "Unknown" : sender.getName()) + "\n");
