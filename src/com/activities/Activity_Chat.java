@@ -1,6 +1,8 @@
 package com.activities;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
@@ -46,6 +48,8 @@ public class Activity_Chat extends Activity {
             case R.id.option_deleteMessage:
                 deleteMessage(info.position); // delete the selected message
                 return true;
+            case R.id.option_copyText:
+                copyText(info.position);
             default:
                 return super.onContextItemSelected(item);
         }
@@ -92,19 +96,30 @@ public class Activity_Chat extends Activity {
 
     public void sendMessagePressed(View v) {
         EditText text = (EditText) findViewById(R.id.eingabe);
-        sendMessage(text.getText().toString().trim());
-        text.setText("");
-    }
-
-    public void sendMessage(String text) {
         if (text.equals("")) {
             Toast.makeText(this, "No empty Messages", Toast.LENGTH_SHORT).show();
         } else {
-            messages.add(text);
-            Calendar c = Calendar.getInstance();
-            timestamps.add("" + c.get(Calendar.HOUR) + ":" + c.get(Calendar.MINUTE) + " | " + c.get(Calendar.DATE) + "." + c.get(Calendar.MONTH));
-            messagesAdapter.notifyDataSetChanged();
-            messageHistory.setSelection(messagesAdapter.getCount() - 1);
+            sendMessage(text.getText().toString().trim());
+            text.setText("");
         }
+    }
+
+    public void sendMessage(String text) {
+        messages.add(text);
+        Calendar c = Calendar.getInstance();
+        String min = "" + c.get(Calendar.MINUTE);
+        if (Integer.parseInt(min) < 10) {
+            min = "0" + min;
+        }
+        timestamps.add("" + c.get(Calendar.HOUR_OF_DAY) + ":" + min + " | " + c.get(Calendar.DATE) + "." + c.get(Calendar.MONTH));
+        messagesAdapter.notifyDataSetChanged();
+        messageHistory.setSelection(messagesAdapter.getCount() - 1);
+    }
+
+    public void copyText(int pos) {
+        // TODO
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("label", messages.get(pos));
+        clipboard.setPrimaryClip(clip);
     }
 }
