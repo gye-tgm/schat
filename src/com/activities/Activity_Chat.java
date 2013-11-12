@@ -36,12 +36,12 @@ public class Activity_Chat extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_chat);
+        you = new User("Wolfram");
+        notyou = new User("Gary");
         messageHistory = (ListView) findViewById(R.id.view_chat);
         messages = new ChatArrayList();
         test = messages.toStringArrayList();
-        messagesAdapter = new ChatAdapter(this, messages, test);
-        you = new User("Wolfram");
-        notyou = new User("Gary");
+        messagesAdapter = new ChatAdapter(this, messages, test, you);
         messageHistory.setAdapter(messagesAdapter); // set the data of the list
         registerForContextMenu(messageHistory); // register all list items for the context menu
         loadMessages();
@@ -128,7 +128,7 @@ public class Activity_Chat extends Activity {
      * @param text New Messages Text
      */
     public void sendMessage(String text) {
-        messages.add(new ChatMessage(notyou, you, text));
+        messages.add(new ChatMessage(you, you, text));
         test.add(text);
         messagesAdapter.notifyDataSetChanged();
         messageHistory.setSelection(messagesAdapter.getCount() - 1);
