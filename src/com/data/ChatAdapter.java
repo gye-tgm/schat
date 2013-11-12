@@ -19,29 +19,32 @@ import java.util.ArrayList;
 
 public class ChatAdapter extends ArrayAdapter<String> {
     private final Context context;
-    private final ArrayList<String> messages, timestamps;
+    private final ChatArrayList messages;
+    private final User you;
 
-    public ChatAdapter(Context context, ArrayList<String> messages, ArrayList<String> timestamps) {
-        super(context, R.layout.layout_chathistory_list_you, messages);
+    public ChatAdapter(Context context, ChatArrayList msg, ArrayList<String> test, User you) {
+        //requires the test ArrayList, msg.toStringArrayList for some reason didn't do the trick
+        super(context, R.layout.layout_chathistory_list_you, test);
         this.context = context;
-        this.messages = messages;
-        this.timestamps = timestamps;
+        this.you = you;
+        messages = msg;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        ChatMessage currentMessage = messages.get(position);
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = null;
-        if (messages.get(position).contains("ä")) {
-            rowView = inflater.inflate(R.layout.layout_chathistory_list_notyou, parent, false);
-        } else {
+        View rowView;
+        if (currentMessage.getSender().equals(you)) {
             rowView = inflater.inflate(R.layout.layout_chathistory_list_you, parent, false);
+        } else {
+            rowView = inflater.inflate(R.layout.layout_chathistory_list_notyou, parent, false);
         }
         TextView msg = (TextView) rowView.findViewById(R.id.msg);
         TextView time = (TextView) rowView.findViewById(R.id.timestamp);
-        msg.setText(messages.get(position));
-        time.setText(timestamps.get(position));
+        msg.setText(currentMessage.getMessage());
+        time.setText(currentMessage.getTimestamp());
         return rowView;
     }
 }
