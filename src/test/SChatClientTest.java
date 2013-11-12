@@ -7,7 +7,6 @@ import com.networking.SChatClient;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Calendar;
 
 /**
  * Tests the SChatClient implementation.
@@ -28,7 +27,7 @@ public class SChatClientTest {
         String hostName = SChatClient.SERVER_NAME;
         int portNumber = SChatClient.PORT_ADDRESS;
 
-        if(args.length == 4){
+        if (args.length == 4) {
             hostName = args[2];
             portNumber = Integer.parseInt(args[3]);
         }
@@ -52,7 +51,8 @@ public class SChatClientTest {
                         message.append(messageSplit[i]);
                         message.append(" \n".charAt(i + 1 == messageSplit.length ? 1 : 0));
                     }
-                    ChatMessage chatMessage = new ChatMessage(me, new User(id), message.toString(), Calendar.getInstance());
+                    //ChatMessage chatMessage = new ChatMessage(me, new User(id), message.toString(), Calendar.getInstance());
+                    ChatMessage chatMessage = new ChatMessage(me, new User(id), message.toString());
                     client.sendMessage(chatMessage);
                 } catch (Exception e) {
                     System.err.println("usage: <id> <message>");
