@@ -9,7 +9,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:id="@+id/view_chat" android:layout_gravity="center" android:clickable="false"/>
+            android:divider="@android:color/transparent"
+            android:dividerHeight="10.0sp"
+            android:id="@+id/view_chat"
+            android:layout_gravity="center"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingBottom="3dp"
+            android:paddingTop="3dp"
+            android:clickable="false"/>
 
     <RelativeLayout
             android:layout_height="wrap_content"
@@ -19,27 +27,30 @@
                 android:id="@+id/line"
                 android:layout_height="1dp"
                 android:layout_width="fill_parent"
-                android:background="#00ff00"
-                />
-        <LinearLayout android:layout_height="wrap_content"
-                      android:layout_width="fill_parent"
-                      android:layout_below="@id/line">
+                android:background="#00ff00"/>
+
+        <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_below="@id/line">
+
             <EditText
                     android:id="@+id/eingabe"
                     android:hint="Your Message"
                     android:layout_height="wrap_content"
                     android:layout_width="0dp"
                     android:layout_weight="0.75"
-                    />
+                    android:maxLines="5"
+                    android:scrollbars="vertical"/>
+
             <Button
                     android:id="@+id/send"
                     android:layout_height="wrap_content"
                     android:layout_width="0dp"
                     android:layout_weight="0.25"
                     android:text="@string/send"
-                    android:onClick="sendMessage"/>
+                    android:onClick="sendMessagePressed"/>
         </LinearLayout>
     </RelativeLayout>
 
 </LinearLayout>
-
