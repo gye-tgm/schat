@@ -30,7 +30,6 @@ public class Activity_Chat extends Activity {
         messageHistory = (ListView) findViewById(R.id.view_chat);
         messages = new ArrayList<>();
         timestamps = new ArrayList<>();
-        //messagesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, messages); // simple_List_item_1 is the android default
         messagesAdapter = new ChatAdapter(this, messages, timestamps);
         messageHistory.setAdapter(messagesAdapter); // set the data of the list
         registerForContextMenu(messageHistory); // register all list items for the context menu
@@ -43,12 +42,10 @@ public class Activity_Chat extends Activity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo(); // the item whose context menu was called
-
         switch (item.getItemId()) {
             case R.id.option_deleteMessage:
-                deleteMessage(info.position); // delete the selected contact
+                deleteMessage(info.position); // delete the selected message
                 return true;
-
             default:
                 return super.onContextItemSelected(item);
         }
@@ -57,12 +54,10 @@ public class Activity_Chat extends Activity {
     /**
      * Deletes the given Message.
      *
-     * @param messageIndex the index of the contact in the list
+     * @param messageIndex the index of the message in the list
      */
     private void deleteMessage(int messageIndex) {
-
         /* todo: maybe add animation */
-
         messages.remove(messageIndex);
         messagesAdapter.notifyDataSetChanged();
     }
@@ -71,11 +66,8 @@ public class Activity_Chat extends Activity {
      * Loads all saved Messages into the Messages-list.
      */
     private void loadMessages() {
-
         /* todo: replace test loading with actual messages from User-objects */
         /* todo: maybe add the custom views (like: delete) */
-
-
         Random r = new Random();
         String alphabet = "abcdefghijklmonpqestuvwxyzöüä";
         for (int j = 0; j < 20; j++) {
@@ -86,7 +78,6 @@ public class Activity_Chat extends Activity {
             }
             sendMessage(print);
         }
-
     }
 
     /**
@@ -95,7 +86,6 @@ public class Activity_Chat extends Activity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_message, menu);
     }
