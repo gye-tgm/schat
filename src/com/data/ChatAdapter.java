@@ -8,7 +8,6 @@ package com.data;
  */
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,7 @@ public class ChatAdapter extends ArrayAdapter<String> {
     private final ArrayList<String> messages, timestamps;
 
     public ChatAdapter(Context context, ArrayList<String> messages, ArrayList<String> timestamps) {
-        super(context, R.layout.layout_chathistory_list, messages);
+        super(context, R.layout.layout_chathistory_list_you, messages);
         this.context = context;
         this.messages = messages;
         this.timestamps = timestamps;
@@ -33,9 +32,11 @@ public class ChatAdapter extends ArrayAdapter<String> {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.layout_chathistory_list, parent, false);
+        View rowView = null;
         if (messages.get(position).contains("ä")) {
-            rowView.setBackgroundColor(Color.RED);
+            rowView = inflater.inflate(R.layout.layout_chathistory_list_notyou, parent, false);
+        } else {
+            rowView = inflater.inflate(R.layout.layout_chathistory_list_you, parent, false);
         }
         TextView msg = (TextView) rowView.findViewById(R.id.msg);
         TextView time = (TextView) rowView.findViewById(R.id.timestamp);
