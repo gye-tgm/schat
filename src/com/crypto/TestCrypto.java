@@ -24,19 +24,15 @@ public class TestCrypto {
 
         ChatMessage message = new ChatMessage(sender, receiver, text);
         message.setActualTime();
-        S_ChatMessage secret_message = new S_ChatMessage(message, skey);
 
         System.out.println("\n");
-        System.out.print(secret_message.toString());
 
         try {
-            Envelope envelope = new Envelope(secret_message, mackey);
+            Envelope envelope = EnvelopeFactory.createEnvelope_ChatMessage(message, skey, mackey);
 
+            System.out.print(envelope.getMessage().toString());
             System.out.println("Message Authentication Code: " + S_Message.toHex(envelope.getSignature()) + "\n");
-
-            if(envelope.verifyMAC(mackey)) {
-                System.out.println("Plaintext: " + ((S_ChatMessage)(envelope.getMessage())).decrypt(skey).toString());
-            }
+            System.out.println(EnvelopeFactory.openEnvelope(envelope, skey, mackey).toString());
         }
         catch(Exception e) {
             e.printStackTrace();

@@ -1,11 +1,13 @@
 package com.crypto;
 
 import com.data.ChatMessage;
+import com.data.User;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import java.io.*;
+import java.util.Calendar;
 
 /**
  *  This class represents an encrypted message.
@@ -55,12 +57,19 @@ public class S_ChatMessage extends S_Message {
      * @param symm_key the key to use for symmetric encryption
      * @return the plain message; or null if anything failed
      */
-    public String decrypt(SecretKey symm_key) {
-        String message = null;
+    public ChatMessage decrypt(SecretKey symm_key) {
+        ChatMessage message = null;
 
+        /* todo: search real user-objects from db */
         try {
-             message = new String(Cryptography.symm_crypt(symm_key, new IvParameterSpec(iv), encrypted_message, Cipher.DECRYPT_MODE), "US-ASCII");
-        } catch (UnsupportedEncodingException e) {
+             Calendar c = Calendar.getInstance();
+             c.setTime(timestamp);
+             message = new ChatMessage(new User(sender),
+                                       new User(receiver),
+                                       new String(Cryptography.symm_crypt(symm_key, new IvParameterSpec(iv), encrypted_message, Cipher.DECRYPT_MODE), "US-ASCII"),
+                                       c);
+        }
+    catch (UnsupportedEncodingException e) {
         }
 
         return message;
