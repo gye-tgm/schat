@@ -1,10 +1,7 @@
 package com.crypto;
 
 import javax.crypto.SecretKey;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.Arrays;
 
 /**
@@ -14,7 +11,7 @@ import java.util.Arrays;
  */
 public class Envelope implements Serializable {
 
-    private S_Message message; // the encrypted message
+    private byte[] message; // the encrypted message
     private byte[] signature; // the MAC
 
     /**
@@ -23,18 +20,18 @@ public class Envelope implements Serializable {
      * @param mac_key the key for MAC computation
      */
     public Envelope(S_Message message, SecretKey mac_key) throws IOException {
-        this.message = message;
-        this.signature = sign(message, mac_key);
+        this.message = serialize(message);
+        this.signature = sign(this.message, mac_key);
     }
 
     /**
      * Computes the MAC of a given message.
-     * @param message the message (encrypted)
+     * @param message the serialized message (encrypted)
      * @param mac_key the key for MAC computation
      * @return the MAC of the given message
      */
-    public byte[] sign(S_Message message, SecretKey mac_key) throws IOException {
-        return Cryptography.mac(mac_key, getBytes(message));
+    public byte[] sign(byte[] message, SecretKey mac_key) {
+        return Cryptography.mac(mac_key, message);
     }
 
     /**
@@ -42,13 +39,25 @@ public class Envelope implements Serializable {
      * @param message the message to serialize
      * @return the byte[] of this message
      */
-    public byte[] getBytes(S_Message message) throws IOException {
+    private byte[] serialize(S_Message message) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
-        oos.writeObject(this);
+        oos.writeObject(message);
         oos.close();
 
         return baos.toByteArray();
+    }
+
+    /**
+     * Deserializes a given serialized S_Message
+     * @param message the serialized message
+     * @return the S_Message as an Object
+     */
+    private S_Message deserialize(byte[] message) throws IOException, ClassNotFoundException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(message);
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        Object o = ois.readObject();
+        return (S_Message)o;
     }
 
     /**
@@ -58,18 +67,16 @@ public class Envelope implements Serializable {
      */
     public boolean verifyMAC(SecretKey mac_key) {
         boolean verified = false;
-        try {
-            if(Arrays.equals(signature, sign(this.message, mac_key)))
-                verified = true;
-        }
-        catch(IOException e) {  // if something fails, the MAC is wrong
-        }
+
+         if(Arrays.equals(signature, sign(this.message, mac_key)))
+            verified = true;
+
         return verified;
     }
 
     /* we only want getters because there should never be invalid message/MAC pairs in this class */
-    public S_Message getMessage() {
-        return message;
+    public S_Message getMessage() throws IOException, ClassNotFoundException {
+        return deserialize(message);
     }
     public byte[] getSignature() {
         return signature;

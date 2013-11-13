@@ -1,12 +1,11 @@
 package com.crypto;
 
-import com.data.User;
+import com.data.ChatMessage;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import java.io.*;
-import java.util.Calendar;
 
 /**
  *  This class represents an encrypted message.
@@ -24,22 +23,20 @@ public class S_ChatMessage extends S_Message {
      * Creates a new secure_Chatmessage-instance from a plain message which will be encrypted using the given keys.
      * @param message the Chatmessage which should be encrypted
      * @param symm_key the key for the symmetric encryption
-     * @param sender the sender of this message
-     * @param receiver the receiver of this message
-     * @param timestamp the time this message was created and sent
+     * @param message the plain message
      */
-    public S_ChatMessage(String message, SecretKey symm_key, User sender, User receiver, Calendar timestamp) {
+    public S_ChatMessage(ChatMessage message, SecretKey symm_key) {
 
         message_type = Type.CHATMESSAGE; // this is a Chat-message and will always stay one
 
-        setSender(sender);
-        setReceiver(receiver);
-        setTimestamp(timestamp);
+        setSender(message.getSender());
+        setReceiver(message.getReceiver());
+        setTimestamp(message.getTimestamp());
 
         IvParameterSpec ivspec = Cryptography.gen_symm_IV();
         iv = ivspec.getIV();
 
-        encrypted_message = encrypt(message, symm_key, ivspec);
+        encrypted_message = encrypt(message.getMessage(), symm_key, ivspec);
     }
 
     /**
@@ -71,6 +68,8 @@ public class S_ChatMessage extends S_Message {
 
     public String toString() {
         StringBuilder result = new StringBuilder("");
+
+        result.append(plainToString());
 
         result.append("Initialization Vector: " + S_Message.toHex(iv) + "\n");
         result.append("Encrypted Message: " + S_Message.toHex(encrypted_message) + "\n");

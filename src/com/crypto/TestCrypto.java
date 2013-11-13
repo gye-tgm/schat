@@ -14,7 +14,6 @@ public class TestCrypto {
 
     public static void main(String[] args) {
 
-        /*
         String text = "This is a simple Test!";
 
         User sender = new User("Alice");
@@ -30,11 +29,18 @@ public class TestCrypto {
         System.out.println("\n");
         System.out.print(secret_message.toString());
 
-        byte[] mac = secret_message.getTag(mackey);
-        System.out.println("Message Authentication Code: " + toHex(mac) + "\n");
+        try {
+            Envelope envelope = new Envelope(secret_message, mackey);
 
-        message = secret_message.decrypt(skey, mackey, mac);
-        System.out.println("\n" + message.toString()); */
+            System.out.println("Message Authentication Code: " + S_Message.toHex(envelope.getSignature()) + "\n");
+
+            if(envelope.verifyMAC(mackey)) {
+                System.out.println("Plaintext: " + ((S_ChatMessage)(envelope.getMessage())).decrypt(skey).toString());
+            }
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
 
     }
 

@@ -53,8 +53,8 @@ public abstract class S_Message implements Serializable { // there should not ex
         StringBuilder s = new StringBuilder();
 
         s.append(sdf.format(timestamp) + "\n");
-        s.append("Sender: " + sender);
-        s.append("Receiver: " + receiver);
+        s.append("Sender: " + sender + "\n");
+        s.append("Receiver: " + receiver + "\n");
 
         return s.toString();
     }
