@@ -8,10 +8,9 @@ import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.*;
 import com.data.ChatAdapter;
 import com.data.ChatArrayList;
 import com.data.ChatMessage;
@@ -28,20 +27,22 @@ import java.util.Random;
  */
 public class Activity_Chat extends Activity {
     private ListView messageHistory;
-    private ChatArrayList messages; // the stored messages and timestamps
-    private ArrayList<String> test; //for some reason required in ChatAdapter.java
+    private ArrayList<ChatMessage> messages; // the stored messages and timestamps
     private ChatAdapter messagesAdapter; // to automatically update the ListView with onDataSetChanged
     private User you, notyou;
+    private ImageButton b;
+    private Animation send_anim;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_chat);
+        b = (ImageButton) findViewById(R.id.send);
+        send_anim = AnimationUtils.loadAnimation(this, R.anim.send_animation);
         you = new User("Wolfram");
         notyou = new User("Gary");
         messageHistory = (ListView) findViewById(R.id.view_chat);
         messages = new ChatArrayList();
-        test = messages.toStringArrayList();
-        messagesAdapter = new ChatAdapter(this, messages, test, you);
+        messagesAdapter = new ChatAdapter(this, messages, you);
         messageHistory.setAdapter(messagesAdapter); // set the data of the list
         registerForContextMenu(messageHistory); // register all list items for the context menu
         loadMessages();
@@ -83,7 +84,7 @@ public class Activity_Chat extends Activity {
         /* todo: maybe add the custom views (like: delete) */
         Random r = new Random();
         String alphabet = "abcdefghijklmonpqestuvwxyzöüä";
-        for (int j = 0; j < 20; j++) {
+        for (int j = 0; j < 100; j++) {
             int saize = (int) (Math.random() * 100 + 1);
             String print = "";
             ChatMessage dummy = null;
@@ -106,7 +107,7 @@ public class Activity_Chat extends Activity {
     }
 
     /**
-     * Checks if the Message is empty, if so shows a Toast, else sends a Message via sendMessage()
+     * Checks if the Message is empty, if so shows a Toast, else sends a Message via sendMessage() and animates the button
      *
      * @param v ButtonView
      */
@@ -116,6 +117,7 @@ public class Activity_Chat extends Activity {
         if (tmp.equals("")) {
             Toast.makeText(this, "No empty Messages", Toast.LENGTH_SHORT).show();
         } else {
+            b.startAnimation(send_anim);
             sendMessage(tmp);
             text.setText("");
         }
@@ -123,26 +125,23 @@ public class Activity_Chat extends Activity {
 
     /**
      * Adds a Message to local messages, updates the View and scrolls to bottom of the list.
-     * For some reason the test ArrayList is needed for the ChatAdapter.java
      *
      * @param text New Messages Text
      */
     public void sendMessage(String text) {
-        messages.add(new ChatMessage(you, you, text));
-        test.add(text);
+        messages.add(new ChatMessage(you, notyou, text));
         messagesAdapter.notifyDataSetChanged();
         messageHistory.setSelection(messagesAdapter.getCount() - 1);
     }
 
     /**
-     * Used for Testing only, user has no acces to this
+     * Used for Testing only, user has no access to this
      * Sends a message with defined ChatMessage
      *
      * @param newChatMessage
      */
     public void testSendMessage(ChatMessage newChatMessage) {
         messages.add(newChatMessage);
-        test.add(newChatMessage.getMessage());
         messagesAdapter.notifyDataSetChanged();
         messageHistory.setSelection(messagesAdapter.getCount() - 1);
     }
