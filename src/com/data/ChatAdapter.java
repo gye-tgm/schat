@@ -17,14 +17,14 @@ import com.activities.R;
 
 import java.util.ArrayList;
 
-public class ChatAdapter extends ArrayAdapter<String> {
+public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     private final Context context;
-    private final ChatArrayList messages;
+    private final ArrayList<ChatMessage> messages;
     private final User you;
 
-    public ChatAdapter(Context context, ChatArrayList msg, ArrayList<String> test, User you) {
+    public ChatAdapter(Context context, ArrayList<ChatMessage> msg, User you) {
         //requires the test ArrayList, msg.toStringArrayList for some reason didn't do the trick
-        super(context, R.layout.layout_chathistory_list_you, test);
+        super(context, R.layout.layout_chathistory_list_you, msg);
         this.context = context;
         this.you = you;
         messages = msg;
@@ -36,7 +36,8 @@ public class ChatAdapter extends ArrayAdapter<String> {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView;
-        if (currentMessage.getSender().equals(you)) {
+        //Contains q should be removed as soon as testing is complete
+        if (currentMessage.getSender().equals(you) && !(currentMessage.getMessage().contains("q"))) {
             rowView = inflater.inflate(R.layout.layout_chathistory_list_you, parent, false);
         } else {
             rowView = inflater.inflate(R.layout.layout_chathistory_list_notyou, parent, false);
