@@ -59,7 +59,7 @@ public class Activity_Chat extends Activity {
                 deleteMessage(info.position); // delete the selected message
                 return true;
             case R.id.option_copyText:
-                copyText(info.position);
+                copyText(info.position); // copy selected messages text
             default:
                 return super.onContextItemSelected(item);
         }
@@ -68,11 +68,11 @@ public class Activity_Chat extends Activity {
     /**
      * Deletes the given Message.
      *
-     * @param messageIndex the index of the message in the list
+     * @param index the index of the message in the list
      */
-    private void deleteMessage(int messageIndex) {
+    private void deleteMessage(int index) {
         /* todo: maybe add animation */
-        messages.remove(messageIndex);
+        messages.remove(index);
         messagesAdapter.notifyDataSetChanged();
     }
 
@@ -149,11 +149,11 @@ public class Activity_Chat extends Activity {
     /**
      * Used to copy a Messages Text
      *
-     * @param pos
+     * @param index
      */
-    public void copyText(int pos) {
+    public void copyText(int index) {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("S/Chat", messages.get(pos).getMessage());
+        ClipData clip = ClipData.newPlainText("S/Chat", messages.get(index).getMessage());
         clipboard.setPrimaryClip(clip);
     }
 }
