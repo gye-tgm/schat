@@ -193,4 +193,21 @@ public class Cryptography {
         return iv;
     }
 
+    /**
+     * Returns a symmetric Cipher with the properties describe in CryptoConstants to use for sealing messages.
+     * @return an instance of a symmetric cipher
+     */
+    public static Cipher getSymmCipher() {
+        Cipher c = null;
+
+        try {
+            c = Cipher.getInstance(CryptoConstants.symm_alg + "/" + CryptoConstants.symm_mode + "/" + CryptoConstants.symm_padding);
+        }
+        /* both Excpetion should never be thrown (we only use valid algorithms and padding), so we don't handle them */
+        catch(NoSuchAlgorithmException e) {}
+        catch(NoSuchPaddingException e) {}
+
+        return c;
+    }
+
 }
