@@ -30,26 +30,28 @@ public class Activity_Chat extends Activity {
     private ArrayList<ChatMessage> messages; // the stored messages and timestamps
     private ChatAdapter messagesAdapter; // to automatically update the ListView with onDataSetChanged
     private User you, notyou;
-    private ImageButton b;
+    private ImageButton button_send;
     private Animation send_anim, send_fail, send_all_fail;
-    private String chatWith;
-    LinearLayout lin;
+    private LinearLayout lin;
+    private boolean buttonOnly;
+
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_chat);
         //Set title
-        chatWith = "Dummy";
-        setTitle(getString(R.string.chat_with) + chatWith);
+        notyou = (User) getIntent().getSerializableExtra("notyou");
+        setTitle(getString(R.string.chat_with) + " " + notyou.getName());
         //Getting Resources
-        b = (ImageButton) findViewById(R.id.send);
+        buttonOnly = false; //Get from res, editable in settings
+        button_send = (ImageButton) findViewById(R.id.send);
         send_anim = AnimationUtils.loadAnimation(this, R.anim.send_animation);
         send_fail = AnimationUtils.loadAnimation(this, R.anim.send_fail);
         send_all_fail = AnimationUtils.loadAnimation(this, R.anim.send_all_fail);
         lin = (LinearLayout) findViewById(R.id.layout_chat_linlay);
         //Users
         you = new User("Wolfram");
-        notyou = new User("Gary");
+        //notyou = new User("Gary");
         //Setting up List
         messageList = (ListView) findViewById(R.id.view_chat);
         messages = new ChatArrayList();
@@ -93,18 +95,14 @@ public class Activity_Chat extends Activity {
      */
     private void loadMessages() {
         /* todo: replace test loading with actual messages from User-objects */
-        /* todo: maybe add the custom views (like: delete) */
         Random r = new Random();
-        String alphabet = "abcdefghijklmonpqestuvwxyzöüä";
+        String alphabet = "abcdefghijklmonpqestuvwxyzöüä         ";
         for (int j = 0; j < 100; j++) {
-            int saize = (int) (Math.random() * 100 + 1);
             String print = "";
-            ChatMessage dummy = null;
-            for (int i = 0; i < saize; i++) {
+            int saize = (int) (Math.random() * 100 + 1);
+            for (int i = 0; i < saize; i++)
                 print += (alphabet.charAt(r.nextInt(alphabet.length())));
-                dummy = (i % 2 == 0) ? new ChatMessage(you, notyou, print) : new ChatMessage(notyou, you, print);
-            }
-            testSendMessage(dummy);
+            testSendMessage(new ChatMessage(you, notyou, print));
         }
     }
 
@@ -121,18 +119,23 @@ public class Activity_Chat extends Activity {
     /**
      * Checks if the Message is empty, if so shows a Toast, else sends a Message via sendMessage() and animates the button
      *
-     * @param v ButtonView
+     * @param v the pressed Button
      */
+    @SuppressWarnings("unused")
     public void sendMessagePressed(View v) {
         EditText text = (EditText) findViewById(R.id.eingabe);
         String tmp = text.getText().toString().trim();
 
         if (tmp.equals("")) {
-            lin.startAnimation(send_all_fail);
-            //b.startAnimation(send_fail);
+            if (!buttonOnly)
+                lin.startAnimation(send_all_fail);
+            else
+                button_send.startAnimation(send_fail);
         } else {
-            lin.startAnimation(send_anim);
-            //b.startAnimation(send_anim);
+            if (!buttonOnly)
+                lin.startAnimation(send_anim);
+            else
+                button_send.startAnimation(send_anim);
             sendMessage(tmp);
             text.setText("");
         }
@@ -153,7 +156,7 @@ public class Activity_Chat extends Activity {
      * Used for Testing only, user has no access to this
      * Sends a message with defined ChatMessage
      *
-     * @param newChatMessage
+     * @param newChatMessage the ChatMessage to be sent
      */
     public void testSendMessage(ChatMessage newChatMessage) {
         messages.add(newChatMessage);
@@ -164,7 +167,7 @@ public class Activity_Chat extends Activity {
     /**
      * Used to copy a Messages Text
      *
-     * @param index
+     * @param index index of the message to be copied
      */
     public void copyText(int index) {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);

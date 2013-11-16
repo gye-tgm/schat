@@ -1,12 +1,14 @@
 package com.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import com.data.User;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +26,8 @@ public class Activity_ContactList extends Activity {
 
     private ArrayList<String> contacts; // the stored contacts
     private ArrayAdapter<String> contactsAdapter; // to automatically update the ListView with onDataSetChanged
+    private Intent start_chat;
+    private Context context;
 
     /**
      * Called when the activity is first created.
@@ -32,11 +36,11 @@ public class Activity_ContactList extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_contactlist);
-
+        context = this;
 
         //Test Intent Chat
-        Intent i = new Intent(this, Activity_Chat.class);
-        startActivity(i);
+        //Intent i = new Intent(this, Activity_Chat.class);
+        //startActivity(i);
 
         /* make all GUI-element available */
         contactList = (ListView) findViewById(R.id.view_contactlist);
@@ -45,6 +49,19 @@ public class Activity_ContactList extends Activity {
         contacts = new ArrayList<String>();
         contactsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, contacts); // simple_List_item_1 is the android default
         contactList.setAdapter(contactsAdapter); // set the data of the list
+
+        contactList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+                                    long arg3) {
+                start_chat = new Intent(context, Activity_Chat.class);
+                User tmp = new User(arg2, contacts.get(arg2));
+                start_chat.putExtra("notyou", tmp);
+                startActivity(start_chat);
+            }
+
+        });
 
         loadContacts(); // load all contacts into the list
     }
