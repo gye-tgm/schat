@@ -31,7 +31,7 @@ public class Activity_Chat extends Activity {
     private ChatAdapter messagesAdapter; // to automatically update the ListView with onDataSetChanged
     private User you, notyou;
     private ImageButton button_send;
-    private Animation send_anim, send_fail, send_all_fail;
+    private Animation send_success, send_fail, send_all_fail;
     private LinearLayout lin;
     private boolean buttonOnly;
 
@@ -45,7 +45,7 @@ public class Activity_Chat extends Activity {
         //Getting Resources
         buttonOnly = false; //Get from res, editable in settings
         button_send = (ImageButton) findViewById(R.id.send);
-        send_anim = AnimationUtils.loadAnimation(this, R.anim.send_animation);
+        send_success = AnimationUtils.loadAnimation(this, R.anim.send_success);
         send_fail = AnimationUtils.loadAnimation(this, R.anim.send_fail);
         send_all_fail = AnimationUtils.loadAnimation(this, R.anim.send_all_fail);
         lin = (LinearLayout) findViewById(R.id.layout_chat_linlay);
@@ -85,7 +85,7 @@ public class Activity_Chat extends Activity {
      * @param index the index of the message in the list
      */
     private void deleteMessage(int index) {
-        /* todo: maybe add animation */
+        /* todo: add animation */
         messages.remove(index);
         messagesAdapter.notifyDataSetChanged();
     }
@@ -133,9 +133,9 @@ public class Activity_Chat extends Activity {
                 button_send.startAnimation(send_fail);
         } else {
             if (!buttonOnly)
-                lin.startAnimation(send_anim);
+                lin.startAnimation(send_success);
             else
-                button_send.startAnimation(send_anim);
+                button_send.startAnimation(send_success);
             sendMessage(tmp);
             text.setText("");
         }
@@ -154,7 +154,7 @@ public class Activity_Chat extends Activity {
 
     /**
      * Used for Testing only, user has no access to this
-     * Sends a message with defined ChatMessage
+     * Sends a message with predefined ChatMessage
      *
      * @param newChatMessage the ChatMessage to be sent
      */
