@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name = "app_name">S/Chat</string>
-	<string name = "chat_with">Chat with:</string>
 	<string name = "send">Send</string>
 	<string name = "send_hint">Your Message</string>
+	<string name = "chat_with">Chat with:</string>
 </resources>
