@@ -13,11 +13,11 @@ public abstract class Content implements Serializable { // there should not exis
     /**
      * The different content-types of a message.
      */
-    public enum Type {
+    public static enum Type {
         CHAT_MESSAGE
     }
 
-    protected Type type; // the type of this content
+    protected transient Type type; // this attribute must not be serialized (it is also contained in the SecureMessage class
 
     /**
      * Returns the type of this content.

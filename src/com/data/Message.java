@@ -7,15 +7,16 @@ import java.util.Date;
  * This class represents a plain message(nothing is encrypted or authenticated). This message can contain any type of "Content".
  * @author Elias Frantar
  * @version 15.11.2013
+ * @param <C> the type of the Content, which will be stored in this class
  */
-public class Message {
+public class Message<C extends Content> {
 
     /* protected because we want to have these attributes in the secure message class */
     protected Date timestamp;
     protected String sender;
     protected String receiver;
 
-    private Content content; // this should >> not << be in any subclasses, so private
+    private C content; // this should >> not << be in any subclasses, so private
 
     /**
      * Creates a new message from the given information
@@ -24,7 +25,7 @@ public class Message {
      * @param receiver the receiver of the message
      * @param content the content of the message
      */
-    public Message(Date timestamp, String sender, String receiver, Content content) {
+    public Message(Date timestamp, String sender, String receiver, C content) {
         this.timestamp = timestamp;
         this.sender = sender;
         this.receiver = receiver;
@@ -81,7 +82,7 @@ public class Message {
     public String getReceiver() {
         return receiver;
     }
-    public Content getContent() {
+    public C getContent() {
         return content;
     }
 }

@@ -22,13 +22,16 @@ public class SecureMessage extends Message implements Serializable {
 
     private SealedObject sealedContent;
 
+    private Content.Type contentType;
+
     /**
      * Creates a new SecureMessage from a plain message.
      * @param m the plain message
      * @param key the key to use for encrypting the content
      */
-    public SecureMessage(Message m, SecretKey key) {
+    public SecureMessage(Message<? extends Content> m, SecretKey key) {
         super(m.getTimestamp(), m.getSender(), m.getReceiver());
+        contentType = m.getContent().getType(); // the content type needs to be stored here because it must be accessible before decrypting the content
 
         try {
             Cipher c = Cryptography.getSymmCipher();
@@ -44,11 +47,12 @@ public class SecureMessage extends Message implements Serializable {
     /**
      * Decrypts the content of this SecureMessage and returns the whole plain message to allow easier processing.
      * @param key the key for decryption
+     * @param <C> the type of the content which will be contained in the returned plain message. (You can find out the content of this class with getContentType())
      * @return the plain message of this secure instance
-     * @throws Exception if something went wrong, transmission was not successfull
+     * @throws Exception if something went wrong, transmission was not successful
      */
-    public Message decrypt(SecretKey key) throws Exception {
-        return new Message(timestamp, sender, receiver, (Content)sealedContent.getObject(key));
+    public <C extends Content> Message<? extends Content> decrypt(SecretKey key) throws Exception {
+        return new Message<C>(timestamp, sender, receiver, (C)sealedContent.getObject(key));
     }
 
     /**
@@ -62,5 +66,10 @@ public class SecureMessage extends Message implements Serializable {
         s.append(CryptoTools.toHex(sealedContent.toString().getBytes()));
 
         return s.toString();
+    }
+
+
+    public Content.Type getContentType() {
+        return contentType;
     }
 }
