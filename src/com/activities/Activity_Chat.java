@@ -26,25 +26,37 @@ import java.util.Random;
  * Time: 13:04
  */
 public class Activity_Chat extends Activity {
-    private ListView messageHistory;
+    private ListView messageList;
     private ArrayList<ChatMessage> messages; // the stored messages and timestamps
     private ChatAdapter messagesAdapter; // to automatically update the ListView with onDataSetChanged
     private User you, notyou;
     private ImageButton b;
-    private Animation send_anim;
+    private Animation send_anim, send_fail, send_all_fail;
+    private String chatWith;
+    LinearLayout lin;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_chat);
+        //Set title
+        chatWith = "Dummy";
+        setTitle(getString(R.string.pre_chat_with) + chatWith);
+        //Getting Resources
         b = (ImageButton) findViewById(R.id.send);
         send_anim = AnimationUtils.loadAnimation(this, R.anim.send_animation);
+        send_fail = AnimationUtils.loadAnimation(this, R.anim.send_fail);
+        send_all_fail = AnimationUtils.loadAnimation(this, R.anim.send_all_fail);
+        lin = (LinearLayout) findViewById(R.id.layout_chat_linlay);
+        //Users
         you = new User("Wolfram");
         notyou = new User("Gary");
-        messageHistory = (ListView) findViewById(R.id.view_chat);
+        //Setting up List
+        messageList = (ListView) findViewById(R.id.view_chat);
         messages = new ChatArrayList();
         messagesAdapter = new ChatAdapter(this, messages, you);
-        messageHistory.setAdapter(messagesAdapter); // set the data of the list
-        registerForContextMenu(messageHistory); // register all list items for the context menu
+        messageList.setAdapter(messagesAdapter); // set the data of the list
+        registerForContextMenu(messageList); // register all list items for the context menu
+        //Load Previous Messages
         loadMessages();
     }
 
@@ -114,10 +126,13 @@ public class Activity_Chat extends Activity {
     public void sendMessagePressed(View v) {
         EditText text = (EditText) findViewById(R.id.eingabe);
         String tmp = text.getText().toString().trim();
+
         if (tmp.equals("")) {
-            Toast.makeText(this, "No empty Messages", Toast.LENGTH_SHORT).show();
+            lin.startAnimation(send_all_fail);
+            //b.startAnimation(send_fail);
         } else {
-            b.startAnimation(send_anim);
+            lin.startAnimation(send_anim);
+            //b.startAnimation(send_anim);
             sendMessage(tmp);
             text.setText("");
         }
@@ -131,7 +146,7 @@ public class Activity_Chat extends Activity {
     public void sendMessage(String text) {
         messages.add(new ChatMessage(you, notyou, text));
         messagesAdapter.notifyDataSetChanged();
-        messageHistory.setSelection(messagesAdapter.getCount() - 1);
+        messageList.setSelection(messagesAdapter.getCount() - 1);
     }
 
     /**
@@ -143,7 +158,7 @@ public class Activity_Chat extends Activity {
     public void testSendMessage(ChatMessage newChatMessage) {
         messages.add(newChatMessage);
         messagesAdapter.notifyDataSetChanged();
-        messageHistory.setSelection(messagesAdapter.getCount() - 1);
+        messageList.setSelection(messagesAdapter.getCount() - 1);
     }
 
     /**
