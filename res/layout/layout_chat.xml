@@ -16,6 +16,7 @@
 			android:paddingRight = "5dp"
 			android:paddingBottom = "3dp"
 			android:paddingTop = "3dp"
+			android:smoothScrollbar = "true"
 			android:fastScrollEnabled = "true"
 			android:clickable = "false" />
 
@@ -32,6 +33,7 @@
 		<LinearLayout
 				android:layout_height = "wrap_content"
 				android:layout_width = "fill_parent"
+				android:id = "@+id/layout_chat_linlay"
 				android:layout_below = "@id/line">
 
 			<EditText
