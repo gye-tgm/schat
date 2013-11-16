@@ -40,7 +40,7 @@ public class Activity_Chat extends Activity {
         setContentView(R.layout.layout_chat);
         //Set title
         chatWith = "Dummy";
-        setTitle(getString(R.string.pre_chat_with) + chatWith);
+        setTitle(getString(R.string.chat_with) + chatWith);
         //Getting Resources
         b = (ImageButton) findViewById(R.id.send);
         send_anim = AnimationUtils.loadAnimation(this, R.anim.send_animation);
