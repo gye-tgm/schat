@@ -51,7 +51,7 @@ public class SecureMessage extends Message implements Serializable {
      * @return the plain message of this secure instance
      * @throws Exception if something went wrong, transmission was not successful
      */
-    public <C extends Content> Message<? extends Content> decrypt(SecretKey key) throws Exception {
+    public <C extends Content> Message<C> decrypt(SecretKey key) throws Exception {
         return new Message<C>(timestamp, sender, receiver, (C)sealedContent.getObject(key));
     }
 

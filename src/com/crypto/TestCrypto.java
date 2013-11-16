@@ -2,6 +2,7 @@ package com.crypto;
 
 import javax.crypto.SecretKey;
 import java.math.BigInteger;
+import java.security.KeyPair;
 import java.util.Calendar;
 
 import com.data.ChatMessage;
@@ -21,33 +22,9 @@ public class TestCrypto {
 
         SecretKey skey = Cryptography.gen_symm_key();
         SecretKey mackey = Cryptography.gen_MAC_key();
-
-        ChatMessage message = new ChatMessage(sender, receiver, text);
-        message.setActualTime();
-
-        System.out.println("\n");
-
-        try {
-            Envelope envelope = EnvelopeFactory.createEnvelope_ChatMessage(message, skey, mackey);
-
-            System.out.print(envelope.getMessage().toString());
-            System.out.println("Message Authentication Code: " + S_Message.toHex(envelope.getSignature()) + "\n");
-            System.out.println(EnvelopeFactory.openEnvelope(envelope, skey, mackey).toString());
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-        }
+        KeyPair keypair = Cryptography.gen_asymm_key();
 
     }
 
-    /**
-     * Converts a byte[] to a hex-String
-     * @param bytes the byte[]to convert
-     * @return the corresponding hex-String
-     */
-    private static String toHex(byte[] bytes) {
-        BigInteger bi = new BigInteger(1, bytes);
-        return String.format("%0" + (bytes.length << 1) + "X", bi);
-    }
 
 }

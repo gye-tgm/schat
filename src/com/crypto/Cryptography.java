@@ -45,7 +45,7 @@ public class Cryptography {
         byte[] encrypted_data = null;
 
         try {
-            Cipher cipher = Cipher.getInstance(CryptoConstants.asymm_Alg);
+            Cipher cipher = Cipher.getInstance(CryptoConstants.asymm_alg);
             cipher.init(Cipher.ENCRYPT_MODE, key);
             encrypted_data = cipher.doFinal(data);
         }
@@ -66,7 +66,7 @@ public class Cryptography {
         byte[] encrypted_data = null;
 
         try {
-            Cipher cipher = Cipher.getInstance(CryptoConstants.asymm_Alg);
+            Cipher cipher = Cipher.getInstance(CryptoConstants.asymm_alg);
             cipher.init(Cipher.DECRYPT_MODE, key);
             encrypted_data = cipher.doFinal(data);
         }
@@ -125,7 +125,7 @@ public class Cryptography {
         KeyPair keypair = null;
 
         try {
-            KeyPairGenerator generator = KeyPairGenerator.getInstance(CryptoConstants.asymm_Alg);
+            KeyPairGenerator generator = KeyPairGenerator.getInstance(CryptoConstants.asymm_alg);
             generator.initialize(CryptoConstants.asymm_keylength);
             keypair = generator.generateKeyPair();
         }
@@ -194,7 +194,7 @@ public class Cryptography {
     }
 
     /**
-     * Returns a symmetric Cipher with the properties describe in CryptoConstants to use for sealing messages.
+     * Returns a symmetric Cipher with the properties described in CryptoConstants to use for sealing messages.
      * @return an instance of a symmetric cipher
      */
     public static Cipher getSymmCipher() {
@@ -208,6 +208,21 @@ public class Cryptography {
         catch(NoSuchPaddingException e) {}
 
         return c;
+    }
+
+    /**
+     * Returns an instance of an asymmetric signature-algorithm with the properties described in CryptoConstants to use for signing messages.
+     * @return an instance of a signature-algorithm
+     */
+    public static Signature getSignature() {
+        Signature s = null;
+
+        try {
+            s = Signature.getInstance(CryptoConstants.signature_alg);
+        }
+        catch (NoSuchAlgorithmException e) {}
+
+        return s;
     }
 
 }
