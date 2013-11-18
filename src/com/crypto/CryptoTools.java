@@ -68,6 +68,7 @@ public class CryptoTools {
      * Returns the type of the received message. (Warning: the signed object should contain a SecureMessage)
      * @param message the SignedObject (containing a SecureMessage)
      * @return the type of the message contained in this SignedObject
+     * @throws ClassCastException if the given SignedObject does not contain a SecureMessage
      */
     public static Content.Type getType(SignedObject message) throws ClassCastException {
         Content.Type type = null;
@@ -82,6 +83,43 @@ public class CryptoTools {
         return type;
     }
 
+    /**
+     * Returns the sender of the received message. (Warning: the signed object should contain a SecureMessage)
+     * @param message the SignedObject (containing a SecureMessage)
+     * @return the sender of the message contained in this SignedObject
+     * @throws ClassCastException if the given SignedObject does not contain a SecureMessage
+     */
+    public static String getSender(SignedObject message) throws ClassCastException {
+        String sender = null;
+
+        try {
+            SecureMessage secureMessage = (SecureMessage)message.getObject();
+            sender = secureMessage.getSender();
+        }
+        catch (IOException e) {}
+        catch (ClassNotFoundException e) {}
+
+        return sender;
+    }
+
+    /**
+     * Returns the receiver of the received message. (Warning: the signed object should contain a SecureMessage)
+     * @param message the SignedObject (containing a SecureMessage)
+     * @return the receiver of the message contained in this SignedObject
+     * @throws ClassCastException if the given SignedObject does not contain a SecureMessage
+     */
+    public static String getReceiver(SignedObject message) throws ClassCastException {
+        String receiver = null;
+
+        try {
+            SecureMessage secureMessage = (SecureMessage)message.getObject();
+            receiver = secureMessage.getReceiver();
+        }
+        catch (IOException e) {}
+        catch (ClassNotFoundException e) {}
+
+        return receiver;
+    }
 
     /**
      * Converts a byte[] to a hex-String
