@@ -1,5 +1,6 @@
 package com.data;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -9,7 +10,7 @@ import java.util.Date;
  * @version 15.11.2013
  * @param <C> the type of the Content, which will be stored in this class
  */
-public class Message<C extends Content> {
+public class Message<C extends Content> implements Serializable {
 
     /* protected because we want to have these attributes in the secure message class */
     protected Date timestamp;

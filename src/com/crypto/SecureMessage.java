@@ -9,7 +9,6 @@ import javax.crypto.SealedObject;
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 
@@ -36,12 +35,13 @@ public class SecureMessage extends Message implements Serializable {
         try {
             Cipher c = Cryptography.getSymmCipher();
             c.init(Cipher.ENCRYPT_MODE, key, Cryptography.gen_symm_IV());
-            sealedContent = new SealedObject(m.getContent(), Cryptography.getSymmCipher());
+            sealedContent = new SealedObject(m.getContent(), c);
         }
         catch(IllegalBlockSizeException e) {}
         catch(InvalidAlgorithmParameterException e) {}
         catch(InvalidKeyException e) {}
         catch(IOException e) {}
+
     }
 
     /**

@@ -10,13 +10,13 @@ public class CryptoConstants {
     public static final String symm_alg = "AES";
     public static final String symm_mode = "CTR";
     public static final String symm_padding = "NoPadding";
-    public static final int symm_keylength = 256;
+    public static final int symm_keylength = 128;
     public static final int symm_blocksize = 128;
 
     public static final String asymm_alg = "RSA";
     public static final int asymm_keylength = 2048;
 
-    public static final String signature_alg = "RSA";
+    public static final String signature_alg = "SHA256withRSA";
 
     public static final String digest_alg = "SHA256";
     public static final int digest_length = 256;

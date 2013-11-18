@@ -38,7 +38,7 @@ public class CryptoTools {
         return signedObject;
     }
 
-    public <C extends Content> Message<C> decryptMessage(SignedObject secureMessage, SecretKey key, PublicKey verificationKey) {
+    public static <C extends Content> Message<C> decryptMessage(SignedObject secureMessage, SecretKey key, PublicKey verificationKey) {
         Message<C> message = null;
 
         try {
@@ -47,11 +47,13 @@ public class CryptoTools {
                 message = verifiedMessage.<C>decrypt(key);
             }
         }
-        catch(InvalidKeyException e) {}
+        /* catch(InvalidKeyException e) {}
         catch(SignatureException e) {}
         catch(ClassNotFoundException e) {}
-        catch(IOException e) {}
-        catch(Exception e) {}
+        catch(IOException e) {} */
+        catch(Exception e) {
+            e.printStackTrace();
+        }
 
         return message;
     }
