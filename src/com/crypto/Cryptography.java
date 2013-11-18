@@ -6,8 +6,8 @@ import java.security.*;
 
 /**
  * This class contains all essential methods for en- and decryption.
- * @author Elias Frantar (0.2)
- * @version 29.10.2013 (0.2)
+ * @author Elias Frantar (0.3)
+ * @version 2.11.2013 (0.3)
  */
 public class Cryptography {
 
@@ -45,7 +45,7 @@ public class Cryptography {
         byte[] encrypted_data = null;
 
         try {
-            Cipher cipher = Cipher.getInstance(CryptoConstants.asymm_Alg);
+            Cipher cipher = Cipher.getInstance(CryptoConstants.asymm_alg);
             cipher.init(Cipher.ENCRYPT_MODE, key);
             encrypted_data = cipher.doFinal(data);
         }
@@ -66,8 +66,8 @@ public class Cryptography {
         byte[] encrypted_data = null;
 
         try {
-            Cipher cipher = Cipher.getInstance(CryptoConstants.asymm_Alg);
-            cipher.init(Cipher.ENCRYPT_MODE, key);
+            Cipher cipher = Cipher.getInstance(CryptoConstants.asymm_alg);
+            cipher.init(Cipher.DECRYPT_MODE, key);
             encrypted_data = cipher.doFinal(data);
         }
         catch(Exception e) {
@@ -125,7 +125,7 @@ public class Cryptography {
         KeyPair keypair = null;
 
         try {
-            KeyPairGenerator generator = KeyPairGenerator.getInstance(CryptoConstants.asymm_Alg);
+            KeyPairGenerator generator = KeyPairGenerator.getInstance(CryptoConstants.asymm_alg);
             generator.initialize(CryptoConstants.asymm_keylength);
             keypair = generator.generateKeyPair();
         }
@@ -152,6 +152,77 @@ public class Cryptography {
         }
 
         return key;
+    }
+
+    /**
+     * Randomly generates a key for the in CryptoConstants specified MAC algorithm.
+     * @return the key
+     */
+    public static SecretKey gen_MAC_key() {
+
+        SecretKey key = null;
+
+        try {
+            KeyGenerator generator = KeyGenerator.getInstance(CryptoConstants.MAC_alg);
+            generator.init(CryptoConstants.symm_keylength);
+            key = generator.generateKey();
+        }
+        catch(Exception e) {
+        }
+
+        return key;
+    }
+
+    /**
+     * Generates a new Initialization Vector for the in CryptoConstants specified symmetric algorithm.
+     * @return the IV
+     */
+    public static IvParameterSpec gen_symm_IV() {
+
+        IvParameterSpec iv = null;
+
+        try {
+            SecureRandom random = new SecureRandom();
+            byte iv_bytes[] = new byte[16];//generate random 16 byte IV AES is always 16bytes
+            random.nextBytes(iv_bytes);
+            iv = new IvParameterSpec(iv_bytes);
+        }
+        catch(Exception e) {
+        }
+
+        return iv;
+    }
+
+    /**
+     * Returns a symmetric Cipher with the properties described in CryptoConstants to use for sealing messages.
+     * @return an instance of a symmetric cipher
+     */
+    public static Cipher getSymmCipher() {
+        Cipher c = null;
+
+        try {
+            c = Cipher.getInstance(CryptoConstants.symm_alg + "/" + CryptoConstants.symm_mode + "/" + CryptoConstants.symm_padding);
+        }
+        /* both Excpetion should never be thrown (we only use valid algorithms and padding), so we don't handle them */
+        catch(NoSuchAlgorithmException e) {}
+        catch(NoSuchPaddingException e) {}
+
+        return c;
+    }
+
+    /**
+     * Returns an instance of an asymmetric signature-algorithm with the properties described in CryptoConstants to use for signing messages.
+     * @return an instance of a signature-algorithm
+     */
+    public static Signature getSignature() {
+        Signature s = null;
+
+        try {
+            s = Signature.getInstance(CryptoConstants.signature_alg);
+        }
+        catch (NoSuchAlgorithmException e) {}
+
+        return s;
     }
 
 }

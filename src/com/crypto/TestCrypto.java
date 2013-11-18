@@ -1,11 +1,12 @@
 package com.crypto;
 
-import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.Charset;
+import java.math.BigInteger;
+import java.security.KeyPair;
+import java.util.Calendar;
+
+import com.data.ChatMessage;
+import com.data.User;
 
 /**
  *
@@ -13,22 +14,17 @@ import java.nio.charset.Charset;
 public class TestCrypto {
 
     public static void main(String[] args) {
-        String message = "This is a simple Test if this program works!";
-        String key = "aaaaaaaaaaaaaaaa";
-        String iv = "bbbbbbbbbbbbbbbb";
 
-        System.out.println("message: " + message);
-        System.out.println("key: " + key);
+        String text = "This is a simple Test!";
 
-        SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(), "AES");
-        IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
+        User sender = new User("Alice");
+        User receiver = new User("Bob");
 
-        byte[] encrypted = Cryptography.symm_crypt(skeySpec, ivspec, message.getBytes(), Cipher.ENCRYPT_MODE);
+        SecretKey skey = Cryptography.gen_symm_key();
+        SecretKey mackey = Cryptography.gen_MAC_key();
+        KeyPair keypair = Cryptography.gen_asymm_key();
 
-        System.out.println(new String(encrypted, Charset.defaultCharset()));
-
-        byte[] decrypted = Cryptography.symm_crypt(skeySpec, ivspec, encrypted, Cipher.DECRYPT_MODE);
-
-        System.out.println(new String(decrypted, Charset.defaultCharset()));
     }
+
+
 }
