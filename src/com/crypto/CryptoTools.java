@@ -38,6 +38,14 @@ public class CryptoTools {
         return signedObject;
     }
 
+    /**
+     * Decrypts a received message and returns the plain message of the specified type.
+     * @param secureMessage the received SignedObject(must be a SecureMessage)
+     * @param key the symmetric key for content decryption
+     * @param verificationKey the public key of the sender to verify the signature
+     * @param <C> the requested return type
+     * @return the plain message of the requested type
+     */
     public static <C extends Content> Message<C> decryptMessage(SignedObject secureMessage, SecretKey key, PublicKey verificationKey) {
         Message<C> message = null;
 
@@ -47,16 +55,33 @@ public class CryptoTools {
                 message = verifiedMessage.<C>decrypt(key);
             }
         }
-        /* catch(InvalidKeyException e) {}
+        catch(InvalidKeyException e) {}
         catch(SignatureException e) {}
         catch(ClassNotFoundException e) {}
-        catch(IOException e) {} */
-        catch(Exception e) {
-            e.printStackTrace();
-        }
+        catch(IOException e) {}
+        catch(Exception e) {}
 
         return message;
     }
+
+    /**
+     * Returns the type of the received message. (Warning: the signed object should contain a SecureMessage)
+     * @param message the SignedObject (containing a SecureMessage)
+     * @return the type of the message contained in this SignedObject
+     */
+    public static Content.Type getType(SignedObject message) throws ClassCastException {
+        Content.Type type = null;
+
+        try {
+            SecureMessage secureMessage = (SecureMessage)message.getObject();
+            type = secureMessage.getContentType();
+        }
+        catch (IOException e) {}
+        catch (ClassNotFoundException e) {}
+
+        return type;
+    }
+
 
     /**
      * Converts a byte[] to a hex-String
