@@ -23,7 +23,6 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     private final User you;
 
     public ChatAdapter(Context context, ArrayList<ChatMessage> msg, User you) {
-        //requires the test ArrayList, msg.toStringArrayList for some reason didn't do the trick
         super(context, R.layout.layout_chathistory_list_you, msg);
         this.context = context;
         this.you = you;
@@ -33,14 +32,13 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ChatMessage currentMessage = messages.get(position);
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        //LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView;
         //Contains q should be removed as soon as testing is complete
         if (currentMessage.getSender().equals(you) && !(currentMessage.getMessage().contains("q"))) {
-            rowView = inflater.inflate(R.layout.layout_chathistory_list_you, parent, false);
+            rowView = LayoutInflater.from(context).inflate(R.layout.layout_chathistory_list_you, parent, false);
         } else {
-            rowView = inflater.inflate(R.layout.layout_chathistory_list_notyou, parent, false);
+            rowView = LayoutInflater.from(context).inflate(R.layout.layout_chathistory_list_notyou, parent, false);
         }
         TextView msg = (TextView) rowView.findViewById(R.id.msg);
         TextView time = (TextView) rowView.findViewById(R.id.timestamp);
