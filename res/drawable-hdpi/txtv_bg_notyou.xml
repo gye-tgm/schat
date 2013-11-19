@@ -8,9 +8,4 @@
 			android:bottomLeftRadius = "10dp"
 			android:topLeftRadius = "10dp"
 			android:topRightRadius = "10dp" />
-	<!--<gradient
-			android:startColor="#bf0000"
-			android:centerColor="#db0909"
-			android:endColor="#bf0000"
-			android:angle="90"/>-->
 </shape>
