@@ -10,9 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.data.ChatAdapter;
-import com.data.ChatArrayList;
 import com.data.ChatMessage;
 import com.data.User;
 
@@ -39,24 +39,33 @@ public class Activity_Chat extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_chat);
-        //Set title
+        //Get Users
+        you = new User("Wolfram"); //Get from.. shared pref?
         notyou = (User) getIntent().getSerializableExtra("notyou");
+        //Set title
         setTitle(getString(R.string.chat_with) + " " + notyou.getName());
         //Getting Resources
-        buttonOnly = false; //Get from res, editable in settings
+        buttonOnly = false; //Get from res, make editable in settings
         button_send = (ImageButton) findViewById(R.id.send);
         send_success = AnimationUtils.loadAnimation(this, R.anim.send_success);
         send_fail = AnimationUtils.loadAnimation(this, R.anim.send_fail);
         send_all_fail = AnimationUtils.loadAnimation(this, R.anim.send_all_fail);
         lin = (LinearLayout) findViewById(R.id.layout_chat_linlay);
-        //Users
-        you = new User("Wolfram");
-        //notyou = new User("Gary");
-        //Setting up List
+        //Setting up List and Adapter
         messageList = (ListView) findViewById(R.id.view_chat);
-        messages = new ChatArrayList();
+        messages = new ArrayList<>();
         messagesAdapter = new ChatAdapter(this, messages, you);
         messageList.setAdapter(messagesAdapter); // set the data of the list
+        //Hide keyboard when scrolling
+        messageList.setOnScrollListener(new AbsListView.OnScrollListener() {
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            }
+        });
         registerForContextMenu(messageList); // register all list items for the context menu
         //Load Previous Messages
         loadMessages();
@@ -94,13 +103,13 @@ public class Activity_Chat extends Activity {
      * Loads all saved Messages into the Messages-list.
      */
     private void loadMessages() {
-        /* todo: replace test loading with actual messages from User-objects */
+        /* todo: replace test loading with actual messages */
         Random r = new Random();
-        String alphabet = "abcdefghijklmonpqestuvwxyzöüä         ";
+        String alphabet = "ab cd ef gh ij kl mn op qe rs tu vw xy zö üä";
         for (int j = 0; j < 100; j++) {
             String print = "";
-            int saize = (int) (Math.random() * 100 + 1);
-            for (int i = 0; i < saize; i++)
+            int size = (int) (Math.random() * 100 + 1);
+            for (int i = 0; i < size; i++)
                 print += (alphabet.charAt(r.nextInt(alphabet.length())));
             testSendMessage(new ChatMessage(you, notyou, print));
         }
@@ -117,7 +126,7 @@ public class Activity_Chat extends Activity {
     }
 
     /**
-     * Checks if the Message is empty, if so shows a Toast, else sends a Message via sendMessage() and animates the button
+     * Checks if the Message is empty, starts animation and calls sendMessage()
      *
      * @param v the pressed Button
      */
@@ -125,7 +134,6 @@ public class Activity_Chat extends Activity {
     public void sendMessagePressed(View v) {
         EditText text = (EditText) findViewById(R.id.eingabe);
         String tmp = text.getText().toString().trim();
-
         if (tmp.equals("")) {
             if (!buttonOnly)
                 lin.startAnimation(send_all_fail);
