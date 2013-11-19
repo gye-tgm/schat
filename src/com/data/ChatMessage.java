@@ -1,6 +1,7 @@
 package com.data;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
@@ -14,7 +15,7 @@ public class ChatMessage implements Serializable {
     private User receiver;
 
     private String message;
-    private String timestamp;
+    private Calendar timestamp;
 
     /**
      * Creates a new message from the given parameters
@@ -24,7 +25,6 @@ public class ChatMessage implements Serializable {
      * @param message  the actual message
      */
     public ChatMessage(User sender, User receiver, String message) {
-        //this(sender, receiver, message);
         this.sender = sender;
         this.receiver = receiver;
         this.message = message;
@@ -32,15 +32,25 @@ public class ChatMessage implements Serializable {
     }
 
     /**
+     * Creates a new message from the given parameters
+     *
+     * @param sender   the sender of this message
+     * @param receiver the receiver of this message
+     * @param message  the actual message
+     */
+    public ChatMessage(User sender, User receiver, String message, Calendar timestamp) {
+        this(sender, receiver, message);
+        this.sender = sender;
+        this.receiver = receiver;
+        this.message = message;
+        this.timestamp = timestamp;
+    }
+
+    /**
      * Initializes the timestamp with the current date and time.
      */
     public void setActualTime() {
-        Calendar c = Calendar.getInstance();
-        String min = "" + c.get(Calendar.MINUTE);
-        if (Integer.parseInt(min) < 10) {
-            min = "0" + min;
-        }
-        timestamp = "" + c.get(Calendar.HOUR_OF_DAY) + ":" + min + " | " + c.get(Calendar.DATE) + "." + c.get(Calendar.MONTH);
+        timestamp = Calendar.getInstance();
     }
 
     public User getSender() {
@@ -68,20 +78,23 @@ public class ChatMessage implements Serializable {
     }
 
     public String getTimestamp() {
-        return timestamp;
+        String min = "" + timestamp.get(Calendar.MINUTE);
+        if (Integer.parseInt(min) < 10) {
+            min = "0" + min;
+        }
+        return ("" + timestamp.get(Calendar.HOUR_OF_DAY) + ":" + min + " | " + timestamp.get(Calendar.DATE) + "." + timestamp.get(Calendar.MONTH));
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(Calendar timestamp) {
         this.timestamp = timestamp;
     }
 
     public String toString() {
         StringBuilder result = new StringBuilder("");
-        //SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
 
         result.append("Timestamp: ");
-        //result.append(getTimestamp() == null ? "Unknown" : sdf.format(getTimestamp().getTime()));
-        result.append(getTimestamp()); //Timestamp can't be null
+        result.append(getTimestamp() == null ? "Unknown" : sdf.format(timestamp.getTime()));
 
         result.append('\n');
 
