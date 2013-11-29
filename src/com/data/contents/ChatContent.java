@@ -1,4 +1,6 @@
-package com.data;
+package com.data.contents;
+
+import com.data.Content;
 
 /**
  *
