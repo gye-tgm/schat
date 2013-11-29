@@ -1,74 +1,113 @@
 package server;
 
-import com.data.ChatMessage;
-import com.data.User;
+import com.crypto.Cryptography;
+import com.crypto.Envelope;
+import com.data.Message;
+import com.data.contents.ChatContent;
+import com.data.contents.Login;
 
+import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.security.KeyPair;
 
 /**
  * @author Gary
- * @version 10/23/13
- *          Handles one single client by using a thread.
+ * @version 2013/11/29
+ *          This single server thread handles one single client.
  */
 public class SChatServerThread extends Thread {
     private final SChatServer server;
     private Socket clientSocket;
-    private User client;
+    private String client;
     private ObjectInputStream in;
     private ObjectOutputStream out;
 
+    /**
+     * Create a server thread, which will be handle a single client connected
+     * to this server.
+     *
+     * @param clientSocket the socket of the client
+     * @param server       the server
+     * @throws IOException
+     */
     public SChatServerThread(Socket clientSocket, SChatServer server) throws IOException {
         this.clientSocket = clientSocket;
         this.server = server;
         this.in = new ObjectInputStream(clientSocket.getInputStream());
         this.out = new ObjectOutputStream(clientSocket.getOutputStream());
-        this.client = getClientInformation();
-        server.addUser(client.getId(), out);
-        System.out.println(client.getId() + " " + client.getName());
+        this.client = null;
     }
 
-    public User getClientInformation() {
-        User user = null;
-        try {
-            int id = in.readInt();
-            String name = in.readUTF();
-            user = new User(id, name);
-        } catch (IOException e) {
-            e.printStackTrace();
+    /**
+     * Handle the login of the user and check whether it was successful or not.
+     *
+     * @param login the login data
+     * @return whether the login of the user was successful or not
+     */
+    public boolean handleLogin(Login login) {
+        if (server.findUser(login.getId())) {
+            client = login.getId();
+            return true;
+        } else {
+            return false;
         }
-        return user;
     }
 
+    /**
+     * Return whether the user is logged in or not.
+     *
+     * @return whether the user is logged in or not
+     */
+    public boolean isLoggedIn() {
+        return client != null;
+    }
+
+    /**
+     * Run the main logic of this server
+     */
     public void run() {
-        try {
-            ChatMessage message = null;
-            while ((message = (ChatMessage) in.readObject()) != null) {
-                sendMessage(message);
-            }
-        } catch (IOException e) {
-            System.err.println("Connection to " + client.getId() + " closed.");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                clientSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            server.eraseUser(client.getId());
-        }
-    }
+        // Load the symmetric key and the key pair from the database
+        SecretKey skey = server.getSkey();
+        KeyPair keypair = server.getKeyPair();
 
-    public void sendMessage(ChatMessage message) throws IOException {
-        ObjectOutputStream recOut = server.getObjectOutputStreamById(message.getReceiver().getId());
+        boolean isRunning = true;
+        while (isRunning) {
+            try {
+                Envelope envelope = (Envelope) in.readObject();
+                switch (envelope.getType()) {
+                    case CHAT_MESSAGE:
+                        if(!isLoggedIn()){
+                            isRunning = false;
+                        }else{
+                            // Message<ChatContent> chatContentMessage = envelope.decryptMessage(skey, keypair.getPublic());
+                            // chatContentMessage.getReceiver();
+                            // chatContentMessage.getSender();
+                            // envelope.decryptMessage()
+                        }
+                        break;
+                    case LOGIN:
+                        Message<Login> loginMessage = envelope.decryptMessage(skey, keypair.getPublic());
+                        if (!handleLogin(loginMessage.getContent()))
+                            isRunning = false;
+                        break;
+                }
+            } catch (IOException e) {
+                System.err.println("Connection to " + client + " closed.");
+                break;
+            } catch (ClassNotFoundException e) {
+                System.err.println("Class not found: " + e.getMessage());
+                break;
+            }
+        }
+        // Close and kill everything
         try {
-            recOut.writeObject(message);
-            recOut.flush();
+            clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        server.eraseUser(client);
     }
 }
