@@ -96,27 +96,6 @@ public class Cryptography {
     }
 
     /**
-     * Generates the Message Authentication Code of the given data using the in CryptoConstants specified Mac-algorithm.
-     * @param key the key
-     * @param data the data
-     * @return the mac of the given data
-     */
-    public static byte[] mac(SecretKey key, byte[] data) {
-
-        byte[] auth = null;
-
-        try {
-            Mac mac = Mac.getInstance(CryptoConstants.MAC_alg);
-            mac.init(key);
-            auth = mac.doFinal(data);
-        }
-        catch(Exception e) {
-        }
-
-        return auth;
-    }
-
-    /**
      * Randomly generates a keypair (public and private key) for the in CryptoConstants specified asymmetric algorithm.
      * @return the keypair
      */
@@ -127,6 +106,26 @@ public class Cryptography {
         try {
             KeyPairGenerator generator = KeyPairGenerator.getInstance(CryptoConstants.asymm_alg);
             generator.initialize(CryptoConstants.asymm_keylength);
+            keypair = generator.generateKeyPair();
+        }
+        catch(Exception e) {
+        }
+
+        return keypair;
+    }
+    /**
+     * Only use for testing!
+     * Fenerates a keypair from the given seed (public and private key) for the in CryptoConstants specified asymmetric algorithm.
+     * @param seed the seed for the secure prng
+     * @return the keypair
+     */
+    public static KeyPair gen_asymm_key(byte[] seed) {
+
+        KeyPair keypair = null;
+
+        try {
+            KeyPairGenerator generator = KeyPairGenerator.getInstance(CryptoConstants.asymm_alg);
+            generator.initialize(CryptoConstants.asymm_keylength, new SecureRandom(seed));
             keypair = generator.generateKeyPair();
         }
         catch(Exception e) {
@@ -153,18 +152,18 @@ public class Cryptography {
 
         return key;
     }
-
     /**
-     * Randomly generates a key for the in CryptoConstants specified MAC algorithm.
+     * Generates a key from the given seed for the in CryptoConstants specified symmetric algorithm.
+     * @param seed the seed for the secure prng
      * @return the key
      */
-    public static SecretKey gen_MAC_key() {
+    public static SecretKey gen_symm_key(byte[] seed) {
 
         SecretKey key = null;
 
         try {
-            KeyGenerator generator = KeyGenerator.getInstance(CryptoConstants.MAC_alg);
-            generator.init(CryptoConstants.symm_keylength);
+            KeyGenerator generator = KeyGenerator.getInstance(CryptoConstants.symm_alg);
+            generator.init(CryptoConstants.symm_keylength, new SecureRandom(seed));
             key = generator.generateKey();
         }
         catch(Exception e) {
