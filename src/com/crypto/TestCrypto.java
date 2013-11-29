@@ -1,13 +1,11 @@
 package com.crypto;
 
 import javax.crypto.SecretKey;
-import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.SignedObject;
 import java.util.Calendar;
 
-import com.data.ChatContent;
-import com.data.ChatMessage;
+import com.data.contents.ChatContent;
 import com.data.Message;
 import com.data.User;
 
