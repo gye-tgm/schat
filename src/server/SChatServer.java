@@ -4,22 +4,27 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * The SChat Server
+ * This class runs a chat server.
  *
  * @author Gary Ye
+ * @version 2013/11/29
  */
 public class SChatServer {
-    private HashMap<Integer, ObjectOutputStream> clients;
+    private final static Logger LOGGER = Logger.getLogger(SChatServer.class.getName());
+    // the online list
+    private HashMap<String, ObjectOutputStream> clients;
 
     /**
-     * Initializes a new KnockKnock Server and also
-     * starts the service.
-     *
-     * @param portNumber the port number listening to
+     * Initialize a new server, which is listening to the given port number
+     * @param portNumber the port number
      */
     public SChatServer(int portNumber) {
+        LOGGER.setLevel(Level.INFO);
+
         clients = new HashMap<>();
 
         boolean isListening = true;
@@ -30,22 +35,36 @@ public class SChatServer {
             }
             serverSocket.close();
         } catch (IOException e) {
-            System.out.println("Exception caught when trying to listen on port "
-                    + portNumber + " or listening for a connection");
+            LOGGER.warning("Exception caught when trying to listen on port " + portNumber);
             System.exit(1);
         }
     }
 
-    public void addUser(int id, ObjectOutputStream out) {
+    /**
+     * Add a user with a given ObjectOutputStream
+     * @param id the id of the user
+     * @param out the ObjectOutputStream of the user
+     */
+    public void addUser(String id, ObjectOutputStream out) {
         clients.put(id, out);
-        System.out.println("User with id = " + id + " added!");
+        LOGGER.info(id + " has logged in.");
     }
 
-    public void eraseUser(int id) {
+    /**
+     * Remove the user from the currently online list.
+     * @param id the id of the user to remove
+     */
+    public void eraseUser(String id) {
         clients.remove(id);
+        LOGGER.info(id + " has logged out.");
     }
 
-    public ObjectOutputStream getObjectOutputStreamById(int id) {
+    /**
+     * Get the ObjectOutputStream of the given user id
+     * @param id the user id
+     * @return the connected ObjectOutputStream of the given user
+     */
+    public ObjectOutputStream getObjectOutputStreamById(String id) {
         return clients.get(id);
     }
 }
