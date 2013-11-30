@@ -60,7 +60,7 @@ public class Activity_ContactList extends Activity {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                     long arg3) {
                 start_chat = new Intent(context, Activity_Chat.class);
-                User tmp = new User(arg2, contacts.get(arg2));
+                User tmp = new User(contacts.get(arg2));
                 start_chat.putExtra("notyou", tmp);
                 startActivity(start_chat);
             }

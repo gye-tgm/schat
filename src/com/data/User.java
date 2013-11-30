@@ -1,56 +1,39 @@
 package com.data;
 
+import javax.crypto.SecretKey;
 import java.io.Serializable;
 import java.security.KeyPair;
 
-public class User implements Serializable{
-    private transient KeyPair keyPair;
-    private String name;
-    private int id;
+public class User implements Serializable {
+    private String id;
+    private KeyPair keyPair;     // asymmetric key
+    private SecretKey secretKey; // symmetric key
 
     /**
-     * Constructor with a specified name
-     *
-     * @param name the name of the user
+     * Create a user with all attributes set to null
      */
-    public User(String name) {
-        this.name = name;
+    public User(){
+        this(null, null, null);
     }
 
     /**
-     * Constructor with a specified id
-     *
+     * Create user with the given id
+     * @param id
+     */
+    public User(String id) {
+        this(id, null, null);
+    }
+
+    /**
+     * Create user with the given id, KeyPair and the SecretKey.
      * @param id the id of the user
+     * @param keyPair the key pair (asymmetric key) of the user
+     * @param secretKey the secret key (symmetric key) of the user
      */
-    public User(int id) {
+    public User(String id, KeyPair keyPair, SecretKey secretKey) {
         this.id = id;
-    }
-
-    public User(int id, String name){
-        this.id = id;
-        this.name = name;
-    }
-
-    public static int MAX_MESSAGE_LENGTH = 256;
-    public static int SENDING_SUCCESSFUL = 0;
-    public static int SENDING_FAILED = 1;
-
-    /**
-     * Send a message to another user.
-     * If the sending was successful 0 will be returned
-     * otherwise a corresponding error code will be returned.
-     *
-     * @param receiver
-     * @param message
-     * @return 0 if the process was done successfully
-     *         an error code otherwise
-     * @throws IllegalArgumentException will be thrown iff the message is too long
-     */
-    public int sendMessage(User receiver, String message) throws IllegalArgumentException {
-        if (message.length() > MAX_MESSAGE_LENGTH)
-            throw new IllegalArgumentException();
-        /* ~ todo ~ */
-        return SENDING_SUCCESSFUL;
+        this.keyPair = keyPair;
+        this.secretKey = secretKey;
     }
 
     public void receiveMessage(ChatMessage message){
@@ -58,24 +41,34 @@ public class User implements Serializable{
     }
 
     /**
-     * @return the name
+     * Return the id of the user
+     * @return the id of the user
      */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name the value of the name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    /**
+     * Return the key pair
+     * @return the key pair
+     */
+    public KeyPair getKeyPair() {
+        return keyPair;
+    }
+
+    /**
+     * Return the secret key
+     * @return the secret key
+     */
+    public SecretKey getSecretKey() {
+        return secretKey;
+    }
+
+    /**
+     * Return the name of the user
+     * @return the name of the user
+     */
+    public String getName(){
+        return this.id; // TODO: give the user a name
     }
 }
