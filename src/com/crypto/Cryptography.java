@@ -46,6 +46,48 @@ public class Cryptography {
     }
 
     /**
+     * Encrypts/wraps the given key using the in CryptoConstants specified asymmetric encryption algorithm.
+     * @param key the public key
+     * @param skey the key to wrap
+     * @return the encrypted data
+     */
+    public static byte[] wrap(PublicKey key, SecretKey skey) {
+
+        byte[] wrapped_key = null;
+
+        try {
+            Cipher cipher = Cipher.getInstance(CryptoConstants.asymm_alg);
+            cipher.init(Cipher.WRAP_MODE, key);
+            wrapped_key = cipher.wrap(skey);
+        }
+        catch(Exception e) {
+        }
+
+        return wrapped_key;
+    }
+
+    /**
+     * Decrypts/Unwraps the given data using the in CryptoConstants specified asymmetric encryption algorithm.
+     * @param key the private key
+     * @param skey the wrapped SecretKey
+     * @return the unwrapped SecretKey
+     */
+    public static SecretKey unwarp(PrivateKey key, byte[] skey) {
+
+        Key unwrapped_key = null;
+
+        try {
+            Cipher cipher = Cipher.getInstance(CryptoConstants.asymm_alg);
+            cipher.init(Cipher.UNWRAP_MODE, key);
+            unwrapped_key = cipher.unwrap(skey, CryptoConstants.symm_alg, Cipher.SECRET_KEY);
+        }
+        catch(Exception e) {
+        }
+
+        return (SecretKey)unwrapped_key;
+    }
+
+    /**
      * Computes the message digest of the given data using the in CryptoConstants specified algorithm.
      * @param data the data
      * @return the digest of the data
