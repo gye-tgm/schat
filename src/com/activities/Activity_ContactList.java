@@ -8,6 +8,7 @@ import android.view.*;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import com.crypto.PRNGFixes;
 import com.data.User;
 
 import java.util.ArrayList;
@@ -34,6 +35,9 @@ public class Activity_ContactList extends Activity {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+        PRNGFixes.apply(); // apply all PRG security fixes
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_contactlist);
         context = this;
