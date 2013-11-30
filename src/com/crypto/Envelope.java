@@ -35,6 +35,24 @@ public class Envelope {
     }
 
     /**
+     * Generates a transmittable Envelope containing a secure signed and sealed Object incuding a header with the wrapped SecretKey.
+     * @param message the message to seal and sign
+     * @param key the symmetric key for sealing
+     * @param wrapKey the public key to use for wrapping the SecretKey
+     * @param signKey the private key for signing
+     */
+    public Envelope(Message message, SecretKey key, PublicKey wrapKey, PrivateKey signKey) {
+        SecureMessage secureMessage = new SecureMessage(message, key, wrapKey);
+
+        try {
+            sign_sec_message = new SignedObject(secureMessage, signKey, Cryptography.getSignature());
+        }
+        catch(InvalidKeyException e) {}
+        catch(SignatureException e) {}
+        catch(IOException e) {}
+    }
+
+    /**
      * Decrypts the message contained in this envelope and returns the plain message of the specified type.
      * @param key the symmetric key for content decryption
      * @param verificationKey the public key of the sender to verify the signature
@@ -48,6 +66,35 @@ public class Envelope {
             if(sign_sec_message.verify(verificationKey, Cryptography.getSignature())) {
                 SecureMessage verifiedMessage = (SecureMessage)sign_sec_message.getObject();
                 message = verifiedMessage.<C>decrypt(key);
+            }
+        }
+        catch(InvalidKeyException e) {}
+        catch(SignatureException e) {}
+        catch(ClassNotFoundException e) {}
+        catch(IOException e) {}
+        catch(Exception e) {}
+
+        return message;
+    }
+
+    /**
+     * Decrypts the message contained in this envelope and returns the plain message of the specified type.
+     * @param key the private key to unwrap the wrappedSecretKey
+     * @param verificationKey the public key of the sender to verify the signature
+     * @param <C> the requested return type
+     * @return the plain message of the requested type; null if the signature did not verify or if the message did not contain a header
+     */
+    public <C extends Content> Message<C> decryptMessage(PrivateKey key, PublicKey verificationKey) {
+        Message<C> message = null;
+
+        try {
+            if(sign_sec_message.verify(verificationKey, Cryptography.getSignature())) {
+                SecureMessage verifiedMessage = (SecureMessage)sign_sec_message.getObject();
+
+                if(verifiedMessage.containsHeader()) {
+                    SecretKey skey = verifiedMessage.decryptHeader(key);
+                    message = verifiedMessage.<C>decrypt(skey);
+                }
             }
         }
         catch(InvalidKeyException e) {}
@@ -110,6 +157,23 @@ public class Envelope {
         catch (ClassNotFoundException e) {}
 
         return receiver;
+    }
+
+    /**
+     * Returns true if this message contains a header.
+     * @return true if yes, false otherwise
+     */
+    public boolean containsHeader() {
+        boolean contains = false;
+
+        try {
+            SecureMessage secureMessage = (SecureMessage)sign_sec_message.getObject();
+            contains = secureMessage.containsHeader();
+        }
+        catch (IOException e) {}
+        catch (ClassNotFoundException e) {}
+
+        return contains;
     }
 
     /**

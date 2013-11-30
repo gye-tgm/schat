@@ -24,11 +24,12 @@ public class TestCrypto {
         User receiver = new User("Bob");
 
         SecretKey skey = Cryptography.gen_symm_key();
-        KeyPair keypair = Cryptography.gen_asymm_key();
+        KeyPair keypair1 = Cryptography.gen_asymm_key();
+        KeyPair keypair2 = Cryptography.gen_asymm_key();
 
-        Message<ChatContent> message = new Message<>(Calendar.getInstance().getTime(), "Alice", "Bob", new ChatContent("This is a Test"));
-        SignedObject secure_message = CryptoTools.encryptMessage(message, skey, keypair.getPrivate());
-        System.out.println(CryptoTools.<ChatContent>decryptMessage(secure_message, skey, keypair.getPublic()));
+        Message<ChatContent> message = new Message<>(Calendar.getInstance().getTime(), "Alice", "Bob", new ChatContent(text));
+        Envelope secure_message = new Envelope(message, skey, keypair2.getPublic(), keypair1.getPrivate());
+        System.out.println(secure_message.<ChatContent>decryptMessage(keypair2.getPrivate(), keypair1.getPublic()));
     }
 
 }
