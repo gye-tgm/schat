@@ -3,8 +3,10 @@ package data;
 import crypto.CryptoConstants;
 import crypto.Cryptography;
 
+import java.io.Writer;
 import java.security.PublicKey;
 import java.sql.*;
+import java.util.ArrayList;
 
 /**
  * @author Gary Ye
@@ -59,6 +61,32 @@ public class SQLiteManager {
     }
 
     public void insertUser(User user){
-        // String query = String.format("INSERT INTO user VALUES ()
+        String sql = "INSERT INTO user VALUES(?,?,?) ";
+        try (Connection connection = DriverManager.getConnection(url);
+             PreparedStatement pstmt = connection.prepareStatement(sql);
+            ){
+            Blob publicKeyBlob, symmetricKeyBlob;
+            pstmt.setString(1, user.getId());
+
+            publicKeyBlob = connection.createBlob();
+            publicKeyBlob.setBytes(0, user.getKeyPair().getPublic().getEncoded());
+            pstmt.setBlob(2, publicKeyBlob);
+
+            symmetricKeyBlob = connection.createBlob();
+            symmetricKeyBlob.setBytes(0, user.getSecretKey().getEncoded());
+            pstmt.setBlob(3, symmetricKeyBlob);
+
+            pstmt.executeUpdate();
+        } catch (SQLException ex) {
+            System.out.println("Unexpected exception: " + ex.toString());
+        }
+    }
+
+    /**
+     * Load the names of all users
+     * @return the name of all users
+     */
+    public ArrayList<String> loadUsers(){
+        return null;
     }
 }
