@@ -79,7 +79,6 @@ public class SChatClient extends Thread {
      */
     public Envelope encrypt(Message<? extends Content> message){
         String receiverId = message.getReceiver();
-        // TODO: get public key of the receiver from database
         SQLiteManager sqLiteManager = new SQLiteManager("client.db");
         PublicKey receiverPublicKey = sqLiteManager.getPublicKeyFromId(receiverId);
         return new Envelope(message, client.getSecretKey(), receiverPublicKey,
