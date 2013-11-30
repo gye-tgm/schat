@@ -3,6 +3,9 @@ package com.crypto;
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 
 /**
  * This class contains all essential methods for en- and decryption.
@@ -166,6 +169,16 @@ public class Cryptography {
         return iv;
     }
 
+    public static PublicKey getPublicKeyFromBytes(byte[] bytes){
+        PublicKey  publicKey = null;
+        try {
+            publicKey = KeyFactory.getInstance(CryptoConstants.asymm_alg).generatePublic(new X509EncodedKeySpec(bytes));
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        return publicKey;
+    }
 
     /* for testing only! */
 
