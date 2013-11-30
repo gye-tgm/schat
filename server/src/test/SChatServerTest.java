@@ -1,3 +1,5 @@
+package test;
+
 import networking.SChatServer;
 
 /**
@@ -11,7 +13,7 @@ public class SChatServerTest {
         try {
             new SChatServer(Integer.parseInt(args[0]));
         } catch (Exception e) {
-            System.err.println("usage: java SChatServerTest <port>");
+            System.err.println("usage: java test.SChatServerTest <port>");
         }
     }
 }

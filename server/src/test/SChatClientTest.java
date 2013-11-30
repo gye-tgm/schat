@@ -1,3 +1,5 @@
+package test;
+
 import crypto.CryptoConstants;
 import data.User;
 import data.contents.ChatContent;
@@ -15,7 +17,7 @@ import java.io.InputStreamReader;
  */
 public class SChatClientTest {
     public static void main(String[] args) {
-        // System.err.println("usage: java SChatClientTest <id> (<host name> <port>)");
+        // System.err.println("usage: java test.SChatClientTest <id> (<host name> <port>)");
 
         String username = args[0];
         SChatClient client = null;
