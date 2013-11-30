@@ -1,8 +1,10 @@
 package test;
 
-import com.data.ChatMessage;
+import com.crypto.CryptoConstants;
 import com.data.User;
+import com.data.contents.ChatContent;
 import com.networking.SChatClient;
+import server.SChatServer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,22 +17,19 @@ import java.io.InputStreamReader;
  */
 public class SChatClientTest {
     public static void main(String[] args) {
-        User me = null;
+        // System.err.println("usage: java SChatClientTest <id> (<host name> <port>)");
+
+        String username = args[0];
         SChatClient client = null;
-        try {
-            me = new User(Integer.parseInt(args[0]), args[1]);
-        } catch (Exception e) {
-            System.err.println("usage: java SChatClientTest <id> <user name> (<host name> <port>)");
-            System.exit(1);
-        }
+        User me = new User(username);
+        String hostName = SChatServer.SERVER_NAME;
+        int portNumber = SChatServer.PORT_ADDRESS;
 
-        String hostName = SChatClient.SERVER_NAME;
-        int portNumber = SChatClient.PORT_ADDRESS;
-
-        if (args.length == 4) {
-            hostName = args[2];
-            portNumber = Integer.parseInt(args[3]);
+        if (args.length == 3) {
+            hostName = args[1];
+            portNumber = Integer.parseInt(args[2]);
         }
+        System.out.println(CryptoConstants.asymm_keylength / 8);
 
         try {
             client = new SChatClient(hostName, portNumber, me);
@@ -39,23 +38,23 @@ public class SChatClientTest {
             e.printStackTrace();
             System.exit(1);
         }
+        System.out.println("Logged in?");
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
             String line;
             while ((line = in.readLine()) != null) {
                 String[] messageSplit = line.split(" ");
                 try {
-                    int id = Integer.parseInt(messageSplit[0]);
+                    String receiverId = messageSplit[0];
                     StringBuilder message = new StringBuilder("");
                     for (int i = 1; i < messageSplit.length; i++) {
                         message.append(messageSplit[i]);
                         message.append(" \n".charAt(i + 1 == messageSplit.length ? 1 : 0));
                     }
-                    //ChatMessage chatMessage = new ChatMessage(me, new User(id), message.toString(), Calendar.getInstance());
-                    ChatMessage chatMessage = new ChatMessage(me, new User(id), message.toString());
-                    client.sendMessage(chatMessage);
+
+                    client.sendMessage(new ChatContent(message.toString()), receiverId);
                 } catch (Exception e) {
-                    System.err.println("usage: <id> <message>");
+                    System.err.println("usage: <receiver id> <message>");
                 }
             }
             in.close();

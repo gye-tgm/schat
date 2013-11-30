@@ -18,6 +18,10 @@ import java.util.logging.Logger;
  * @version 2013/11/29
  */
 public class SChatServer {
+    public static final String SERVER_NAME = "85.10.240.108";
+    public static final int PORT_ADDRESS = 1234;
+    public static final String SERVER_ID = "_";
+
     private final static Logger LOGGER = Logger.getLogger(SChatServer.class.getName());
     // the online list
     private HashMap<String, ObjectOutputStream> clients;
@@ -31,7 +35,7 @@ public class SChatServer {
      */
     public SChatServer(int portNumber) {
         LOGGER.setLevel(Level.INFO);
-
+        LOGGER.info("Server has started...");
         clients = new HashMap<>();
 
         byte[] seed = new byte[2];
@@ -96,6 +100,7 @@ public class SChatServer {
 
     /**
      * Return the symmetric key
+     *
      * @return the symmetric key
      */
     public SecretKey getSkey() {
@@ -104,9 +109,23 @@ public class SChatServer {
 
     /**
      * Return the asymmetric key
+     *
      * @return the asymmetric key
      */
     public KeyPair getKeyPair() {
         return keyPair;
+    }
+
+    /**
+     * Usage:
+     * java SChatServer <port number>
+     * @param args
+     */
+    public static void main(String[] args) {
+        try {
+            new SChatServer(Integer.parseInt(args[0]));
+        } catch (Exception e) {
+            System.err.println("usage: java SChatServer <port>");
+        }
     }
 }

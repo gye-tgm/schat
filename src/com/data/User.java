@@ -1,8 +1,12 @@
 package com.data;
 
+import com.crypto.Envelope;
+import com.data.contents.ChatContent;
+
 import javax.crypto.SecretKey;
 import java.io.Serializable;
 import java.security.KeyPair;
+import java.security.PublicKey;
 
 public class User implements Serializable {
     private String id;
@@ -36,8 +40,13 @@ public class User implements Serializable {
         this.secretKey = secretKey;
     }
 
-    public void receiveMessage(ChatMessage message){
-        System.out.println("New message: " + message.toString());
+    /**
+     * Output the message to the console
+     * @param secure_message the secure message
+     */
+    public void receiveMessage(Envelope secure_message){
+        PublicKey senderPublicKey = null; // Load from database
+        System.out.println(secure_message.<ChatContent>decryptMessage(keyPair.getPrivate(), senderPublicKey));
     }
 
     /**

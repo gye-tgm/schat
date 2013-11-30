@@ -6,6 +6,7 @@ import server.SChatServer;
  * SChat Server tester
  *
  * @author Gary Ye
+ * @version 2013/11/29
  */
 public class SChatServerTest {
     public static void main(String[] args) {
