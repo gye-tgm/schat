@@ -1,4 +1,4 @@
-package crypto;
+package com.security;
 
 /* source code unmodified from http://android-developers.blogspot.co.at/2013/08/some-securerandom-thoughts.html */
 
