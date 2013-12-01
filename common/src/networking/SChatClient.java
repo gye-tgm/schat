@@ -4,6 +4,7 @@ import crypto.Envelope;
 import data.*;
 import data.contents.ChatContent;
 import data.contents.Login;
+import data.contents.PublicKeyRequest;
 import data.contents.Registration;
 
 import java.io.IOException;
@@ -92,5 +93,11 @@ public class SChatClient extends Thread {
         SQLiteManager sqLiteManager = new SQLiteManager("client.db");
         PublicKey receiverPublicKey = sqLiteManager.getPublicKeyFromId(receiverId);
         return new Envelope(message, client.getSecretKey(), receiverPublicKey, client.getKeyPair().getPrivate());
+    }
+
+    public void sendPublicKeyRequest(String id) {
+        Message<PublicKeyRequest> loginMessage = new Message<PublicKeyRequest>(Calendar.getInstance().getTime(), client.getId(), SChatServer.SERVER_ID,
+                new PublicKeyRequest(id));
+        sender.send(encrypt(loginMessage));
     }
 }

@@ -16,7 +16,7 @@ public abstract class Content implements Serializable { // there should not exis
     public static enum Type {
         CHAT_MESSAGE,
         LOGIN,
-        REGISTRATION;
+        REGISTRATION, PUBLIC_KEY_REQUEST, PUBLIC_KEY_RESPONSE;
     }
 
     protected transient Type type; // this attribute must not be serialized (it is also contained in the SecureMessage class

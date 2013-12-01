@@ -5,6 +5,8 @@ import data.Message;
 import data.SQLiteManager;
 import data.User;
 import data.contents.Login;
+import data.contents.PublicKeyRequest;
+import data.contents.PublicKeyResponse;
 import data.contents.Registration;
 
 import javax.crypto.SecretKey;
@@ -13,6 +15,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.security.KeyPair;
+import java.security.PublicKey;
+import java.util.Calendar;
 
 /**
  * @author Gary
@@ -97,6 +101,10 @@ public class SChatServerThread extends Thread {
                             isRunning = false;
                         }
                         break;
+                    case PUBLIC_KEY_REQUEST:
+                        handlePublicKeyRequest(envelope);
+                        break;
+
                 }
             } catch (IOException e) {
                 System.err.println("Connection to " + client + " closed.");
@@ -115,23 +123,42 @@ public class SChatServerThread extends Thread {
         server.eraseUser(client.getId());
     }
 
+    private void handlePublicKeyRequest(Envelope envelope) {
+        PublicKeyRequest pkRequest = envelope.<PublicKeyRequest>decryptMessage(secretKey, client.getPublicKey()).getContent();
+        PublicKey requestPK = dbmanager.getPublicKeyFromId(pkRequest.getRequestId());
+        Message<PublicKeyResponse> pkResponse = new Message<PublicKeyResponse>(Calendar.getInstance().getTime(), SChatServer.SERVER_ID,
+                envelope.getSender(), new PublicKeyResponse(pkRequest.getRequestId(), requestPK));
+        PublicKey senderPk = dbmanager.getPublicKeyFromId(envelope.getSender());
+        sendEnvelope(new Envelope(pkResponse, secretKey, senderPk, server.getKeyPair().getPrivate()));
+    }
+
     private void handleRedirecting(Envelope envelope) {
         redirectMessage(envelope);
     }
 
     public void redirectMessage(Envelope envelope) {
-        String receiver = envelope.getReceiver();
-        ObjectOutputStream out = server.getObjectOutputStreamById(receiver);
-        if (out == null) { // offline, store it to the database
-
-        } else { // user is online
-            try{
-                out.writeObject(envelope);
-                out.flush();
-            }catch (IOException e){
-                System.err.println(e.getMessage());
-            }
+        if(!sendEnvelope(envelope)){
+            // save into database so the user can retrieve it later...
         }
+    }
+
+    /**
+     *
+     * @param envelope
+     * @return whether the sending was successful or not
+     */
+    public boolean sendEnvelope(Envelope envelope){
+        ObjectOutputStream out = server.getObjectOutputStreamById(envelope.getReceiver());
+        if(out == null)
+            return false;
+        try{
+            out.writeObject(envelope);
+            out.flush();
+        }catch (IOException e){
+            System.err.println(e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -150,8 +177,8 @@ public class SChatServerThread extends Thread {
             System.err.println("Registration failed because id already exists");
             return false;
         }
-
-        dbmanager.insertUser(new User(login.getId(), new KeyPair(registration.getPublicKey(), null), secretKey));
+        client = new User(login.getId(), new KeyPair(registration.getPublicKey(), null), secretKey);
+        dbmanager.insertUser(client);
         System.out.println("New user " + login.getId() + " registered!");
         handleLogin(registration.getLogin());
         return true;

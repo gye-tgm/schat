@@ -2,6 +2,7 @@ package data;
 
 import crypto.Envelope;
 import data.contents.ChatContent;
+import data.contents.PublicKeyResponse;
 
 import javax.crypto.SecretKey;
 import java.io.Serializable;
@@ -81,5 +82,18 @@ public class User implements Serializable {
      */
     public String getName(){
         return this.id; // TODO: give the user a name
+    }
+
+    public void registerUser(Envelope envelope) {
+        PublicKey senderPublicKey = (new SQLiteManager("client.db").getPublicKeyFromId(envelope.getSender())); // Load from database
+        SecretKey secretKey1 = envelope.getUnwrappedKey(keyPair.getPrivate());
+        PublicKeyResponse publicKeyResponse = envelope.<PublicKeyResponse>decryptMessage(secretKey1).getContent();
+        SQLiteManager sqLiteManager = new SQLiteManager("client.db");
+        sqLiteManager.insertUser(new User(publicKeyResponse.getRequestId(),
+                new KeyPair(publicKeyResponse.getPublicKey(), null),null));
+    }
+
+    public PublicKey getPublicKey() {
+        return keyPair.getPublic();
     }
 }

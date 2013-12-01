@@ -1,6 +1,7 @@
 package networking;
 
 import crypto.Envelope;
+import data.SQLiteManager;
 import data.User;
 
 import java.io.IOException;
@@ -44,6 +45,9 @@ public class SChatClientListener extends Thread {
                 switch (envelope.getType()) {
                     case CHAT_MESSAGE:
                         notifyUser(envelope);
+                        break;
+                    case PUBLIC_KEY_RESPONSE:
+                        receiver.registerUser(envelope);
                         break;
                     default:
                         System.err.println("Unknown envelope type!");

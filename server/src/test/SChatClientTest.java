@@ -18,6 +18,9 @@ import java.io.InputStreamReader;
  * @author Gary Ye
  */
 public class SChatClientTest {
+    private static SQLiteManager sqLiteManager;
+    private static User me;
+
     public static User getMyUser(String username) {
         byte[] seed = new byte[2];
         seed[0] = 101;
@@ -30,27 +33,29 @@ public class SChatClientTest {
                 Cryptography.gen_symm_key());
     }
 
-    public static void init(User user, String dbname) {
-        SQLiteManager sqLiteManager = new SQLiteManager(dbname);
-        sqLiteManager.createTables("clientdb.sql");
-        sqLiteManager.insertUser(user);
-        sqLiteManager.insertUser(getServerUser());
-    }
-    public static SChatClient initalize(String[] args){
+    public static SChatClient initalize(String[] args) {
         String username = null, hostName = null, dbFile = null;
         int portNumber = 0;
 
-        try{
+        try {
             username = args[0];
             hostName = args[1];
             portNumber = Integer.parseInt(args[2]);
-        }catch (Exception e){
+            dbFile = args[3];
+        } catch (Exception e) {
             System.err.println("usage: java test.SChatClientTest <id> <host name> <port> <db name>");
             System.exit(1);
         }
 
-        User me = getMyUser(username);
-        init(me, dbFile);
+        me = getMyUser(username);
+
+        sqLiteManager = new SQLiteManager(dbFile);
+
+
+        sqLiteManager.createTables("clientdb.sql");
+        sqLiteManager.insertUser(me);
+        sqLiteManager.insertUser(getServerUser());
+
 
         SChatClient client = null;
         try {
@@ -63,6 +68,14 @@ public class SChatClientTest {
         }
         return client;
     }
+
+    public static void printOptions() {
+        System.out.println("1) Add contact\n" +
+                "2) Remove contact\n" +
+                "3) Send message\n" +
+                "4) Show contact list\n");
+    }
+
     public static void main(String[] args) throws IOException {
         SChatClient client = initalize(args);
         /**
@@ -76,19 +89,39 @@ public class SChatClientTest {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
             String line;
+            printOptions();
             while ((line = in.readLine()) != null) {
-                String[] messageSplit = line.split(" ");
-                if (messageSplit.length >= 2) {
-                    String receiverId = messageSplit[0];
-                    StringBuilder message = new StringBuilder("");
-                    for (int i = 1; i < messageSplit.length; i++) {
-                        message.append(messageSplit[i]);
-                        message.append(" \n".charAt(i + 1 == messageSplit.length ? 1 : 0));
+                try {
+                    String[] messageSplit = line.split(" ");
+                    int option = Integer.parseInt(messageSplit[0]);
+                    if (option == 1) {
+                        String id = messageSplit[1];
+                        // Retrieve from server
+                        client.sendPublicKeyRequest(id);
+                    } else if (option == 2) {
+                        String id = messageSplit[1];
+                        sqLiteManager.removeUser(id);
+                    } else if (option == 3) {
+                        String receiverId = messageSplit[1];
+                        StringBuilder message = new StringBuilder("");
+                        for (int i = 2; i < messageSplit.length; i++) {
+                            message.append(messageSplit[i]);
+                            message.append(" \n".charAt(i + 1 == messageSplit.length ? 1 : 0));
+                        }
+                        client.sendMessage(new ChatContent(message.toString()), receiverId);
+                    } else if (option == 4) {
+                        System.out.println("***Contact list***");
+                        for (User user : sqLiteManager.loadUsers()) {
+                            System.out.println(user.getName());
+                        }
+                        System.out.println("********************\n");
+                    } else {
+                        System.err.println("usage: <option> <option args>");
                     }
-
-                    client.sendMessage(new ChatContent(message.toString()), receiverId);
-                } else {
-                    System.err.println("usage: <receiver id> <message>");
+                } catch (Exception ex) {
+                    System.err.println("usage: <option> <option args>");
+                } finally {
+                    printOptions();
                 }
             }
             in.close();
