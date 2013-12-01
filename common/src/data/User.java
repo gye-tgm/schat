@@ -45,7 +45,7 @@ public class User implements Serializable {
      * @param secure_message the secure message
      */
     public void receiveMessage(Envelope secure_message){
-        PublicKey senderPublicKey = (new SQLiteManager("client.db").getPublicKeyFromId(secure_message.getReceiver())); // Load from database
+        PublicKey senderPublicKey = (new SQLiteManager("client.db").getPublicKeyFromId(secure_message.getSender())); // Load from database
         SecretKey secretKey1 = secure_message.getUnwrappedKey(keyPair.getPrivate());
         ChatContent chatContent = secure_message.<ChatContent>decryptMessage(secretKey1, senderPublicKey).getContent();
         System.out.println(chatContent.toString());

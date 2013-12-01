@@ -71,6 +71,7 @@ public class SChatClient extends Thread {
                 new Login(client.getId()));
         sender.send(encrypt(loginMessage));
     }
+
     public void registerToServer() throws IOException{
         Message<Registration> registrationMessage =
         new Message<Registration>(
