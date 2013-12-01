@@ -181,8 +181,8 @@ public class Cryptography {
 
     public static SecretKey getSecretKeyFromBytes(byte[] bytes) {
         SecretKey key = null;
-
-        key = new SecretKeySpec(bytes, CryptoConstants.symm_alg);
+        if(bytes != null)
+            key = new SecretKeySpec(bytes, CryptoConstants.symm_alg);
 
         return key;
     }
