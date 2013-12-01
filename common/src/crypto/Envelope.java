@@ -5,6 +5,7 @@ import data.Message;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.*;
 
@@ -13,17 +14,17 @@ import java.security.*;
  * @author Elias Frantar
  * @version 29.11.2013
  */
-public class Envelope {
+public class Envelope implements Serializable {
 
     private SignedObject sign_sec_message;
 
-    private transient SecureMessage sec_message;
+    private transient SecureMessage sec_message; // this attribute will not be serialized
 
     /**
      * Generates a transmittable Envelope containing a secure signed and sealed Object.
      * @param message the message to seal and sign
-     * @param key the symmetric key for sealing
-     * @param signKey the private key for signing
+     * @param key the shared symmetric key between sender and receiver (key for sealing)
+     * @param signKey the private key of the sender (key for signing)
      */
     public Envelope(Message message, SecretKey key, PrivateKey signKey) {
         SecureMessage secureMessage = new SecureMessage(message, key);
@@ -37,11 +38,11 @@ public class Envelope {
     }
 
     /**
-     * Generates a transmittable Envelope containing a secure signed and sealed Object incuding a header with the wrapped SecretKey.
+     * Generates a transmittable Envelope containing a secure signed and sealed Object including a header with the wrapped SecretKey.
      * @param message the message to seal and sign
-     * @param key the symmetric key for sealing
-     * @param wrapKey the public key to use for wrapping the SecretKey
-     * @param signKey the private key for signing
+     * @param key the symmetric key which will be shared between sender and receiver afterwards (key for sealing)
+     * @param wrapKey the public key of the receiver (key to use for wrapping the SecretKey)
+     * @param signKey the private key of the sender (key for signing)
      */
     public Envelope(Message message, SecretKey key, PublicKey wrapKey, PrivateKey signKey) {
         SecureMessage secureMessage = new SecureMessage(message, key, wrapKey);
@@ -55,22 +56,20 @@ public class Envelope {
     }
 
     /**
-     * Decrypts the message contained in this envelope and returns the plain message of the specified type. Warning: does not verify the signature!
-     * @param key the symmetric key for content decryption
+     * Decrypts the message contained in this envelope and returns the plain message of the specified type.
+     * Warning: does not verify the signature! You must call verify() afterwards. Only use this method if its really necessary!
+     * @param key the shared symmetric key between Sender and receiver (call getUnwrappedKey() to get it) (key for content decryption)
      * @param <C> the requested return type
-     * @return the plain message of the requested type;
+     * @return the plain message of the requested type
      */
     public <C extends Content> Message<C> decryptMessage(SecretKey key) {
+        deserializeIfNecessary();
         Message<C> message = null;
 
         try {
-            SecureMessage verifiedMessage = (SecureMessage)sign_sec_message.getObject();
-            message = verifiedMessage.<C>decrypt(key);
+            message = sec_message.<C>decrypt(key);
         }
         catch(InvalidKeyException e) {}
-        catch(SignatureException e) {}
-        catch(ClassNotFoundException e) {}
-        catch(IOException e) {}
         catch(Exception e) {}
 
         return message;
@@ -94,25 +93,21 @@ public class Envelope {
     }
 
     /**
-     * Decrypts the message contained in this envelope and returns the plain message of the specified type.
-     * @param key the symmetric key for content decryption
-     * @param verificationKey the public key of the sender to verify the signature
+     * Decrypts the message contained in this envelope and returns the plain message of the specified type. Also verifies the signature.
+     * @param key the shared symmetric key between sender and receiver (key for content decryption decryption)
+     * @param verificationKey the public key of the sender (key to verify the signature)
      * @param <C> the requested return type
      * @return the plain message of the requested type; null if the signature did not verify
      */
     public <C extends Content> Message<C> decryptMessage(SecretKey key, PublicKey verificationKey) {
+        deserializeIfNecessary();
         Message<C> message = null;
 
         try {
-            if(sign_sec_message.verify(verificationKey, Cryptography.getSignature())) {
-                SecureMessage verifiedMessage = (SecureMessage)sign_sec_message.getObject();
-                message = verifiedMessage.<C>decrypt(key);
-            }
+            if(verify(verificationKey))
+                message = sec_message.<C>decrypt(key);
         }
         catch(InvalidKeyException e) {}
-        catch(SignatureException e) {}
-        catch(ClassNotFoundException e) {}
-        catch(IOException e) {}
         catch(Exception e) {}
 
         return message;
@@ -122,37 +117,21 @@ public class Envelope {
      * Returns the type of the received message.
      * @return the type of the message contained in this envelope
      */
-    public Content.Type getType() throws ClassCastException {
-        Content.Type type = null;
+    public Content.Type getType() {
+        deserializeIfNecessary();
 
-        try {
-            SecureMessage secureMessage = (SecureMessage)sign_sec_message.getObject();
-            type = secureMessage.getContentType();
-        }
-        catch (IOException e) {}
-        catch (ClassNotFoundException e) {}
-        catch (ClassCastException e) {}
-
-        return type;
+        return sec_message.getContentType();
     }
 
     /**
-     * Returns the unwrapped key containd in the message header.
-     * @param key the private key to decrypt the header
+     * Returns the unwrapped key contained in the message header.
+     * @param key the private key of the receiver (key to decrypt the header)
      * @return the SecretKey contained in the header
      */
     public SecretKey getUnwrappedKey(PrivateKey key) {
-        SecretKey skey = null;
+        deserializeIfNecessary();
 
-        try {
-            SecureMessage secureMessage = (SecureMessage)sign_sec_message.getObject();
-            skey = secureMessage.decryptHeader(key);
-        }
-        catch (IOException e) {}
-        catch (ClassNotFoundException e) {}
-        catch (ClassCastException e) {}
-
-        return skey;
+        return sec_message.decryptHeader(key);
     }
 
     /**
@@ -160,17 +139,9 @@ public class Envelope {
      * @return the sender of the message contained in this envelope
      */
     public String getSender() {
-        String sender = null;
+        deserializeIfNecessary();
 
-        try {
-            SecureMessage secureMessage = (SecureMessage)sign_sec_message.getObject();
-            sender = secureMessage.getSender();
-        }
-        catch (IOException e) {}
-        catch (ClassNotFoundException e) {}
-        catch (ClassCastException e) {}
-
-        return sender;
+        return sec_message.getSender();
     }
 
     /**
@@ -178,16 +149,9 @@ public class Envelope {
      * @return the receiver of the message contained in this envelope
      */
     public String getReceiver() {
-        String receiver = null;
+        deserializeIfNecessary();
 
-        try {
-            SecureMessage secureMessage = (SecureMessage)sign_sec_message.getObject();
-            receiver = secureMessage.getReceiver();
-        }
-        catch (IOException e) {}
-        catch (ClassNotFoundException e) {}
-
-        return receiver;
+        return sec_message.getReceiver();
     }
 
     /**
@@ -195,16 +159,20 @@ public class Envelope {
      * @return true if yes, false otherwise
      */
     public boolean containsHeader() {
-        boolean contains = false;
+        return sec_message.containsHeader();
+    }
 
-        try {
-            SecureMessage secureMessage = (SecureMessage)sign_sec_message.getObject();
-            contains = secureMessage.containsHeader();
+    /**
+     * Deserializes the contained SecretMessage if it has not already been deserialized.
+     */
+    private void deserializeIfNecessary() {
+        if(sec_message == null) {
+            try {
+                sec_message = (SecureMessage)sign_sec_message.getObject();
+            }
+            catch (IOException e) {}
+            catch (ClassNotFoundException e) {}
         }
-        catch (IOException e) {}
-        catch (ClassNotFoundException e) {}
-
-        return contains;
     }
 
     /**
