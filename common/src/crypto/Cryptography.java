@@ -1,14 +1,19 @@
 package crypto;
 
-import javax.crypto.*;
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 /**
  * This class contains all essential methods for en- and decryption.
+ *
  * @author Elias Frantar
  * @version 30.11.2013
  */
@@ -18,6 +23,7 @@ public class Cryptography {
 
     /**
      * Returns a symmetric Cipher with the properties described in CryptoConstants to use for sealing messages.
+     *
      * @return an instance of a symmetric cipher
      */
     public static Cipher getSymmCipher() {
@@ -26,15 +32,16 @@ public class Cryptography {
         try {
             c = Cipher.getInstance(CryptoConstants.symm_alg + "/" + CryptoConstants.symm_mode + "/" + CryptoConstants.symm_padding);
         }
-        /* both Exception should never be thrown (we only use valid algorithms and padding), so we don't handle them */
-        catch(NoSuchAlgorithmException e) {}
-        catch(NoSuchPaddingException e) {}
+        /* both Exception should never be thrown (we only use valid algorithms and padding), so we don't handle them */ catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchPaddingException e) {
+        }
 
         return c;
     }
 
     /**
      * Returns an instance of an asymmetric signature-algorithm with the properties described in CryptoConstants to use for signing messages.
+     *
      * @return an instance of a signature-algorithm
      */
     public static Signature getSignature() {
@@ -42,15 +49,16 @@ public class Cryptography {
 
         try {
             s = Signature.getInstance(CryptoConstants.signature_alg);
+        } catch (NoSuchAlgorithmException e) {
         }
-        catch (NoSuchAlgorithmException e) {}
 
         return s;
     }
 
     /**
      * Encrypts/wraps the given key using the in CryptoConstants specified asymmetric encryption algorithm.
-     * @param key the public key
+     *
+     * @param key  the public key
      * @param skey the key to wrap
      * @return the encrypted data
      */
@@ -62,8 +70,7 @@ public class Cryptography {
             Cipher cipher = Cipher.getInstance(CryptoConstants.asymm_alg);
             cipher.init(Cipher.WRAP_MODE, key);
             wrapped_key = cipher.wrap(skey);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
         }
 
         return wrapped_key;
@@ -71,7 +78,8 @@ public class Cryptography {
 
     /**
      * Decrypts/Unwraps the given data using the in CryptoConstants specified asymmetric encryption algorithm.
-     * @param key the private key
+     *
+     * @param key  the private key
      * @param skey the wrapped SecretKey
      * @return the unwrapped SecretKey
      */
@@ -83,15 +91,16 @@ public class Cryptography {
             Cipher cipher = Cipher.getInstance(CryptoConstants.asymm_alg);
             cipher.init(Cipher.UNWRAP_MODE, key);
             unwrapped_key = cipher.unwrap(skey, CryptoConstants.symm_alg, Cipher.SECRET_KEY);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        return (SecretKey)unwrapped_key;
+        return (SecretKey) unwrapped_key;
     }
 
     /**
      * Computes the message digest of the given data using the in CryptoConstants specified algorithm.
+     *
      * @param data the data
      * @return the digest of the data
      */
@@ -102,8 +111,7 @@ public class Cryptography {
         try {
             MessageDigest digest = MessageDigest.getInstance(CryptoConstants.digest_alg);
             hash = digest.digest(data);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
         }
 
         return hash;
@@ -113,6 +121,7 @@ public class Cryptography {
 
     /**
      * Randomly generates a keypair (public and private key) for the in CryptoConstants specified asymmetric algorithm.
+     *
      * @return the keypair
      */
     public static KeyPair gen_asymm_key() {
@@ -123,8 +132,7 @@ public class Cryptography {
             KeyPairGenerator generator = KeyPairGenerator.getInstance(CryptoConstants.asymm_alg);
             generator.initialize(CryptoConstants.asymm_keylength);
             keypair = generator.generateKeyPair();
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
         }
 
         return keypair;
@@ -132,6 +140,7 @@ public class Cryptography {
 
     /**
      * Randomly generates a key for the in CryptoConstants specified symmetric algorithm.
+     *
      * @return the key
      */
     public static SecretKey gen_symm_key() {
@@ -142,8 +151,7 @@ public class Cryptography {
             KeyGenerator generator = KeyGenerator.getInstance(CryptoConstants.symm_alg);
             generator.init(CryptoConstants.symm_keylength);
             key = generator.generateKey();
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
         }
 
         return key;
@@ -151,6 +159,7 @@ public class Cryptography {
 
     /**
      * Generates a new Initialization Vector for the in CryptoConstants specified symmetric algorithm.
+     *
      * @return the IV
      */
     public static IvParameterSpec gen_symm_IV() {
@@ -162,8 +171,7 @@ public class Cryptography {
             byte iv_bytes[] = new byte[16];//generate random 16 byte IV AES is always 16bytes
             random.nextBytes(iv_bytes);
             iv = new IvParameterSpec(iv_bytes);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
         }
 
         return iv;
@@ -181,10 +189,11 @@ public class Cryptography {
 
     /**
      * Generate a public key from the given bytes.
+     *
      * @param bytes the bytes represent the public key.
      * @return the public key from the given bytes
      */
-    public static PublicKey getPublicKeyFromBytes(byte[] bytes){
+    public static PublicKey getPublicKeyFromBytes(byte[] bytes) {
         PublicKey publicKey = null;
         try {
             publicKey = KeyFactory.getInstance(CryptoConstants.asymm_alg).generatePublic(new X509EncodedKeySpec(bytes));
@@ -195,11 +204,27 @@ public class Cryptography {
         return publicKey;
     }
 
+    /**
+     * Generate a public key from the given bytes.
+     *
+     * @param bytes the bytes represent the public key.
+     * @return the public key from the given bytes
+     */
+    public static PrivateKey getPrivateKeyFromBytes(byte[] bytes) {
+        PrivateKey privateKey = null;
+        try {
+            privateKey = KeyFactory.getInstance(CryptoConstants.asymm_alg).generatePrivate(new PKCS8EncodedKeySpec(bytes));
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return privateKey;
+    }
     /* for testing only! */
 
     /**
      * Only use for testing!
      * Fenerates a keypair from the given seed (public and private key) for the in CryptoConstants specified asymmetric algorithm.
+     *
      * @param seed the seed for the secure prng
      * @return the keypair
      */
@@ -211,14 +236,15 @@ public class Cryptography {
             KeyPairGenerator generator = KeyPairGenerator.getInstance(CryptoConstants.asymm_alg);
             generator.initialize(CryptoConstants.asymm_keylength, new SecureRandom(seed));
             keypair = generator.generateKeyPair();
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
         }
 
         return keypair;
     }
+
     /**
      * Generates a key from the given seed for the in CryptoConstants specified symmetric algorithm.
+     *
      * @param seed the seed for the secure prng
      * @return the key
      */
@@ -230,8 +256,7 @@ public class Cryptography {
             KeyGenerator generator = KeyGenerator.getInstance(CryptoConstants.symm_alg);
             generator.init(CryptoConstants.symm_keylength, new SecureRandom(seed));
             key = generator.generateKey();
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
         }
 
         return key;
