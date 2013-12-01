@@ -125,6 +125,25 @@ public class Envelope {
     }
 
     /**
+     * Returns the unwrapped key containd in the message header.
+     * @param key the private key to decrypt the header
+     * @return the SecretKey contained in the header
+     */
+    public SecretKey getUnwrappedKey(PrivateKey key) {
+        SecretKey skey = null;
+
+        try {
+            SecureMessage secureMessage = (SecureMessage)sign_sec_message.getObject();
+            skey = secureMessage.decryptHeader(key);
+        }
+        catch (IOException e) {}
+        catch (ClassNotFoundException e) {}
+        catch (ClassCastException e) {}
+
+        return skey;
+    }
+
+    /**
      * Returns the sender of the received message.
      * @return the sender of the message contained in this envelope
      */
