@@ -124,8 +124,10 @@ public class SQLiteManager {
             PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, user.getId());
             // In SQLite you set blob as bytes
-            pstmt.setBytes(2, user.getKeyPair().getPublic().getEncoded());
-            pstmt.setBytes(3, user.getSecretKey().getEncoded());
+            if(user.getPublicKey() != null)
+                pstmt.setBytes(2, user.getKeyPair().getPublic().getEncoded());
+            if(user.getSecretKey() != null)
+                pstmt.setBytes(3, user.getSecretKey().getEncoded());
             pstmt.executeUpdate();
         } catch (SQLException ex) {
             System.out.println("Unexpected exception: " + ex.toString());
@@ -145,7 +147,7 @@ public class SQLiteManager {
              Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql);
         ) {
-            while (!rs.next()) {
+            while (rs.next()) {
                 String id = rs.getString("id");
                 PublicKey publicKey = Cryptography.getPublicKeyFromBytes(rs.getBytes("public_key"));
                 SecretKey secretKey = Cryptography.getSecretKeyFromBytes(rs.getBytes("symmetric_key"));
@@ -164,5 +166,15 @@ public class SQLiteManager {
      */
     public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(url);
+    }
+
+    /**
+     * Remove the user with the given id from the database
+     * @param id the id of the user to remove
+     * @return if the operation was successful
+     */
+    public boolean removeUser(String id) {
+        executeQuery(String.format("DELETE FROM user WHERE id = '%s'",  id)); // TODO: check if there is SQL injection?!
+        return true;
     }
 }
