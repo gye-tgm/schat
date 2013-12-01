@@ -89,6 +89,14 @@ public class SQLiteManager {
     }
 
     /**
+     * Returns whether the user exists or not.
+     * @param id the given user id
+     * @return whether the user exists or not
+     */
+    public boolean userExists(String id){
+        return getUserFromGivenId(id) != null;
+    }
+    /**
      * Execute a simple query
      * @param sql the sql query
      */

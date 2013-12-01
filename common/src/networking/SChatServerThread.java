@@ -2,7 +2,10 @@ package networking;
 
 import crypto.Envelope;
 import data.Message;
+import data.SQLiteManager;
+import data.User;
 import data.contents.Login;
+import data.contents.Registration;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
@@ -19,10 +22,11 @@ import java.security.KeyPair;
 public class SChatServerThread extends Thread {
     private final SChatServer server;
     private Socket clientSocket;
-    private String client;
+    private User client;
     private SecretKey secretKey;
     private ObjectInputStream in;
     private ObjectOutputStream out;
+    private SQLiteManager dbmanager;
 
     /**
      * Create a server thread, which will be handle a single client connected
@@ -38,6 +42,7 @@ public class SChatServerThread extends Thread {
         this.in = new ObjectInputStream(clientSocket.getInputStream());
         this.out = new ObjectOutputStream(clientSocket.getOutputStream());
         this.client = null;
+        this.dbmanager = new SQLiteManager("server.db");
     }
 
     /**
@@ -48,7 +53,7 @@ public class SChatServerThread extends Thread {
      */
     public boolean handleLogin(Login login) {
         if (server.findUser(login.getId())) {
-            client = login.getId();
+            client = dbmanager.getUserFromGivenId(login.getId());
             return true;
         } else {
             return false;
@@ -77,9 +82,9 @@ public class SChatServerThread extends Thread {
                 Envelope envelope = (Envelope) in.readObject();
                 switch (envelope.getType()) {
                     case CHAT_MESSAGE:
-                        if(!isLoggedIn()){
+                        if (!isLoggedIn()) {
                             isRunning = false;
-                        }else{
+                        } else {
                             // Message<ChatContent> chatContentMessage = envelope.decryptMessage(skey, keypair.getPublic());
                             // chatContentMessage.getReceiver();
                             // chatContentMessage.getSender();
@@ -93,7 +98,9 @@ public class SChatServerThread extends Thread {
                             isRunning = false;
                         break;
                     case REGISTRATION:
-                        secretKey = envelope.getUnwrappedKey(keypair.getPrivate());
+                        if(!handleRegistration(envelope)){
+                            isRunning = false;
+                        }
                         break;
                 }
             } catch (IOException e) {
@@ -110,6 +117,28 @@ public class SChatServerThread extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        server.eraseUser(client);
+        server.eraseUser(client.getId());
+    }
+
+    /**
+     * Handle the registration of a user.
+     * The registration can fail if the given id already exists.
+     *
+     * @param envelope the envelope
+     * @return if the registration was successful or not
+     */
+    private boolean handleRegistration(Envelope envelope) {
+        this.secretKey = envelope.getUnwrappedKey(server.getKeyPair().getPrivate());
+        Registration registration = envelope.<Registration>decryptMessage(secretKey).getContent();
+        Login login = registration.getLogin();
+
+        if(dbmanager.userExists(login.getId())){
+            System.err.println("Registration failed because id already exists");
+            return false;
+        }
+
+        dbmanager.insertUser(new User(login.getId(), new KeyPair(registration.getPublicKey(), null), secretKey));
+        handleLogin(registration.getLogin());
+        return true;
     }
 }
