@@ -15,7 +15,9 @@ import java.security.*;
  */
 public class Envelope {
 
-    SignedObject sign_sec_message;
+    private SignedObject sign_sec_message;
+
+    private transient SecureMessage sec_message;
 
     /**
      * Generates a transmittable Envelope containing a secure signed and sealed Object.
@@ -53,6 +55,45 @@ public class Envelope {
     }
 
     /**
+     * Decrypts the message contained in this envelope and returns the plain message of the specified type. Warning: does not verify the signature!
+     * @param key the symmetric key for content decryption
+     * @param <C> the requested return type
+     * @return the plain message of the requested type;
+     */
+    public <C extends Content> Message<C> decryptMessage(SecretKey key) {
+        Message<C> message = null;
+
+        try {
+            SecureMessage verifiedMessage = (SecureMessage)sign_sec_message.getObject();
+            message = verifiedMessage.<C>decrypt(key);
+        }
+        catch(InvalidKeyException e) {}
+        catch(SignatureException e) {}
+        catch(ClassNotFoundException e) {}
+        catch(IOException e) {}
+        catch(Exception e) {}
+
+        return message;
+    }
+
+    /**
+     * Verifies the signature of the contained message.
+     * @param verificationKey the public key to verfiy the message with
+     * @return true if verified; false otherwise
+     */
+    public boolean verify(PublicKey verificationKey) {
+        boolean verified = false;
+
+        try {
+            verified = sign_sec_message.verify(verificationKey, Cryptography.getSignature());
+        }
+        catch (InvalidKeyException e) {}
+        catch (SignatureException e) {}
+
+        return verified;
+    }
+
+    /**
      * Decrypts the message contained in this envelope and returns the plain message of the specified type.
      * @param key the symmetric key for content decryption
      * @param verificationKey the public key of the sender to verify the signature
@@ -66,35 +107,6 @@ public class Envelope {
             if(sign_sec_message.verify(verificationKey, Cryptography.getSignature())) {
                 SecureMessage verifiedMessage = (SecureMessage)sign_sec_message.getObject();
                 message = verifiedMessage.<C>decrypt(key);
-            }
-        }
-        catch(InvalidKeyException e) {}
-        catch(SignatureException e) {}
-        catch(ClassNotFoundException e) {}
-        catch(IOException e) {}
-        catch(Exception e) {}
-
-        return message;
-    }
-
-    /**
-     * Decrypts the message contained in this envelope and returns the plain message of the specified type.
-     * @param key the private key to unwrap the wrappedSecretKey
-     * @param verificationKey the public key of the sender to verify the signature
-     * @param <C> the requested return type
-     * @return the plain message of the requested type; null if the signature did not verify or if the message did not contain a header
-     */
-    public <C extends Content> Message<C> decryptMessage(PrivateKey key, PublicKey verificationKey) {
-        Message<C> message = null;
-
-        try {
-            if(sign_sec_message.verify(verificationKey, Cryptography.getSignature())) {
-                SecureMessage verifiedMessage = (SecureMessage)sign_sec_message.getObject();
-
-                if(verifiedMessage.containsHeader()) {
-                    SecretKey skey = verifiedMessage.decryptHeader(key);
-                    message = verifiedMessage.<C>decrypt(skey);
-                }
             }
         }
         catch(InvalidKeyException e) {}
