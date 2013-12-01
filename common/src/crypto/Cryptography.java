@@ -179,8 +179,13 @@ public class Cryptography {
         return key;
     }
 
+    /**
+     * Generate a public key from the given bytes.
+     * @param bytes the bytes represent the public key.
+     * @return the public key from the given bytes
+     */
     public static PublicKey getPublicKeyFromBytes(byte[] bytes){
-        PublicKey  publicKey = null;
+        PublicKey publicKey = null;
         try {
             publicKey = KeyFactory.getInstance(CryptoConstants.asymm_alg).generatePublic(new X509EncodedKeySpec(bytes));
         } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {

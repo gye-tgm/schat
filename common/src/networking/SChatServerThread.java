@@ -20,6 +20,7 @@ public class SChatServerThread extends Thread {
     private final SChatServer server;
     private Socket clientSocket;
     private String client;
+    private SecretKey secretKey;
     private ObjectInputStream in;
     private ObjectOutputStream out;
 
@@ -68,7 +69,6 @@ public class SChatServerThread extends Thread {
      */
     public void run() {
         // Load the symmetric key and the key pair from the database
-        SecretKey skey = server.getSkey();
         KeyPair keypair = server.getKeyPair();
 
         boolean isRunning = true;
@@ -87,9 +87,13 @@ public class SChatServerThread extends Thread {
                         }
                         break;
                     case LOGIN:
-                        Message<Login> loginMessage = envelope.decryptMessage(skey, keypair.getPublic());
+                        // envelope.de
+                        Message<Login> loginMessage = envelope.<Login>decryptMessage(secretKey, keypair.getPublic());
                         if (!handleLogin(loginMessage.getContent()))
                             isRunning = false;
+                        break;
+                    case REGISTRATION:
+                        secretKey = envelope.getUnwrappedKey(keypair.getPrivate());
                         break;
                 }
             } catch (IOException e) {

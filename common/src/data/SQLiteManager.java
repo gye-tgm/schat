@@ -3,10 +3,15 @@ package data;
 import crypto.CryptoConstants;
 import crypto.Cryptography;
 
-import java.io.Writer;
+import javax.crypto.SecretKey;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.security.KeyPair;
 import java.security.PublicKey;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
 
 /**
  * @author Gary Ye
@@ -26,56 +31,93 @@ public class SQLiteManager {
         this.url = "jdbc:sqlite:" + db;
     }
 
-    public PublicKey getPublicKeyFromId(String receiverId) {
-        String query = "SELECT public_key FROM user";
-        Connection connection = null;
-        Statement statement = null;
-        ResultSet rs = null;
-        System.out.println(CryptoConstants.asymm_keylength / 8);
-        byte[] publicKeyBytes = new byte[CryptoConstants.asymm_keylength / 8];
+    /**
+     * Calls the create script
+     */
+    public void createTables(String createScriptFile) {
+        try (
+                Connection connection = DriverManager.getConnection(url);
+                Statement statement = connection.createStatement();
+        ){
+            String sqlScript;
+            try {
+                sqlScript = new Scanner(new File(createScriptFile)).useDelimiter("\\A").next();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return;
+            }
 
-        System.out.println(publicKeyBytes.length);
-
-        for(int i = 0; i < publicKeyBytes.length; i++)
-            publicKeyBytes[i] = (byte)0;
-
-        try {
-            connection = DriverManager.getConnection(url);
-            statement = connection.createStatement();
-            rs = statement.executeQuery(query);
-            while (rs.next()) {
-                publicKeyBytes = rs.getBlob("public_key").getBytes(0, CryptoConstants.asymm_keylength / 8);
+            String[] sqlQueries = sqlScript.split(";");
+            for (String query : sqlQueries) {
+                statement.executeUpdate(query);
             }
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (statement != null) statement.close();
-                if (connection != null) connection.close();
-            } catch (SQLException ignored) {
-            }
+            e.printStackTrace();
         }
-
-        return Cryptography.getPublicKeyFromBytes(publicKeyBytes);
     }
 
-    public void insertUser(User user){
+    /**
+     * Return the user from the given id
+     * @return null if the user was not found or otherwise the data of the user
+     */
+    public User getUserFromGivenId(String id) {
+        String query = "SELECT id, public_key, symmetric_key FROM user WHERE id = \'" + id + "\'";
+        PublicKey publicKey = null;
+        SecretKey secretKey = null;
+        try (
+                Connection connection = DriverManager.getConnection(url);
+                Statement statement = connection.createStatement();
+                ResultSet rs = statement.executeQuery(query)
+        ) {
+            if(!rs.next())
+                return null;
+            publicKey = Cryptography.getPublicKeyFromBytes(rs.getBytes("public_key"));
+            secretKey = Cryptography.getSecretKeyFromBytes(rs.getBytes("symmetric_key")); // sprint(publicKeyBytes);
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+        return new User(id, new KeyPair(publicKey, null), secretKey);
+    }
+
+    /**
+     * Returns the public of the given user
+     * @param id the given id
+     * @return the public key of the given user
+     */
+    public PublicKey getPublicKeyFromId(String id) {
+        return getUserFromGivenId(id).getKeyPair().getPublic();
+    }
+
+    /**
+     * Execute a simple query
+     * @param sql the sql query
+     */
+    public void executeQuery(String sql) {
+        try (Connection connection = getConnection();
+             Statement stmt = connection.createStatement();
+        ) {
+            stmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * This method will insert the given user to the database.
+     * Every attribute of the user will be inserted into.
+     *
+     * @param user the user
+     */
+    public void insertUser(User user) {
         String sql = "INSERT INTO user VALUES(?,?,?) ";
         try (Connection connection = DriverManager.getConnection(url);
-             PreparedStatement pstmt = connection.prepareStatement(sql);
-            ){
-            Blob publicKeyBlob, symmetricKeyBlob;
+        ) {
+            PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, user.getId());
-
-            publicKeyBlob = connection.createBlob();
-            publicKeyBlob.setBytes(0, user.getKeyPair().getPublic().getEncoded());
-            pstmt.setBlob(2, publicKeyBlob);
-
-            symmetricKeyBlob = connection.createBlob();
-            symmetricKeyBlob.setBytes(0, user.getSecretKey().getEncoded());
-            pstmt.setBlob(3, symmetricKeyBlob);
-
+            // In SQLite you set blob as bytes
+            pstmt.setBytes(2, user.getKeyPair().getPublic().getEncoded());
+            pstmt.setBytes(3, user.getSecretKey().getEncoded());
             pstmt.executeUpdate();
         } catch (SQLException ex) {
             System.out.println("Unexpected exception: " + ex.toString());
@@ -83,10 +125,36 @@ public class SQLiteManager {
     }
 
     /**
-     * Load the names of all users
-     * @return the name of all users
+     * Load all users from the database and
+     * return a list of them in the lexicographical order.
+     *
+     * @return all users in the lexicographical order
      */
-    public ArrayList<String> loadUsers(){
-        return null;
+    public ArrayList<User> loadUsers() {
+        String sql = "SELECT id, public_key, symmetric_key FROM user ORDER BY id ASC";
+        ArrayList<User> list = new ArrayList<>();
+        try (Connection connection = getConnection();
+             Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql);
+        ) {
+            while (!rs.next()) {
+                String id = rs.getString("id");
+                PublicKey publicKey = Cryptography.getPublicKeyFromBytes(rs.getBytes("public_key"));
+                SecretKey secretKey = Cryptography.getSecretKeyFromBytes(rs.getBytes("symmetric_key"));
+                list.add(new User(id, new KeyPair(publicKey, null), secretKey));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    /**
+     * Get a connection from the driver manager
+     * @return a connection
+     * @throws SQLException
+     */
+    public Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(url);
     }
 }

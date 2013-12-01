@@ -1,5 +1,3 @@
-package test;
-
 import networking.SChatServer;
 
 /**
@@ -8,12 +6,12 @@ import networking.SChatServer;
  * @author Gary Ye
  * @version 2013/11/29
  */
-public class SChatServerTest {
+public class ServerMain {
     public static void main(String[] args) {
         try {
             new SChatServer(Integer.parseInt(args[0]));
         } catch (Exception e) {
-            System.err.println("usage: java test.SChatServerTest <port>");
+            System.err.println("usage: java ServerMain <port>");
         }
     }
 }
