@@ -1,6 +1,8 @@
 package networking;
 
 import crypto.Cryptography;
+import data.KeyPairManager;
+import data.SQLiteManager;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
@@ -25,7 +27,6 @@ public class SChatServer {
     private final static Logger LOGGER = Logger.getLogger(SChatServer.class.getName());
     // the online list
     private HashMap<String, ObjectOutputStream> clients;
-    private SecretKey skey;
     private KeyPair keyPair;
 
     /**
@@ -36,14 +37,15 @@ public class SChatServer {
     public SChatServer(int portNumber) {
         LOGGER.setLevel(Level.INFO);
         LOGGER.info("Server has started...");
-        clients = new HashMap<>();
 
-        byte[] seed = new byte[2];
-        seed[0] = 100;
-        seed[1] = 101;
-        // Should actually be loaded and not be generated
-        skey = Cryptography.gen_symm_key(seed);
-        keyPair = Cryptography.gen_asymm_key(seed);
+        keyPair = KeyPairManager.readKeyPair("public.key", "private.key");
+        LOGGER.info("Key pair loaded!");
+
+        new SQLiteManager("server.db").createTables("clientdb.sql");
+        LOGGER.info("Database created");
+
+        clients = new HashMap<>();
+        LOGGER.info("User online list initialized");
 
         boolean isListening = true;
         try {
@@ -83,7 +85,8 @@ public class SChatServer {
      * Get the ObjectOutputStream of the given user id
      *
      * @param id the user id
-     * @return the connected ObjectOutputStream of the given user
+     * @return the connected ObjectOutputStream of the given user or null if the user is not connected
+     * to the server
      */
     public ObjectOutputStream getObjectOutputStreamById(String id) {
         return clients.get(id);
@@ -98,14 +101,6 @@ public class SChatServer {
         return true;
     }
 
-    /**
-     * Return the symmetric key
-     *
-     * @return the symmetric key
-     */
-    public SecretKey getSkey() {
-        return skey;
-    }
 
     /**
      * Return the asymmetric key

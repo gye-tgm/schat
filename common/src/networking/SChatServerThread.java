@@ -54,6 +54,7 @@ public class SChatServerThread extends Thread {
     public boolean handleLogin(Login login) {
         if (server.findUser(login.getId())) {
             client = dbmanager.getUserFromGivenId(login.getId());
+            server.addUser(client.getId(), out);
             return true;
         } else {
             return false;
@@ -73,9 +74,6 @@ public class SChatServerThread extends Thread {
      * Run the main logic of this server
      */
     public void run() {
-        // Load the symmetric key and the key pair from the database
-        KeyPair keypair = server.getKeyPair();
-
         boolean isRunning = true;
         while (isRunning) {
             try {
@@ -85,20 +83,17 @@ public class SChatServerThread extends Thread {
                         if (!isLoggedIn()) {
                             isRunning = false;
                         } else {
-                            // Message<ChatContent> chatContentMessage = envelope.decryptMessage(skey, keypair.getPublic());
-                            // chatContentMessage.getReceiver();
-                            // chatContentMessage.getSender();
-                            // envelope.decryptMessage()
+                            handleRedirecting(envelope);
                         }
                         break;
                     case LOGIN:
                         // envelope.de
-                        Message<Login> loginMessage = envelope.<Login>decryptMessage(secretKey, keypair.getPublic());
+                        Message<Login> loginMessage = envelope.<Login>decryptMessage(secretKey, server.getKeyPair().getPublic());
                         if (!handleLogin(loginMessage.getContent()))
                             isRunning = false;
                         break;
                     case REGISTRATION:
-                        if(!handleRegistration(envelope)){
+                        if (!handleRegistration(envelope)) {
                             isRunning = false;
                         }
                         break;
@@ -120,6 +115,25 @@ public class SChatServerThread extends Thread {
         server.eraseUser(client.getId());
     }
 
+    private void handleRedirecting(Envelope envelope) {
+        redirectMessage(envelope);
+    }
+
+    public void redirectMessage(Envelope envelope) {
+        String receiver = envelope.getReceiver();
+        ObjectOutputStream out = server.getObjectOutputStreamById(receiver);
+        if (out == null) { // offline, store it to the database
+
+        } else { // user is online
+            try{
+                out.writeObject(envelope);
+                out.flush();
+            }catch (IOException e){
+                System.err.println(e.getMessage());
+            }
+        }
+    }
+
     /**
      * Handle the registration of a user.
      * The registration can fail if the given id already exists.
@@ -132,12 +146,13 @@ public class SChatServerThread extends Thread {
         Registration registration = envelope.<Registration>decryptMessage(secretKey).getContent();
         Login login = registration.getLogin();
 
-        if(dbmanager.userExists(login.getId())){
+        if (dbmanager.userExists(login.getId())) {
             System.err.println("Registration failed because id already exists");
             return false;
         }
 
         dbmanager.insertUser(new User(login.getId(), new KeyPair(registration.getPublicKey(), null), secretKey));
+        System.out.println("New user " + login.getId() + " registered!");
         handleLogin(registration.getLogin());
         return true;
     }

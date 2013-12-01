@@ -18,6 +18,7 @@ public class Registration extends Content {
      * @param publicKey the public key of the user
      */
     public Registration(Login login, PublicKey publicKey) {
+        this.type = Type.REGISTRATION;
         this.login = login;
         this.publicKey = publicKey;
     }

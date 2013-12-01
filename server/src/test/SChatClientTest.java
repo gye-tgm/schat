@@ -2,6 +2,7 @@ package test;
 
 import crypto.CryptoConstants;
 import crypto.Cryptography;
+import data.KeyPairManager;
 import data.SQLiteManager;
 import data.User;
 import data.contents.ChatContent;
@@ -11,6 +12,7 @@ import networking.SChatServer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.KeyPair;
 
 /**
  * Tests the SChatClient implementation.
@@ -25,16 +27,19 @@ public class SChatClientTest {
         return new User(username, Cryptography.gen_asymm_key(seed), Cryptography.gen_symm_key(seed));
     }
     public static User getServerUser(){
-        byte[] seed = new byte[2];
-        seed[0] = 100;
-        seed[1] = 101;
-
-        return new User(SChatServer.SERVER_ID, Cryptography.gen_asymm_key(seed), Cryptography.gen_symm_key(seed));
+        return new User(SChatServer.SERVER_ID, KeyPairManager.readKeyPair("public.key", "private.key"),
+                Cryptography.gen_symm_key());
     }
-
+    public static void init(String username){
+        SQLiteManager sqLiteManager = new SQLiteManager("client.db");
+        sqLiteManager.createTables("clientdb.sql");
+        sqLiteManager.insertUser(getMyUser(username));
+        sqLiteManager.insertUser(getServerUser());
+    }
     public static void main(String[] args) {
         // System.err.println("usage: java test.SChatClientTest <id> (<host name> <port>)");
         String username = args[0];
+        init(username);
         String hostName = SChatServer.SERVER_NAME;
         int portNumber = SChatServer.PORT_ADDRESS;
         User me = getMyUser(username);
@@ -47,6 +52,7 @@ public class SChatClientTest {
         SChatClient client = null;
         try {
             client = new SChatClient(hostName, portNumber, me);
+            client.registerToServer();
         } catch (IOException e) {
             System.err.println("Could not connect to the server successfully.");
             e.printStackTrace();

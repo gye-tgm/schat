@@ -196,7 +196,8 @@ public class Cryptography {
     public static PublicKey getPublicKeyFromBytes(byte[] bytes) {
         PublicKey publicKey = null;
         try {
-            publicKey = KeyFactory.getInstance(CryptoConstants.asymm_alg).generatePublic(new X509EncodedKeySpec(bytes));
+            if(bytes != null)
+                publicKey = KeyFactory.getInstance(CryptoConstants.asymm_alg).generatePublic(new X509EncodedKeySpec(bytes));
         } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -213,7 +214,8 @@ public class Cryptography {
     public static PrivateKey getPrivateKeyFromBytes(byte[] bytes) {
         PrivateKey privateKey = null;
         try {
-            privateKey = KeyFactory.getInstance(CryptoConstants.asymm_alg).generatePrivate(new PKCS8EncodedKeySpec(bytes));
+            if(bytes != null)
+                privateKey = KeyFactory.getInstance(CryptoConstants.asymm_alg).generatePrivate(new PKCS8EncodedKeySpec(bytes));
         } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }

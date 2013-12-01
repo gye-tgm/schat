@@ -4,6 +4,7 @@ import crypto.Envelope;
 import data.*;
 import data.contents.ChatContent;
 import data.contents.Login;
+import data.contents.Registration;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -48,7 +49,6 @@ public class SChatClient extends Thread {
         this.listener = new SChatClientListener(socket, client);
         this.sender = new SChatClientWriter(socket);
         listener.start();
-        loginToServer();
     }
 
     /**
@@ -71,7 +71,16 @@ public class SChatClient extends Thread {
                 new Login(client.getId()));
         sender.send(encrypt(loginMessage));
     }
-
+    public void registerToServer() throws IOException{
+        Message<Registration> registrationMessage =
+        new Message<Registration>(
+                Calendar.getInstance().getTime(),
+                client.getId(),
+                SChatServer.SERVER_ID,
+                new Registration(new Login(client.getId()), client.getKeyPair().getPublic())
+        );
+        sender.send(encrypt(registrationMessage));
+    }
     /**
      * Envelope a message
      * @param message the message
@@ -81,7 +90,6 @@ public class SChatClient extends Thread {
         String receiverId = message.getReceiver();
         SQLiteManager sqLiteManager = new SQLiteManager("client.db");
         PublicKey receiverPublicKey = sqLiteManager.getPublicKeyFromId(receiverId);
-        return new Envelope(message, client.getSecretKey(), receiverPublicKey,
-                client.getKeyPair().getPrivate());
+        return new Envelope(message, client.getSecretKey(), receiverPublicKey, client.getKeyPair().getPrivate());
     }
 }
