@@ -116,16 +116,4 @@ public class SChatServer {
         return keyPair;
     }
 
-    /**
-     * Usage:
-     * java networking.SChatServer <port number>
-     * @param args
-     */
-    public static void main(String[] args) {
-        try {
-            new SChatServer(Integer.parseInt(args[0]));
-        } catch (Exception e) {
-            System.err.println("usage: java networking.SChatServer <port>");
-        }
-    }
 }
