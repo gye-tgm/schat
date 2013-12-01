@@ -7,6 +7,6 @@ This application has no backdoor since you can read the source code.
 
 Requirements
 ----------
-* Android 4.2
+* Android 4.1.2
 * Strong need of security
 
