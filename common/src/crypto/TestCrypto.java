@@ -26,7 +26,9 @@ public class TestCrypto {
 
         Message<ChatContent> message = new Message<>(Calendar.getInstance().getTime(), "Alice", "Bob", new ChatContent(text));
         Envelope secure_message = new Envelope(message, skey, keypair2.getPublic(), keypair1.getPrivate());
-        System.out.println(secure_message.<ChatContent>decryptMessage(keypair2.getPrivate(), keypair1.getPublic()));
+
+        SecretKey sharedSecretKey = secure_message.getUnwrappedKey(keypair2.getPrivate());
+        System.out.println(secure_message.<ChatContent>decryptMessage(sharedSecretKey, keypair1.getPublic()));
     }
 
 }

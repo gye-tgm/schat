@@ -2,6 +2,7 @@ package crypto;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
@@ -166,6 +167,16 @@ public class Cryptography {
         }
 
         return iv;
+    }
+
+    /* create key-Objects from byte[]s */
+
+    public static SecretKey getSecretKeyFromBytes(byte[] bytes) {
+        SecretKey key = null;
+
+        key = new SecretKeySpec(bytes, CryptoConstants.symm_alg);
+
+        return key;
     }
 
     public static PublicKey getPublicKeyFromBytes(byte[] bytes){

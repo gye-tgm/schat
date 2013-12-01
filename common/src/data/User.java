@@ -46,7 +46,7 @@ public class User implements Serializable {
      */
     public void receiveMessage(Envelope secure_message){
         PublicKey senderPublicKey = null; // Load from database
-        System.out.println(secure_message.<ChatContent>decryptMessage(keyPair.getPrivate(), senderPublicKey));
+        System.out.println(secure_message.<ChatContent>decryptMessage(secure_message.getUnwrappedKey(keyPair.getPrivate()), senderPublicKey));
     }
 
     /**
