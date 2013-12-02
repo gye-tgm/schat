@@ -98,7 +98,7 @@ public class Activity_Chat extends Activity {
     }
 
     /**
-     * Deletes the given Message.
+     * Deletes the Message at given index.
      *
      * @param index the index of the message in the list
      */
@@ -175,8 +175,10 @@ public class Activity_Chat extends Activity {
      * @param index index of the message to be copied
      */
     public void copyText(int index) {
-        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        /*ClipData clip = ClipData.newPlainText("S/Chat", messages.get(index).getContent().getMessage());
+        /*android.content.ClipboardManager clipboard =  (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("S/Chat", messages.get(index).getContent().getMessage());
         clipboard.setPrimaryClip(clip);*/
+        ClipboardManager clipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+        clipboard.setText(messages.get(index).getContent().getMessage());
     }
 }
