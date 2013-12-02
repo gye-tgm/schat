@@ -1,8 +1,8 @@
 package com.activities;
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.os.Bundle;
-import android.text.ClipboardManager;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,9 +22,9 @@ import java.util.Random;
 
 /**
  * Created with IntelliJ IDEA.
- * User: Wolfram
- * Date: 14.10.13
- * Time: 13:04
+ *
+ * @author Wolfram Soyka
+ * @version 14.10.13: 0.2
  */
 public class Activity_Chat extends Activity {
     private ListView messageList;
@@ -175,10 +175,9 @@ public class Activity_Chat extends Activity {
      * @param index index of the message to be copied
      */
     public void copyText(int index) {
-        /*android.content.ClipboardManager clipboard =  (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        android.content.ClipboardManager clipboard =  (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("S/Chat", messages.get(index).getContent().getMessage());
-        clipboard.setPrimaryClip(clip);*/
-        ClipboardManager clipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
-        clipboard.setText(messages.get(index).getContent().getMessage());
+        clipboard.setPrimaryClip(clip);
+        clipboard.setPrimaryClip(clip);
     }
 }
