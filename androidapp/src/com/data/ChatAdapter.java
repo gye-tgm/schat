@@ -13,17 +13,17 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import com.activities.R;
-import data.ChatMessage;
-import data.User;
+import data.Message;
+import data.contents.ChatContent;
 
 import java.util.ArrayList;
 
-public class ChatAdapter extends ArrayAdapter<ChatMessage> {
+public class ChatAdapter extends ArrayAdapter<Message<ChatContent>> {
     private final Context context;
-    private final ArrayList<ChatMessage> messages;
-    private final User you;
+    private final ArrayList<Message<ChatContent>> messages;
+    private final String you;
 
-    public ChatAdapter(Context context, ArrayList<ChatMessage> msg, User you) {
+    public ChatAdapter(Context context, ArrayList<Message<ChatContent>> msg, String you) {
         super(context, R.layout.layout_chathistory_list_you, msg);
         this.context = context;
         this.you = you;
@@ -32,19 +32,19 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ChatMessage currentMessage = messages.get(position);
+        Message<ChatContent> currentMessage = messages.get(position);
         //LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView;
-        //Contains q should be removed as soon as testing is complete
-        if (currentMessage.getSender().equals(you) && !(currentMessage.getMessage().contains("q"))) {
+        //TODO remove Contains q soon as testing is complete
+        if (currentMessage.getSender().equals(you) && !(currentMessage.getContent().getMessage().contains("q"))) {
             rowView = LayoutInflater.from(context).inflate(R.layout.layout_chathistory_list_you, parent, false);
         } else {
             rowView = LayoutInflater.from(context).inflate(R.layout.layout_chathistory_list_notyou, parent, false);
         }
         TextView msg = (TextView) rowView.findViewById(R.id.msg);
         TextView time = (TextView) rowView.findViewById(R.id.timestamp);
-        msg.setText(currentMessage.getMessage());
-        time.setText(currentMessage.getTimestamp());
+        msg.setText(currentMessage.getContent().getMessage());
+        time.setText(currentMessage.getTimestampString());
         return rowView;
     }
 }
