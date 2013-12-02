@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item android:id="@+id/option_addContact"
-          android:title="Add Contact"/>
-    />
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+		>
+<item
+		android:id="@+id/action_addContact"
+		android:title="@string/add"
+		android:icon="@drawable/ic_action_add_person"
+		android:showAsAction="always" />
 </menu>

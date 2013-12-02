@@ -2,7 +2,6 @@ package com.activities;
 
 import android.app.Activity;
 import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
@@ -13,21 +12,23 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.data.ChatAdapter;
-import data.ChatMessage;
+import data.Message;
 import data.User;
+import data.contents.ChatContent;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Random;
 
 /**
  * Created with IntelliJ IDEA.
- * User: Wolfram
- * Date: 14.10.13
- * Time: 13:04
+ *
+ * @author Wolfram Soyka
+ * @version 14.10.13: 0.2
  */
 public class Activity_Chat extends Activity {
     private ListView messageList;
-    private ArrayList<ChatMessage> messages; // the stored messages and timestamps
+    private ArrayList<Message<ChatContent>> messages; // the stored messages and timestamps
     private ChatAdapter messagesAdapter; // to automatically update the ListView with onDataSetChanged
     private User you, notyou;
     private ImageButton button_send;
@@ -39,11 +40,14 @@ public class Activity_Chat extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_chat);
+
         //Get Users
         you = new User("Wolfram"); //Get from.. shared pref?
         notyou = (User) getIntent().getSerializableExtra("notyou");
+
         //Set title
         setTitle(getString(R.string.chat_with) + " " + notyou.getName());
+
         //Getting Resources
         buttonOnly = false; //Get from res, make editable in settings
         button_send = (ImageButton) findViewById(R.id.send);
@@ -51,11 +55,13 @@ public class Activity_Chat extends Activity {
         send_fail = AnimationUtils.loadAnimation(this, R.anim.send_fail);
         send_all_fail = AnimationUtils.loadAnimation(this, R.anim.send_all_fail);
         lin = (LinearLayout) findViewById(R.id.layout_chat_linlay);
+
         //Setting up List and Adapter
         messageList = (ListView) findViewById(R.id.view_chat);
         messages = new ArrayList<>();
-        messagesAdapter = new ChatAdapter(this, messages, you);
+        messagesAdapter = new ChatAdapter(this, messages, you.getName());
         messageList.setAdapter(messagesAdapter); // set the data of the list
+
         //Hide keyboard when scrolling
         messageList.setOnScrollListener(new AbsListView.OnScrollListener() {
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -66,7 +72,10 @@ public class Activity_Chat extends Activity {
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
             }
         });
-        registerForContextMenu(messageList); // register all list items for the context menu
+
+        //Context menu
+        registerForContextMenu(messageList);
+
         //Load Previous Messages
         loadMessages();
     }
@@ -89,7 +98,7 @@ public class Activity_Chat extends Activity {
     }
 
     /**
-     * Deletes the given Message.
+     * Deletes the Message at given index.
      *
      * @param index the index of the message in the list
      */
@@ -111,7 +120,7 @@ public class Activity_Chat extends Activity {
             int size = (int) (Math.random() * 100 + 1);
             for (int i = 0; i < size; i++)
                 print += (alphabet.charAt(r.nextInt(alphabet.length())));
-            testSendMessage(new ChatMessage(you, notyou, print));
+            sendMessage(print);
         }
     }
 
@@ -155,19 +164,7 @@ public class Activity_Chat extends Activity {
      * @param text New Messages Text
      */
     public void sendMessage(String text) {
-        messages.add(new ChatMessage(you, notyou, text));
-        messagesAdapter.notifyDataSetChanged();
-        messageList.setSelection(messagesAdapter.getCount() - 1);
-    }
-
-    /**
-     * Used for Testing only, user has no access to this
-     * Sends a message with predefined ChatMessage
-     *
-     * @param newChatMessage the ChatMessage to be sent
-     */
-    public void testSendMessage(ChatMessage newChatMessage) {
-        messages.add(newChatMessage);
+        messages.add(new Message<ChatContent>(Calendar.getInstance().getTime(), you.getName(), notyou.getName(), new ChatContent(text)));
         messagesAdapter.notifyDataSetChanged();
         messageList.setSelection(messagesAdapter.getCount() - 1);
     }
@@ -178,8 +175,9 @@ public class Activity_Chat extends Activity {
      * @param index index of the message to be copied
      */
     public void copyText(int index) {
-        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("S/Chat", messages.get(index).getMessage());
+        android.content.ClipboardManager clipboard =  (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("S/Chat", messages.get(index).getContent().getMessage());
+        clipboard.setPrimaryClip(clip);
         clipboard.setPrimaryClip(clip);
     }
 }

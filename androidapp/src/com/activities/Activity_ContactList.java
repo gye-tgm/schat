@@ -1,26 +1,25 @@
 package com.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.*;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.*;
 import com.security.PRNGFixes;
 import data.User;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /* todo: add options menu handling */
 
 /**
  * The main activity of the S/Chat-Application. It displays and manages the list of all available contacts.
  *
- * @author Elias Frantar (0.1)
- * @version 12.10.2013: 0.1
+ * @author Wolfram Soyka (0.2)
+ * @version 2.12.2013: 0.2
  */
 public class Activity_ContactList extends Activity {
     private ListView contactList; // the GUI element
@@ -90,7 +89,28 @@ public class Activity_ContactList extends Activity {
     }
 
     /**
-     * Deletes the given contact.
+     * Creates the OptionsMenu of this Activity
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_contactlist, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.action_addContact:
+            add();
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /**
+     * Deletes the contact at given index.
      *
      * @param contactIndex the index of the contact in the list
      */
@@ -103,6 +123,38 @@ public class Activity_ContactList extends Activity {
     }
 
     /**
+     * Adds a contact to the List
+     */
+    public void add(){
+        final EditText txt = new EditText(this);
+        new AlertDialog.Builder(this)
+                .setTitle("Add Contact")
+                .setView(txt)
+                .setPositiveButton("Add",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                @SuppressWarnings("unchecked")
+                                String newUser = txt.getText().toString();
+                                if (!newUser.equals("")) {
+                                    contactsAdapter.add(newUser);
+                                    // Refreshes the content
+                                    contactsAdapter.notifyDataSetChanged();
+                                    // Shows toast
+                                    Toast.makeText(context, "Added "+newUser +" to contacts.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                // Do nothing. (Closes Dialog)
+                            }
+                        }).show();
+    }
+
+    /**
      * Loads all saved contacts into the contact-menu-list.
      */
     private void loadContacts() {
@@ -110,23 +162,13 @@ public class Activity_ContactList extends Activity {
         /* todo: replace test loading with actual contacts from User-objects */
         /* todo: maybe add the custom views (to display additional information, like: new Message, date of last conversation, ...) */
 
-        String[] users = new String[20];
+        /*String[] users = new String[20];
         for (int i = 0; i < users.length; i++)
             users[i] = "User" + i;
 
         contacts.addAll(Arrays.asList(users));
         contactsAdapter.notifyDataSetChanged();
-    }
-
-    /**
-     * Creates the OptionsMenu of this Activity
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_contactlist, menu);
-        return super.onCreateOptionsMenu(menu);
+        */
     }
 
     /**
