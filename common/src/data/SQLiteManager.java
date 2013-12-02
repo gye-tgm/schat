@@ -17,7 +17,7 @@ import java.util.Scanner;
  *          This class can interact with an SQLite database and it offers
  *          the needed methods to retrieve or update data.
  */
-public class SQLiteManager {
+public class SQLiteManager implements DatabaseManager {
     private String url; // the connection url, needed to specify the database to connect to.
 
     /**
