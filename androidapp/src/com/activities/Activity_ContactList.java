@@ -18,8 +18,8 @@ import java.util.ArrayList;
 /**
  * The main activity of the S/Chat-Application. It displays and manages the list of all available contacts.
  *
- * @author Elias Frantar (0.1)
- * @version 12.10.2013: 0.1
+ * @author Wolfram Soyka (0.2)
+ * @version 2.12.2013: 0.2
  */
 public class Activity_ContactList extends Activity {
     private ListView contactList; // the GUI element
@@ -93,16 +93,15 @@ public class Activity_ContactList extends Activity {
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_contactlist, menu);
-        return super.onCreateOptionsMenu(menu);
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_contactlist, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
-            case R.id.option_addContact:
+            case R.id.action_addContact:
             add();
             return true;
         default:
@@ -111,7 +110,7 @@ public class Activity_ContactList extends Activity {
     }
 
     /**
-     * Deletes the given contact.
+     * Deletes the contact at given index.
      *
      * @param contactIndex the index of the contact in the list
      */
@@ -123,6 +122,9 @@ public class Activity_ContactList extends Activity {
         contactsAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Adds a contact to the List
+     */
     public void add(){
         final EditText txt = new EditText(this);
         new AlertDialog.Builder(this)
@@ -168,8 +170,6 @@ public class Activity_ContactList extends Activity {
         contactsAdapter.notifyDataSetChanged();
         */
     }
-
-
 
     /**
      * Creates the ContextMenu of an individual List item
