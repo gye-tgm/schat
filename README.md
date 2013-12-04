@@ -1,12 +1,12 @@
 S/Chat
 =====
 
-This android app allows user to chat securely all over the world.
-It uses strong and various encryption algorithm to ensure your security.
-This application has no backdoor since you can read the source code.
+This android application allows user to chat securely all over the world
+using various strong encryption algorithms to ensure security.
+This application has no backdoor as you can see in the source code.
 
 Requirements
 ----------
-* Android 4.1.2
-* Strong need of security
+* Android phone using ICS or above
+
 
