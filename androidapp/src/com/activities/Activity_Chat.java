@@ -47,13 +47,6 @@ public class Activity_Chat extends Activity {
         you = new User("Wolfram"); //Get from.. shared pref?
         notyou = (User) getIntent().getSerializableExtra("notyou");
 
-        try {
-            SChatClient client = new SChatClient(you, "85.10.240.108", 1234);
-            client.registerToServer();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         //Set title
         setTitle(getString(R.string.chat_with) + " " + notyou.getName());
 

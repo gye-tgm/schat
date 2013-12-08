@@ -6,9 +6,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import com.security.PRNGFixes;
+import com.services.MessageService;
 import data.User;
 
 import java.util.ArrayList;
@@ -29,6 +31,8 @@ public class Activity_ContactList extends Activity {
     private Intent start_chat;
     private Context context;
 
+    private Intent service;
+
     /**
      * Called when the activity is first created.
      */
@@ -41,11 +45,10 @@ public class Activity_ContactList extends Activity {
         setContentView(R.layout.layout_contactlist);
         context = this;
 
-        //Test Intent Chat
-        //Intent i = new Intent(this, Activity_Chat.class);
-        //startActivity(i);
+        service = new Intent(getApplicationContext(), MessageService.class);
+        startService(service);
 
-        /* make all GUI-element available */
+        /* make all GUI-elements available */
         contactList = (ListView) findViewById(R.id.view_contactlist);
         registerForContextMenu(contactList); // register all list items for the context menu
 
