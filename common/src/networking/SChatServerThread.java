@@ -137,24 +137,23 @@ public class SChatServerThread extends Thread {
     }
 
     public void redirectMessage(Envelope envelope) {
-        if(!sendEnvelope(envelope)){
+        if (!sendEnvelope(envelope)) {
             // save into database so the user can retrieve it later...
         }
     }
 
     /**
-     *
      * @param envelope
      * @return whether the sending was successful or not
      */
-    public boolean sendEnvelope(Envelope envelope){
+    public boolean sendEnvelope(Envelope envelope) {
         ObjectOutputStream out = server.getObjectOutputStreamById(envelope.getReceiver());
-        if(out == null)
+        if (out == null)
             return false;
-        try{
+        try {
             out.writeObject(envelope);
             out.flush();
-        }catch (IOException e){
+        } catch (IOException e) {
             System.err.println(e.getMessage());
             return false;
         }

@@ -1,10 +1,8 @@
 package networking;
 
-import crypto.Cryptography;
 import data.KeyPairManager;
 import data.SQLiteManager;
 
-import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -86,7 +84,7 @@ public class SChatServer {
      *
      * @param id the user id
      * @return the connected ObjectOutputStream of the given user or null if the user is not connected
-     * to the server
+     *         to the server
      */
     public ObjectOutputStream getObjectOutputStreamById(String id) {
         return clients.get(id);

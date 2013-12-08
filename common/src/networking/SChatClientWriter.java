@@ -17,6 +17,7 @@ public class SChatClientWriter {
 
     /**
      * Create a writer which is only writing to the ObjectOutputStream
+     *
      * @param socket the socket to write to
      * @throws IOException
      */
@@ -26,6 +27,7 @@ public class SChatClientWriter {
 
     /**
      * Send an envelope to the server
+     *
      * @param message
      */
     public void send(Envelope message) {

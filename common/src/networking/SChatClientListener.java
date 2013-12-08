@@ -1,7 +1,6 @@
 package networking;
 
 import crypto.Envelope;
-import data.SQLiteManager;
 import data.User;
 
 import java.io.IOException;
@@ -22,11 +21,12 @@ public class SChatClientListener extends Thread {
     /**
      * Create a new listener thread, which is constantly listening
      * to the server.
-     * @param socket the socket to listen to
+     *
+     * @param socket   the socket to listen to
      * @param receiver the receiver or the client to handle
      * @throws IOException
      */
-    public SChatClientListener(Socket socket, User receiver) throws IOException{
+    public SChatClientListener(Socket socket, User receiver) throws IOException {
         this.socket = socket;
         this.receiver = receiver;
     }
@@ -65,11 +65,13 @@ public class SChatClientListener extends Thread {
 
         try {
             in.close();
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
     }
 
     /**
      * Notify the user with the received envelope
+     *
      * @param envelope the envelope
      */
     public void notifyUser(Envelope envelope) {

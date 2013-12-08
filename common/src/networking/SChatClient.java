@@ -1,7 +1,10 @@
 package networking;
 
 import crypto.Envelope;
-import data.*;
+import data.Content;
+import data.Message;
+import data.SQLiteManager;
+import data.User;
 import data.contents.ChatContent;
 import data.contents.Login;
 import data.contents.PublicKeyRequest;
@@ -39,9 +42,8 @@ public class SChatClient extends Thread {
      * Generate a SChatClient, which can listen and send messages
      * simultaneously. It is going to interact with the given server.
      *
-     *
-     * @param client the client
-     * @param hostName the host name of the server
+     * @param client     the client
+     * @param hostName   the host name of the server
      * @param portNumber the port number
      * @throws IOException
      */
@@ -56,8 +58,9 @@ public class SChatClient extends Thread {
     /**
      * Send the given ChatContent to the server with the given
      * receiver id.
+     *
      * @param chatContent the chat content
-     * @param receiverId the receiver id
+     * @param receiverId  the receiver id
      */
     public void sendMessage(ChatContent chatContent, String receiverId) {
         Message<ChatContent> message = new Message<>(Calendar.getInstance().getTime(), client.getId(), receiverId, chatContent);
@@ -66,6 +69,7 @@ public class SChatClient extends Thread {
 
     /**
      * Try to login to the server
+     *
      * @throws IOException
      */
     public void loginToServer() throws IOException {
@@ -74,22 +78,24 @@ public class SChatClient extends Thread {
         sender.send(encrypt(loginMessage));
     }
 
-    public void registerToServer() throws IOException{
+    public void registerToServer() throws IOException {
         Message<Registration> registrationMessage =
-        new Message<Registration>(
-                Calendar.getInstance().getTime(),
-                client.getId(),
-                SChatServer.SERVER_ID,
-                new Registration(new Login(client.getId()), client.getKeyPair().getPublic())
-        );
+                new Message<Registration>(
+                        Calendar.getInstance().getTime(),
+                        client.getId(),
+                        SChatServer.SERVER_ID,
+                        new Registration(new Login(client.getId()), client.getKeyPair().getPublic())
+                );
         sender.send(encrypt(registrationMessage));
     }
+
     /**
      * Envelope a message
+     *
      * @param message the message
      * @return an enveloped message
      */
-    public Envelope encrypt(Message<? extends Content> message){
+    public Envelope encrypt(Message<? extends Content> message) {
         String receiverId = message.getReceiver();
         SQLiteManager sqLiteManager = new SQLiteManager("client.db");
         PublicKey receiverPublicKey = sqLiteManager.getPublicKeyFromId(receiverId);
