@@ -13,8 +13,7 @@ import java.net.Socket;
  * @version 2013/11/30
  */
 public class SChatClientWriter {
-    private Socket socket;
-    ObjectOutputStream out;
+    private ObjectOutputStream out;
 
     /**
      * Create a writer which is only writing to the ObjectOutputStream
@@ -22,7 +21,6 @@ public class SChatClientWriter {
      * @throws IOException
      */
     public SChatClientWriter(Socket socket) throws IOException {
-        this.socket = socket;
         this.out = new ObjectOutputStream(socket.getOutputStream());
     }
 

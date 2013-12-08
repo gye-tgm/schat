@@ -15,7 +15,9 @@ import com.data.ChatAdapter;
 import data.Message;
 import data.User;
 import data.contents.ChatContent;
+import networking.SChatClient;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Random;
@@ -44,6 +46,13 @@ public class Activity_Chat extends Activity {
         //Get Users
         you = new User("Wolfram"); //Get from.. shared pref?
         notyou = (User) getIntent().getSerializableExtra("notyou");
+
+        try {
+            SChatClient client = new SChatClient(you, "85.10.240.108", 1234);
+            client.registerToServer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         //Set title
         setTitle(getString(R.string.chat_with) + " " + notyou.getName());

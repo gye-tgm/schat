@@ -32,19 +32,20 @@ public class SChatClient extends Thread {
      * @throws IOException
      */
     public SChatClient(User client) throws IOException {
-        this(SChatServer.SERVER_NAME, SChatServer.PORT_ADDRESS, client);
+        this(client, SChatServer.SERVER_NAME, SChatServer.PORT_ADDRESS);
     }
 
     /**
      * Generate a SChatClient, which can listen and send messages
      * simultaneously. It is going to interact with the given server.
      *
+     *
+     * @param client the client
      * @param hostName the host name of the server
      * @param portNumber the port number
-     * @param client the client
      * @throws IOException
      */
-    public SChatClient(String hostName, int portNumber, User client) throws IOException {
+    public SChatClient(User client, String hostName, int portNumber) throws IOException {
         this.client = client;
         this.socket = new Socket(hostName, portNumber);
         this.listener = new SChatClientListener(socket, client);

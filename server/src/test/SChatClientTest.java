@@ -59,7 +59,7 @@ public class SChatClientTest {
 
         SChatClient client = null;
         try {
-            client = new SChatClient(hostName, portNumber, me);
+            client = new SChatClient(me, hostName, portNumber);
             client.registerToServer();
         } catch (IOException e) {
             System.err.println("Could not connect to the server successfully.");
