@@ -1,5 +1,6 @@
 package networking;
 
+import data.DatabaseManager;
 import data.KeyPairManager;
 import data.SQLiteManager;
 
@@ -21,11 +22,17 @@ public class SChatServer {
     public static final String SERVER_NAME = "85.10.240.108";
     public static final int PORT_ADDRESS = 1234;
     public static final String SERVER_ID = "_";
+    private static final String PUBLIC_KEY_FILE = "public.key";
+    private static final String PRIVATE_KEY_FILE = "private.key";
+
 
     private final static Logger LOGGER = Logger.getLogger(SChatServer.class.getName());
+    public static final String SERVER_DB = "server.db";
+    private static final String SERVER_DB_SCRIPT = "serverdb.sql";
     // the online list
     private HashMap<String, ObjectOutputStream> clients;
     private KeyPair keyPair;
+    private DatabaseManager databaseManager;
 
     /**
      * Initialize a new server, which is listening to the given port number
@@ -36,10 +43,11 @@ public class SChatServer {
         LOGGER.setLevel(Level.INFO);
         LOGGER.info("Server has started...");
 
-        keyPair = KeyPairManager.readKeyPair("public.key", "private.key");
+        keyPair = KeyPairManager.readKeyPair(PUBLIC_KEY_FILE, PRIVATE_KEY_FILE);
         LOGGER.info("Key pair loaded!");
 
-        new SQLiteManager("server.db").createTables("clientdb.sql");
+        databaseManager = new SQLiteManager(SERVER_DB);
+        databaseManager.createTables(SERVER_DB_SCRIPT);
         LOGGER.info("Database created");
 
         clients = new HashMap<>();

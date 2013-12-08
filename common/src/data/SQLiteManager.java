@@ -1,14 +1,17 @@
 package data;
 
 import crypto.Cryptography;
+import crypto.Envelope;
+import data.contents.ChatContent;
 
 import javax.crypto.SecretKey;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Scanner;
 
 /**
@@ -182,5 +185,101 @@ public class SQLiteManager implements DatabaseManager {
     public boolean removeUser(String id) {
         executeQuery(String.format("DELETE FROM user WHERE id = '%s'", id)); // TODO: check if an SQL injection can occur?!
         return true;
+    }
+
+
+    public void insertEncryptedMessage(Envelope envelope) {
+        try (
+                Connection connection = getConnection();
+                PreparedStatement pstmt = connection.prepareStatement("INSERT INTO message VALUES(?,?,?)");
+        ) {
+            pstmt.setString(1, envelope.getReceiver());
+            pstmt.setLong(2, Calendar.getInstance().getTimeInMillis());
+            try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                 ObjectOutput out = new ObjectOutputStream(bos)
+            ) {
+                out.writeObject(envelope);
+                pstmt.setBytes(3, bos.toByteArray());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ArrayList<Envelope> loadEncryptedMessagesFromReceiver(String id) {
+        ArrayList<Envelope> ret = new ArrayList<>();
+        try (
+                Connection connection = getConnection();
+                PreparedStatement pstmt = connection.prepareStatement("SELECT content" +
+                        " FROM message WHERE receiver_id = ? ORDER BY timestamp ASC")
+        ) {
+            pstmt.setString(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                try (
+                        ByteArrayInputStream bis = new ByteArrayInputStream(rs.getBytes(1));
+                        ObjectInput in = new ObjectInputStream(bis)
+                ) {
+                    ret.add((Envelope) in.readObject());
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
+
+    @Override
+    public void insertMessage(Message<ChatContent> message) {
+        try (
+                Connection connection = getConnection();
+                PreparedStatement pstmt = connection.prepareStatement("INSERT INTO message VALUES(?,?,?,?)");
+        ) {
+            pstmt.setString(1, message.getSender());
+            pstmt.setString(2, message.getReceiver());
+            pstmt.setLong(3, message.getTimestamp().getTime() / 1000);
+            pstmt.setString(4, message.getContent().getMessage());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ArrayList<Message<ChatContent>> loadMessagesFromReceiver(String id) {
+        return loadMessagesFromUser("receiver_id", id);
+    }
+
+    public ArrayList<Message<ChatContent>> loadMessagesFromSender(String id) {
+        return loadMessagesFromUser("sender_id", id);
+    }
+
+
+    public ArrayList<Message<ChatContent>> loadMessagesFromUser(String who, String id) {
+        ArrayList<Message<ChatContent>> ret = new ArrayList<>();
+
+        try (
+                Connection connection = getConnection();
+                PreparedStatement pstmt = connection.prepareStatement("SELECT sender_id, receiver_id, timestamp, content" +
+                        " FROM message WHERE " + who + " = ? ORDER BY timestamp ASC")
+        ) {
+            pstmt.setString(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                String senderId = rs.getString(1);
+                String receiverId = rs.getString(2);
+                long timestamp = rs.getLong(3);
+                String content = rs.getString(4);
+                ret.add(new Message<ChatContent>(new Date(timestamp), senderId, receiverId, new ChatContent(content)));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ret;
     }
 }

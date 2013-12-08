@@ -120,4 +120,12 @@ public class User implements Serializable {
                 new KeyPair(publicKeyResponse.getPublicKey(), null), null));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        User u = (User) o;
+        return u.getId().equals(getId()) &&
+                u.getPublicKey().equals(getPublicKey()) &&
+                u.getSecretKey().equals(getSecretKey());
+    }
+
 }

@@ -1,5 +1,7 @@
 package data;
 
+import data.contents.ChatContent;
+
 import java.security.PublicKey;
 import java.util.ArrayList;
 
@@ -61,4 +63,11 @@ public interface DatabaseManager {
      * @return if the operation was successful
      */
     public boolean removeUser(String id);
+
+    public void insertMessage(Message<ChatContent> chatContentMessage);
+
+    public ArrayList<Message<ChatContent>> loadMessagesFromReceiver(String id);
+
+    public ArrayList<Message<ChatContent>> loadMessagesFromSender(String id);
+
 }

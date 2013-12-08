@@ -16,6 +16,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.security.KeyPair;
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -46,7 +47,7 @@ public class SChatServerThread extends Thread {
         this.in = new ObjectInputStream(clientSocket.getInputStream());
         this.out = new ObjectOutputStream(clientSocket.getOutputStream());
         this.client = null;
-        this.dbmanager = new SQLiteManager("server.db");
+        this.dbmanager = new SQLiteManager(SChatServer.SERVER_DB);
     }
 
     /**
@@ -74,11 +75,26 @@ public class SChatServerThread extends Thread {
         return client != null;
     }
 
+
+    public void sendStoredMessages() {
+        ArrayList<Envelope> envelopes = dbmanager.loadEncryptedMessagesFromReceiver(client.getId());
+        int i = 0;
+        for (; i < envelopes.size(); i++)
+            if (!sendEnvelope(envelopes.get(i)))
+                break;
+        while (i-- > 0) {
+            // remove from database
+        }
+    }
+
     /**
      * Run the main logic of this server
      */
     public void run() {
         boolean isRunning = true;
+
+        sendStoredMessages();
+
         while (isRunning) {
             try {
                 Envelope envelope = (Envelope) in.readObject();
@@ -138,7 +154,7 @@ public class SChatServerThread extends Thread {
 
     public void redirectMessage(Envelope envelope) {
         if (!sendEnvelope(envelope)) {
-            // save into database so the user can retrieve it later...
+            dbmanager.insertEncryptedMessage(envelope);
         }
     }
 

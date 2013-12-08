@@ -44,7 +44,7 @@ public class SChatClientListener extends Thread {
                 Envelope envelope = (Envelope) in.readObject();
                 switch (envelope.getType()) {
                     case CHAT_MESSAGE:
-                        notifyUser(envelope);
+                        receiver.receiveMessage(envelope);
                         break;
                     case PUBLIC_KEY_RESPONSE:
                         receiver.registerUser(envelope);
