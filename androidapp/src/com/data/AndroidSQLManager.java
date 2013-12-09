@@ -1,5 +1,6 @@
 package com.data;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -38,8 +39,8 @@ public class AndroidSQLManager implements DatabaseManager {
 
     SQLiteDatabase db;
 
-    public void connect() {
-        db = SQLiteDatabase.openOrCreateDatabase(DB_NAME, null);
+    public void connect(Activity activity) {
+        db = activity.openOrCreateDatabase(DB_NAME, Context.MODE_PRIVATE, null);
         createTables(CREATE_SCRIPT);
     }
     public void disconnect() {
@@ -98,7 +99,7 @@ public class AndroidSQLManager implements DatabaseManager {
 
         Cursor c = db.query(USER, null, null, null, null, null, null); // SELECT * FROM user;
         while(c.moveToNext()) {
-            String id = c.getColumnName(c.getColumnIndex(ID));
+            String id = c.getString(c.getColumnIndex(ID));
             PublicKey pub_key = Cryptography.getPublicKeyFromBytes(c.getBlob(c.getColumnIndex(PUB_KEY)));
             SecretKey symm_key = Cryptography.getSecretKeyFromBytes(c.getBlob(c.getColumnIndex(SYMM_KEY)));
             users.add(new User(id, new KeyPair(pub_key, null), symm_key));

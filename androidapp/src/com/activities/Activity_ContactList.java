@@ -12,8 +12,12 @@ import android.widget.*;
 import com.data.AndroidSQLManager;
 import com.security.PRNGFixes;
 import com.services.MessageService;
+import crypto.Cryptography;
 import data.User;
 
+import javax.crypto.SecretKey;
+import java.security.KeyPair;
+import java.security.PublicKey;
 import java.util.ArrayList;
 
 /* todo: add options menu handling */
@@ -47,8 +51,10 @@ public class Activity_ContactList extends Activity {
         setContentView(R.layout.layout_contactlist);
         context = this;
 
+        /*
         service = new Intent(getApplicationContext(), MessageService.class);
         startService(service);
+        */
 
         /* make all GUI-elements available */
         contactList = (ListView) findViewById(R.id.view_contactlist);
@@ -72,7 +78,7 @@ public class Activity_ContactList extends Activity {
         });
 
         dbManager = new AndroidSQLManager();
-        dbManager.connect();
+        dbManager.connect(this);
         loadContacts(); // load all contacts into the list
     }
 
@@ -85,6 +91,7 @@ public class Activity_ContactList extends Activity {
 
         switch (item.getItemId()) {
             case R.id.option_deleteContact:
+                dbManager.removeUser(contacts.get(info.position));
                 deleteContact(info.position); // delete the selected contact
                 return true;
             case R.id.option_editContact: // edit the selected contact
@@ -144,11 +151,21 @@ public class Activity_ContactList extends Activity {
                                 @SuppressWarnings("unchecked")
                                 String newUser = txt.getText().toString();
                                 if (!newUser.equals("")) {
-                                    contactsAdapter.add(newUser);
-                                    // Refreshes the content
-                                    contactsAdapter.notifyDataSetChanged();
-                                    // Shows toast
-                                    Toast.makeText(context, "Added "+newUser +" to contacts.", Toast.LENGTH_SHORT).show();
+                                    if (!dbManager.userExists(newUser)) {
+                                        /* todo: replace keygen with keyrequests */
+                                        PublicKey pkey = Cryptography.gen_asymm_key().getPublic();
+                                        SecretKey skey = Cryptography.gen_symm_key();
+                                        User u = new User(newUser, new KeyPair(pkey, null), skey);
+                                        dbManager.insertUser(u);
+
+                                        contactsAdapter.add(newUser);
+                                        // Refreshes the content
+                                        contactsAdapter.notifyDataSetChanged();
+                                        // Shows toast
+                                        Toast.makeText(context, "Added " + newUser + " to contacts.", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(context, "Contact already exists", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
                             }
                         })
@@ -166,12 +183,6 @@ public class Activity_ContactList extends Activity {
      */
     private void loadContacts() {
         ArrayList<User> users = new ArrayList<>();
-        users.add(new User("Alice", null, null));
-        users.add(new User("Bob", null, null));
-        users.add(new User("Eve", null, null));
-
-        for(User u : users)
-            dbManager.insertUser(u);
 
         users = dbManager.loadUsers();
         for(User u : users)
@@ -181,6 +192,7 @@ public class Activity_ContactList extends Activity {
     @Override
     public void onDestroy() {
         dbManager.disconnect();
+        super.onDestroy();
     }
 
     /**
