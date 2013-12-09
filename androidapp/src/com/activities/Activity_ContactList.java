@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
+import com.data.AndroidSQLManager;
 import com.security.PRNGFixes;
 import com.services.MessageService;
 import data.User;
@@ -32,6 +33,7 @@ public class Activity_ContactList extends Activity {
     private Context context;
 
     private Intent service;
+    private AndroidSQLManager dbManager;
 
     /**
      * Called when the activity is first created.
@@ -69,6 +71,8 @@ public class Activity_ContactList extends Activity {
 
         });
 
+        dbManager = new AndroidSQLManager();
+        dbManager.connect();
         loadContacts(); // load all contacts into the list
     }
 
@@ -161,17 +165,22 @@ public class Activity_ContactList extends Activity {
      * Loads all saved contacts into the contact-menu-list.
      */
     private void loadContacts() {
+        ArrayList<User> users = new ArrayList<>();
+        users.add(new User("Alice", null, null));
+        users.add(new User("Bob", null, null));
+        users.add(new User("Eve", null, null));
 
-        /* todo: replace test loading with actual contacts from User-objects */
-        /* todo: maybe add the custom views (to display additional information, like: new Message, date of last conversation, ...) */
+        for(User u : users)
+            dbManager.insertUser(u);
 
-        /*String[] users = new String[20];
-        for (int i = 0; i < users.length; i++)
-            users[i] = "User" + i;
+        users = dbManager.loadUsers();
+        for(User u : users)
+            contacts.add(u.getId());
+    }
 
-        contacts.addAll(Arrays.asList(users));
-        contactsAdapter.notifyDataSetChanged();
-        */
+    @Override
+    public void onDestroy() {
+        dbManager.disconnect();
     }
 
     /**
