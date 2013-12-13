@@ -35,8 +35,8 @@ public class ChatAdapter extends ArrayAdapter<Message<ChatContent>> {
         Message<ChatContent> currentMessage = messages.get(position);
         //LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView;
-        //TODO remove Contains q soon as testing is complete
-        if (currentMessage.getSender().equals(you) && !(currentMessage.getContent().getMessage().contains("q"))) {
+        /* todo: change layout names? */
+        if (!(currentMessage.getSender().equals(you))) {
             rowView = LayoutInflater.from(context).inflate(R.layout.layout_chathistory_list_you, parent, false);
         } else {
             rowView = LayoutInflater.from(context).inflate(R.layout.layout_chathistory_list_notyou, parent, false);

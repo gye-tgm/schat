@@ -19,6 +19,7 @@ import javax.crypto.SecretKey;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /* todo: add options menu handling */
 
@@ -69,6 +70,7 @@ public class Activity_ContactList extends Activity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                     long arg3) {
+                dbManager.disconnect();
                 start_chat = new Intent(context, Activity_Chat.class);
                 User tmp = new User(contacts.get(arg2));
                 start_chat.putExtra("notyou", tmp);
@@ -158,7 +160,8 @@ public class Activity_ContactList extends Activity {
                                         User u = new User(newUser, new KeyPair(pkey, null), skey);
                                         dbManager.insertUser(u);
 
-                                        contactsAdapter.add(newUser);
+                                        contacts.add(newUser);
+                                        Collections.sort(contacts);
                                         // Refreshes the content
                                         contactsAdapter.notifyDataSetChanged();
                                         // Shows toast
