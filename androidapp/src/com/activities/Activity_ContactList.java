@@ -63,10 +63,8 @@ public class Activity_ContactList extends Activity {
         setContentView(R.layout.layout_contactlist);
         context = this;
 
-        /*
         service = new Intent(getApplicationContext(), MessageService.class);
         startService(service);
-        */
 
         /* make all GUI-elements available */
         contactList = (ListView) findViewById(R.id.view_contactlist);

@@ -30,7 +30,7 @@ public class MessageService extends Service {
 
     private static int nr = 0;
 
-    private ApplicationUser you;
+    private ApplicationUser me;
 
     private static Context activityContext;
     private static Uri alarmSound;
@@ -49,20 +49,17 @@ public class MessageService extends Service {
         @Override
         protected Object doInBackground(Object... objects) {
             try {
-                sleep(5000);
-                throwNotification(new Message<ChatContent>(new Date(), "Alice", "Bob", new ChatContent("This is a Test.")));
-                sleep(5000);
-                throwNotification(new Message<ChatContent>(new Date(), "Alice", "Bob", new ChatContent("This is a Test.")));
-
                 /*
-                try {
-                you = ApplicationUser.getInstance();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                you.registerToServer();
+                sleep(5000);
+                throwNotification(new Message<ChatContent>(new Date(), "Alice", "Bob", new ChatContent("This is a Test.")));
+                sleep(5000);
+                throwNotification(new Message<ChatContent>(new Date(), "Alice", "Bob", new ChatContent("This is a Test.")));
                 */
+
+                me = ApplicationUser.getInstance();
+                me.connect();
+                me.registerToServer();
+                me.sendMessage(new ChatContent("Hallo"), "Alice");
 
             } catch (Exception e) {
                 Log.d("?", e.getMessage());

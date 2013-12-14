@@ -1,9 +1,9 @@
 package com.data;
 
 import android.app.Activity;
-import android.content.Context;
 import com.security.AndroidKeyPairManager;
 import crypto.Cryptography;
+import data.Message;
 import data.User;
 import data.contents.ChatContent;
 import networking.SChatClient;
@@ -26,7 +26,8 @@ public class ApplicationUser extends User {
     private SChatClient client;
     private AndroidSQLManager dbMangager;
 
-    private final static String hostName = "85.10.240.108";
+    private final static String hostName = "62.178.242.13";
+    // private final static String hostName = "62.178.242.13";
     private final static int portNumber = SChatServer.PORT_ADDRESS;
 
     private ApplicationUser() throws IOException {
@@ -52,6 +53,14 @@ public class ApplicationUser extends User {
         return instance;
     }
 
+    public void connect() {
+        try {
+            client = new SChatClient(this, hostName, portNumber, dbMangager);
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
     public boolean registerToServer(){
         try {
             client.registerToServer();
@@ -70,12 +79,15 @@ public class ApplicationUser extends User {
         return true;
     }
 
+    public void sendMessage(ChatContent content, String receiver_id) {
+        client.sendMessage(content, receiver_id);
+    }
+
     public void initialize(Activity activity) {
         if(!dbMangager.userExists(SChatServer.SERVER_ID)) {
             User server = new User(SChatServer.SERVER_ID, new KeyPair(AndroidKeyPairManager.getServerPK(activity), null), Cryptography.gen_symm_key());
             dbMangager.insertUser(server);
         }
-
 
         if(!AndroidKeyPairManager.isKeyPairAlreadySaved(activity)) {
             KeyPair keyPair1 = Cryptography.gen_asymm_key();
@@ -83,5 +95,6 @@ public class ApplicationUser extends User {
         }
 
         keyPair = AndroidKeyPairManager.getKeyPairFormSharedPref(activity);
+        id = "TestUser";
     }
 }
