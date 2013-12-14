@@ -3,22 +3,23 @@ package com.data;
 import android.app.Activity;
 import com.security.AndroidKeyPairManager;
 import crypto.Cryptography;
-import data.Message;
+import crypto.Envelope;
 import data.User;
 import data.contents.ChatContent;
+import data.contents.PublicKeyResponse;
 import networking.SChatClient;
 import networking.SChatServer;
 
+import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.security.KeyPair;
 
 /**
  * @author Gary Ye
  * @version 12/2/13
- * One has to specify the following data:
- *  - host name (default: server name)
- *  - port ( default: port number )
- *
+ *          One has to specify the following data:
+ *          - host name (default: server name)
+ *          - port ( default: port number )
  */
 public class ApplicationUser extends User {
     private static ApplicationUser instance = null;
@@ -43,8 +44,8 @@ public class ApplicationUser extends User {
     }
 
     public static ApplicationUser getInstance() throws IOException {
-        if(instance == null){
-            synchronized (ApplicationUser.class){
+        if (instance == null) {
+            synchronized (ApplicationUser.class) {
                 if (instance == null) {
                     instance = new ApplicationUser();
                 }
@@ -61,7 +62,7 @@ public class ApplicationUser extends User {
         }
     }
 
-    public boolean registerToServer(){
+    public boolean registerToServer() {
         try {
             client.registerToServer();
         } catch (IOException e) {
@@ -70,10 +71,10 @@ public class ApplicationUser extends User {
         return true;
     }
 
-    public boolean loginToServer(){
-        try{
+    public boolean loginToServer() {
+        try {
             client.loginToServer();
-        } catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return true;
@@ -83,18 +84,26 @@ public class ApplicationUser extends User {
         client.sendMessage(content, receiver_id);
     }
 
+    @Override
+    public void registerUser(Envelope envelope) {
+        SecretKey secretKey1 = envelope.getUnwrappedKey(keyPair.getPrivate());
+        PublicKeyResponse publicKeyResponse = envelope.<PublicKeyResponse>decryptMessage(secretKey1).getContent();
+        dbMangager.insertUser(new User(publicKeyResponse.getRequestId(),
+                new KeyPair(publicKeyResponse.getPublicKey(), null), null));
+    }
+
     public void initialize(Activity activity) {
-        if(!dbMangager.userExists(SChatServer.SERVER_ID)) {
+        if (!dbMangager.userExists(SChatServer.SERVER_ID)) {
             User server = new User(SChatServer.SERVER_ID, new KeyPair(AndroidKeyPairManager.getServerPK(activity), null), Cryptography.gen_symm_key());
             dbMangager.insertUser(server);
         }
 
-        if(!AndroidKeyPairManager.isKeyPairAlreadySaved(activity)) {
+        if (!AndroidKeyPairManager.isKeyPairAlreadySaved(activity)) {
             KeyPair keyPair1 = Cryptography.gen_asymm_key();
             AndroidKeyPairManager.saveKeyPair(activity, keyPair1);
         }
 
         keyPair = AndroidKeyPairManager.getKeyPairFormSharedPref(activity);
-        id = "TestUser";
+        id = "Gary";
     }
 }
