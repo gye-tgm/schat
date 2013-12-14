@@ -114,8 +114,8 @@ public class SChatClient extends Thread {
      */
     public Envelope encrypt(Message<? extends Content> message) {
         String receiverId = message.getReceiver();
-        PublicKey receiverPublicKey = manager.getPublicKeyFromId(receiverId);
-        return new Envelope(message, client.getSecretKey(), receiverPublicKey, client.getKeyPair().getPrivate());
+        User receiver = manager.getUserFromGivenId(receiverId);
+        return new Envelope(message, receiver.getSecretKey(), receiver.getPublicKey(), client.getKeyPair().getPrivate());
     }
 
     public void sendPublicKeyRequest(String id) {
