@@ -13,6 +13,8 @@ public class CryptoConstants {
     public static final int symm_keylength = 128;
 
     public static final String asymm_alg = "RSA";
+    public static final String asymm_mode = "NONE";
+    public static final String asymm_padding = "PKCS1Padding";
     public static final int asymm_keylength = 2048;
 
     public static final String signature_alg = "SHA256withRSA";

@@ -67,7 +67,7 @@ public class Cryptography {
         byte[] wrapped_key = null;
 
         try {
-            Cipher cipher = Cipher.getInstance(CryptoConstants.asymm_alg);
+            Cipher cipher = Cipher.getInstance(CryptoConstants.asymm_alg + "/" + CryptoConstants.asymm_mode + "/" + CryptoConstants.asymm_padding);
             cipher.init(Cipher.WRAP_MODE, key);
             wrapped_key = cipher.wrap(skey);
         } catch (Exception e) {
@@ -88,7 +88,7 @@ public class Cryptography {
         Key unwrapped_key = null;
 
         try {
-            Cipher cipher = Cipher.getInstance(CryptoConstants.asymm_alg);
+            Cipher cipher = Cipher.getInstance(CryptoConstants.asymm_alg + "/" + CryptoConstants.asymm_mode + "/" + CryptoConstants.asymm_padding);
             cipher.init(Cipher.UNWRAP_MODE, key);
             unwrapped_key = cipher.unwrap(skey, CryptoConstants.symm_alg, Cipher.SECRET_KEY);
         } catch (Exception e) {
