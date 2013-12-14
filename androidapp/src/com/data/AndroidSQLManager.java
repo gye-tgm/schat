@@ -23,8 +23,9 @@ import java.util.Date;
 public class AndroidSQLManager implements DatabaseManager {
     private final String DB_NAME = "clientdatabase";
 
-    private final String CREATE_SCRIPT = "CREATE TABLE IF NOT EXISTS user (id TEXT, public_key BLOB, symmetric_key BLOB, PRIMARY KEY(id)); " +
-                                         "CREATE TABLE IF NOT EXISTS message (sender_id TEXT, receiver_id TEXT, timestamp INTEGER, content TEXT, PRIMARY KEY(sender_id, receiver_id, timestamp));";
+
+    private final String CREATE_USER = "CREATE TABLE IF NOT EXISTS user (id TEXT, public_key BLOB, symmetric_key BLOB, PRIMARY KEY(id)); ";
+    private final String CREATE_MESSAGE = "CREATE TABLE IF NOT EXISTS message (sender_id TEXT, receiver_id TEXT, timestamp INTEGER, content TEXT, PRIMARY KEY(sender_id, receiver_id, timestamp));";
 
     private final String USER = "user";
     private final String ID = "id";
@@ -32,8 +33,8 @@ public class AndroidSQLManager implements DatabaseManager {
     private final String SYMM_KEY = "symmetric_key";
 
     private final String MESSAGE = "message";
-    private final String SENDER = "sender";
-    private final String RECEIVER = "receiver";
+    private final String SENDER = "sender_id";
+    private final String RECEIVER = "receiver_id";
     private final String TIMESTAMP = "timestamp";
     private final String CONTENT = "content";
 
@@ -41,7 +42,8 @@ public class AndroidSQLManager implements DatabaseManager {
 
     public void connect(Activity activity) {
         db = activity.openOrCreateDatabase(DB_NAME, Context.MODE_PRIVATE, null);
-        createTables(CREATE_SCRIPT);
+        createTables(CREATE_USER);
+        createTables(CREATE_MESSAGE);
     }
     public void disconnect() {
         db.close();
@@ -97,7 +99,7 @@ public class AndroidSQLManager implements DatabaseManager {
     public ArrayList<User> loadUsers() {
         ArrayList<User> users = new ArrayList<>();
 
-        Cursor c = db.query(USER, null, null, null, null, null, null); // SELECT * FROM user;
+        Cursor c = db.query(USER, null, null, null, null, null, ID); // SELECT * FROM user ORDER BY id;
         while(c.moveToNext()) {
             String id = c.getString(c.getColumnIndex(ID));
             PublicKey pub_key = Cryptography.getPublicKeyFromBytes(c.getBlob(c.getColumnIndex(PUB_KEY)));
@@ -110,7 +112,7 @@ public class AndroidSQLManager implements DatabaseManager {
 
     @Override
     public boolean removeUser(String id) {
-        String query = "DELETE FROM " + USER + " WHERE id = ?;";
+        String query = "DELETE FROM " + USER + " WHERE " + ID + " = ?;";
         SQLiteStatement st = db.compileStatement(query);
         st.bindString(1, id);
 
@@ -123,10 +125,20 @@ public class AndroidSQLManager implements DatabaseManager {
         SQLiteStatement st = db.compileStatement(query);
         st.bindString(1, chatContentMessage.getSender());
         st.bindString(2, chatContentMessage.getReceiver());
-        st.bindLong(3, chatContentMessage.getTimestamp().getTime() / 1000);
+        st.bindLong(3, chatContentMessage.getTimestamp().getTime());
         st.bindString(4, chatContentMessage.getContent().getMessage());
 
         st.executeInsert();
+    }
+
+    public boolean removeMessage(Message<ChatContent> message) {
+        String query = "DELETE FROM " + MESSAGE + " WHERE " + SENDER + " = ? AND " + RECEIVER + " = ? AND " + TIMESTAMP + " = ?;";
+        SQLiteStatement st = db.compileStatement(query);
+        st.bindString(1, message.getSender());
+        st.bindString(2, message.getReceiver());
+        st.bindLong(3, message.getTimestamp().getTime());
+
+        return (st.executeUpdateDelete() > 0);
     }
 
     @Override
@@ -165,9 +177,10 @@ public class AndroidSQLManager implements DatabaseManager {
         Cursor c = db.query(MESSAGE, null, SENDER + " = ? OR " + RECEIVER + " = ?", new String[]{id, id}, null, null, TIMESTAMP);
         while(c.moveToNext()) {
             String receiver = c.getString(c.getColumnIndex(RECEIVER));
+            String sender = c.getString(c.getColumnIndex(SENDER));
             String content = c.getString(c.getColumnIndex(CONTENT));
             Date timestamp = new Date(c.getLong(c.getColumnIndex(TIMESTAMP)));
-            messages.add(new Message<ChatContent>(timestamp, id, receiver, new ChatContent(content)));
+            messages.add(new Message<ChatContent>(timestamp, sender, receiver, new ChatContent(content)));
         }
 
         return messages;

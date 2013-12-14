@@ -11,6 +11,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
+import com.data.AndroidSQLManager;
 import com.data.ChatAdapter;
 import data.Message;
 import data.User;
@@ -38,14 +39,18 @@ public class Activity_Chat extends Activity {
     private LinearLayout lin;
     private boolean buttonOnly;
 
+    private AndroidSQLManager dbManager;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_chat);
 
         //Get Users
-        you = new User("Wolfram"); //Get from.. shared pref?
         notyou = (User) getIntent().getSerializableExtra("notyou");
+        you = new User("Test");
+
+        dbManager = new AndroidSQLManager();
+        dbManager.connect(this);
 
         //Set title
         setTitle(getString(R.string.chat_with) + " " + notyou.getName());
@@ -61,7 +66,7 @@ public class Activity_Chat extends Activity {
         //Setting up List and Adapter
         messageList = (ListView) findViewById(R.id.view_chat);
         messages = new ArrayList<>();
-        messagesAdapter = new ChatAdapter(this, messages, you.getName());
+        messagesAdapter = new ChatAdapter(this, messages, you.getId());
         messageList.setAdapter(messagesAdapter); // set the data of the list
 
         //Hide keyboard when scrolling
@@ -106,6 +111,7 @@ public class Activity_Chat extends Activity {
      */
     private void deleteMessage(int index) {
         /* todo: add animation */
+        dbManager.removeMessage(messages.get(index));
         messages.remove(index);
         messagesAdapter.notifyDataSetChanged();
     }
@@ -114,16 +120,10 @@ public class Activity_Chat extends Activity {
      * Loads all saved Messages into the Messages-list.
      */
     private void loadMessages() {
-        /* todo: replace test loading with actual messages */
-        Random r = new Random();
-        String alphabet = "ab cd ef gh ij kl mn op qe rs tu vw xy zö üä";
-        for (int j = 0; j < 100; j++) {
-            String print = "";
-            int size = (int) (Math.random() * 100 + 1);
-            for (int i = 0; i < size; i++)
-                print += (alphabet.charAt(r.nextInt(alphabet.length())));
-            sendMessage(print);
-        }
+        ArrayList<Message<ChatContent>> chat;
+        chat = dbManager.loadChat(notyou.getId());
+
+        messages.addAll(chat);
     }
 
     /**
@@ -155,7 +155,7 @@ public class Activity_Chat extends Activity {
                 lin.startAnimation(send_success);
             else
                 button_send.startAnimation(send_success);
-            sendMessage(tmp);
+            addMessage(tmp);
             text.setText("");
         }
     }
@@ -165,10 +165,16 @@ public class Activity_Chat extends Activity {
      *
      * @param text New Messages Text
      */
-    public void sendMessage(String text) {
-        messages.add(new Message<ChatContent>(Calendar.getInstance().getTime(), you.getName(), notyou.getName(), new ChatContent(text)));
+    public void addMessage(String text) {
+        Message<ChatContent> m = new Message<>(Calendar.getInstance().getTime(), you.getName(), notyou.getName(), new ChatContent(text));
+        messages.add(m);
+        dbManager.insertMessage(m);
         messagesAdapter.notifyDataSetChanged();
         messageList.setSelection(messagesAdapter.getCount() - 1);
+    }
+
+    public void sendMessage(String text) {
+
     }
 
     /**
@@ -181,5 +187,11 @@ public class Activity_Chat extends Activity {
         ClipData clip = ClipData.newPlainText("S/Chat", messages.get(index).getContent().getMessage());
         clipboard.setPrimaryClip(clip);
         clipboard.setPrimaryClip(clip);
+    }
+
+    @Override
+    public void onDestroy() {
+        dbManager.disconnect();
+        super.onDestroy();
     }
 }
