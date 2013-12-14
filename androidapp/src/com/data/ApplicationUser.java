@@ -1,5 +1,6 @@
 package com.data;
 
+import android.app.Activity;
 import android.content.Context;
 import com.security.AndroidKeyPairManager;
 import crypto.Cryptography;
@@ -69,10 +70,18 @@ public class ApplicationUser extends User {
         return true;
     }
 
-    public void initialize(Context context) {
+    public void initialize(Activity activity) {
         if(!dbMangager.userExists(SChatServer.SERVER_ID)) {
-            User server = new User(SChatServer.SERVER_ID, new KeyPair(AndroidKeyPairManager.getServerPK(context), null), Cryptography.gen_symm_key());
+            User server = new User(SChatServer.SERVER_ID, new KeyPair(AndroidKeyPairManager.getServerPK(activity), null), Cryptography.gen_symm_key());
             dbMangager.insertUser(server);
         }
+
+
+        if(!AndroidKeyPairManager.isKeyPairAlreadySaved(activity)) {
+            KeyPair keyPair1 = Cryptography.gen_asymm_key();
+            AndroidKeyPairManager.saveKeyPair(activity, keyPair1);
+        }
+
+        keyPair = AndroidKeyPairManager.getKeyPairFormSharedPref(activity);
     }
 }
