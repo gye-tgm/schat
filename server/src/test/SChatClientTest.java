@@ -1,6 +1,7 @@
 package test;
 
 import crypto.Cryptography;
+import data.DatabaseManager;
 import data.KeyPairManager;
 import data.SQLiteManager;
 import data.User;
@@ -18,7 +19,7 @@ import java.io.InputStreamReader;
  * @author Gary Ye
  */
 public class SChatClientTest {
-    private static SQLiteManager sqLiteManager;
+    private static DatabaseManager sqLiteManager;
     private static User me;
 
     public static User getMyUser(String username) {

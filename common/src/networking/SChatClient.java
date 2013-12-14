@@ -2,8 +2,8 @@ package networking;
 
 import crypto.Envelope;
 import data.Content;
+import data.DatabaseManager;
 import data.Message;
-import data.SQLiteManager;
 import data.User;
 import data.contents.ChatContent;
 import data.contents.Login;
@@ -26,6 +26,7 @@ public class SChatClient extends Thread {
     private Socket socket;
     private SChatClientListener listener;
     private SChatClientWriter sender;
+    private DatabaseManager manager;
 
     /**
      * Generate a SChatClient, which can listen and send messages
@@ -34,7 +35,7 @@ public class SChatClient extends Thread {
      * @param client the client to handle
      * @throws IOException
      */
-    public SChatClient(User client) throws IOException {
+    public SChatClient(User client, DatabaseManager manager) throws IOException {
         this(client, SChatServer.SERVER_NAME, SChatServer.PORT_ADDRESS);
     }
 
@@ -48,12 +49,28 @@ public class SChatClient extends Thread {
      * @throws IOException
      */
     public SChatClient(User client, String hostName, int portNumber) throws IOException {
+        this(client, hostName, portNumber, null);
+    }
+
+    /**
+     * Generate a SChatClient, which can listen and send messages
+     * simultaneously. It is going to interact with the given server.
+     *
+     * @param client     the client
+     * @param hostName   the host name of the server
+     * @param portNumber the port number
+     * @param manager    the database manager
+     * @throws IOException
+     */
+    public SChatClient(User client, String hostName, int portNumber, DatabaseManager manager) throws IOException {
         this.client = client;
         this.socket = new Socket(hostName, portNumber);
         this.listener = new SChatClientListener(socket, client);
         this.sender = new SChatClientWriter(socket);
+        this.manager = manager;
         listener.start();
     }
+
 
     /**
      * Send the given ChatContent to the server with the given
@@ -97,8 +114,7 @@ public class SChatClient extends Thread {
      */
     public Envelope encrypt(Message<? extends Content> message) {
         String receiverId = message.getReceiver();
-        SQLiteManager sqLiteManager = new SQLiteManager("client.db");
-        PublicKey receiverPublicKey = sqLiteManager.getPublicKeyFromId(receiverId);
+        PublicKey receiverPublicKey = manager.getPublicKeyFromId(receiverId);
         return new Envelope(message, client.getSecretKey(), receiverPublicKey, client.getKeyPair().getPrivate());
     }
 
