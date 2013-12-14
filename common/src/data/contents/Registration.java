@@ -1,5 +1,6 @@
 package data.contents;
 
+import crypto.Cryptography;
 import data.Content;
 
 import java.security.PublicKey;
@@ -10,7 +11,7 @@ import java.security.PublicKey;
  */
 public class Registration extends Content {
     private Login login;
-    private PublicKey publicKey;
+    private byte[] publicKey;
 
     /**
      * Constructs a registration content object.
@@ -20,7 +21,7 @@ public class Registration extends Content {
     public Registration(Login login, PublicKey publicKey) {
         this.type = Type.REGISTRATION;
         this.login = login;
-        this.publicKey = publicKey;
+        this.publicKey = publicKey.getEncoded();
     }
 
     @Override
@@ -33,6 +34,6 @@ public class Registration extends Content {
     }
 
     public PublicKey getPublicKey() {
-        return publicKey;
+        return Cryptography.getPublicKeyFromBytes(publicKey);
     }
 }
