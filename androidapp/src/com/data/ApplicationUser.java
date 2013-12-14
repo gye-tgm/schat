@@ -1,14 +1,15 @@
 package com.data;
 
-import data.DatabaseManager;
-import data.SQLiteManager;
+import android.content.Context;
+import com.security.AndroidKeyPairManager;
+import crypto.Cryptography;
 import data.User;
 import data.contents.ChatContent;
 import networking.SChatClient;
 import networking.SChatServer;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.security.KeyPair;
 
 /**
  * @author Gary Ye
@@ -20,21 +21,23 @@ import java.util.ArrayList;
  */
 public class ApplicationUser extends User {
     private static ApplicationUser instance = null;
-    private SChatClient client;
-    private DatabaseManager sqLiteManager;
 
-    private final static String databaseName = "schat.db";
+    private SChatClient client;
+    private AndroidSQLManager dbMangager;
+
     private final static String hostName = "85.10.240.108";
     private final static int portNumber = SChatServer.PORT_ADDRESS;
 
     private ApplicationUser() throws IOException {
-        this(databaseName, hostName, portNumber);
+        this(hostName, portNumber);
     }
 
-    private ApplicationUser(String databaseName, String hostName, int portNumber) throws IOException {
-        sqLiteManager = new SQLiteManager(databaseName);
+    private ApplicationUser(String hostName, int portNumber) throws IOException {
+        dbMangager = new AndroidSQLManager();
+        dbMangager.connect();
+
         // pass this object as a reference so the chat listener is able to call the method 'receiveMessage'
-        client = new SChatClient(this, hostName, portNumber);
+        // client = new SChatClient(this, hostName, portNumber, dbMangager);
     }
 
     public static ApplicationUser getInstance() throws IOException {
@@ -53,7 +56,7 @@ public class ApplicationUser extends User {
             client.registerToServer();
         } catch (IOException e) {
             e.printStackTrace();
-        } // gui output...
+        }
         return true;
     }
 
@@ -62,36 +65,14 @@ public class ApplicationUser extends User {
             client.loginToServer();
         } catch(IOException e){
             e.printStackTrace();
-        } // gui output...
+        }
         return true;
     }
 
-    public void sendMessage(String text, String receiverId){
-        client.sendMessage(new ChatContent(text), receiverId);
-        // show to GUI
+    public void initialize(Context context) {
+        if(!dbMangager.userExists(SChatServer.SERVER_ID)) {
+            User server = new User(SChatServer.SERVER_ID, new KeyPair(AndroidKeyPairManager.getServerPK(context), null), Cryptography.gen_symm_key());
+            dbMangager.insertUser(server);
+        }
     }
-
-    public void receiveMessage(ChatContent chatContent){
-        // show to gui...
-    }
-
-    public void addContact(User newContact){
-        sqLiteManager.insertUser(newContact);
-    }
-
-    public void removeContact(String id){
-        sqLiteManager.removeUser(id);
-    }
-
-    public ArrayList<User> loadContacts(){
-        return sqLiteManager.loadUsers();
-    }
-
-    // Register to Server
-    // Login to Server
-    // Send message
-    // Receive message
-    // Add User to contact list
-    // Load all user from contact list
-    // Load all messages from a given user
 }

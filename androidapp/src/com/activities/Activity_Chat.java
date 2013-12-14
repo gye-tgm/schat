@@ -50,7 +50,7 @@ public class Activity_Chat extends Activity {
         you = new User("Test");
 
         dbManager = new AndroidSQLManager();
-        dbManager.connect(this);
+        dbManager.connect();
 
         //Set title
         setTitle(getString(R.string.chat_with) + " " + notyou.getName());

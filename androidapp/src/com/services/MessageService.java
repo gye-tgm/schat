@@ -51,7 +51,8 @@ public class MessageService extends Service {
             try {
                 sleep(5000);
                 throwNotification(new Message<ChatContent>(new Date(), "Alice", "Bob", new ChatContent("This is a Test.")));
-
+                sleep(5000);
+                throwNotification(new Message<ChatContent>(new Date(), "Alice", "Bob", new ChatContent("This is a Test.")));
 
                 /*
                 try {

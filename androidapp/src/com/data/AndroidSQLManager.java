@@ -21,8 +21,8 @@ import java.util.Date;
  *
  */
 public class AndroidSQLManager implements DatabaseManager {
-    private final String DB_NAME = "clientdatabase";
-
+    public static final String DB_NAME = "clientdatabase";
+    public static final String DB_PATH = "/data/data/com.activities/databases/";
 
     private final String CREATE_USER = "CREATE TABLE IF NOT EXISTS user (id TEXT, public_key BLOB, symmetric_key BLOB, PRIMARY KEY(id)); ";
     private final String CREATE_MESSAGE = "CREATE TABLE IF NOT EXISTS message (sender_id TEXT, receiver_id TEXT, timestamp INTEGER, content TEXT, PRIMARY KEY(sender_id, receiver_id, timestamp));";
@@ -45,6 +45,11 @@ public class AndroidSQLManager implements DatabaseManager {
         createTables(CREATE_USER);
         createTables(CREATE_MESSAGE);
     }
+    public void connect() {
+        db = SQLiteDatabase.openOrCreateDatabase(DB_PATH + DB_NAME, null);
+        createTables(CREATE_USER);
+        createTables(CREATE_MESSAGE);
+    }
     public void disconnect() {
         db.close();
     }
@@ -59,7 +64,7 @@ public class AndroidSQLManager implements DatabaseManager {
         User user = null;
 
         Cursor c = db.query(USER, null, ID + " = ?", new String[]{id}, null, null, null); // SELECT * FROM user WHERE id = ?; ? = id
-        if(c.getCount() != 0) {
+        if(c.moveToNext()) {
             PublicKey pub_key = Cryptography.getPublicKeyFromBytes(c.getBlob(c.getColumnIndex(PUB_KEY)));
             SecretKey symm_key = Cryptography.getSecretKeyFromBytes(c.getBlob(c.getColumnIndex(SYMM_KEY)));
             user = new User(id, new KeyPair(pub_key, null), symm_key);
@@ -73,7 +78,7 @@ public class AndroidSQLManager implements DatabaseManager {
         PublicKey key = null;
 
         Cursor c = db.query(USER, new String[]{PUB_KEY}, ID + " = ?", new String[]{id}, null, null, null); // SELECT public_key FROM user WHERE id = ?; ? = id
-        if(c.getCount() != 0)
+        if(c.moveToNext())
             key = Cryptography.getPublicKeyFromBytes(c.getBlob(1));
 
         return key;

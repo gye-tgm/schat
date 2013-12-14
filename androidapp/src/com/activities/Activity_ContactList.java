@@ -10,12 +10,14 @@ import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import com.data.AndroidSQLManager;
+import com.data.ApplicationUser;
 import com.security.PRNGFixes;
 import com.services.MessageService;
 import crypto.Cryptography;
 import data.User;
 
 import javax.crypto.SecretKey;
+import java.io.IOException;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.ArrayList;
@@ -40,6 +42,8 @@ public class Activity_ContactList extends Activity {
     private Intent service;
     private AndroidSQLManager dbManager;
 
+    private ApplicationUser me;
+
     /**
      * Called when the activity is first created.
      */
@@ -47,6 +51,13 @@ public class Activity_ContactList extends Activity {
     public void onCreate(Bundle savedInstanceState) {
 
         PRNGFixes.apply(); // apply all PRG security fixes
+
+        try {
+            me = ApplicationUser.getInstance();
+            me.initialize(this);
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_contactlist);
@@ -80,7 +91,7 @@ public class Activity_ContactList extends Activity {
         });
 
         dbManager = new AndroidSQLManager();
-        dbManager.connect(this);
+        dbManager.connect();
         loadContacts(); // load all contacts into the list
     }
 
