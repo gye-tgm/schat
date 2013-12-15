@@ -31,8 +31,8 @@ public class ApplicationUser extends User {
     private SChatClient client;
     private AndroidSQLManager dbMangager;
 
-    //private final static String hostName = "85.10.240.108";
-    private final static String hostName = "62.178.242.13";
+    private final static String hostName = "192.168.1.2";
+    // private final static String hostName = "62.178.242.13";
     private final static int portNumber = SChatServer.PORT_ADDRESS;
 
     private ApplicationUser() throws IOException {
