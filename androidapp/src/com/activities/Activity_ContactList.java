@@ -18,6 +18,7 @@ import data.User;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * The main activity of the S/Chat-Application. It displays and manages the list of all available contacts.
@@ -188,10 +189,12 @@ public class Activity_ContactList extends Activity implements AddContact {
      * Uses a Handler and a Runnable to be allowed to do so.
      *
      */
-    public void addContact(String name) {
+    public void addContact(final String name) {
         handler.post(new Runnable() {
             public void run() {
-                 contacts.add("name");
+                contacts.add(name);
+                Collections.sort(contacts);
+                contactsAdapter.notifyDataSetChanged();
             }
         });
     }
