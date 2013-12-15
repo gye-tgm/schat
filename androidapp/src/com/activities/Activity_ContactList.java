@@ -18,6 +18,7 @@ import data.User;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * The main activity of the S/Chat-Application. It displays and manages the list of all available contacts.
@@ -53,8 +54,8 @@ public class Activity_ContactList extends Activity implements AddContact {
 
         try {
             me = ApplicationUser.getInstance();
-            me.addObserver(this);
             me.initialize(this);
+            me.setObserver(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -65,6 +66,16 @@ public class Activity_ContactList extends Activity implements AddContact {
         /* make all GUI-elements available */
         contactList = (ListView) findViewById(R.id.view_contactlist);
         registerForContextMenu(contactList); // register all list items for the context menu
+
+        dbManager = new AndroidSQLManager();
+        dbManager.connect(this);
+
+        try {
+            me = ApplicationUser.getInstance();
+            me.initialize(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         contacts = new ArrayList<String>();
         contactsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, contacts); // simple_List_item_1 is the android default
@@ -121,12 +132,12 @@ public class Activity_ContactList extends Activity implements AddContact {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_addContact:
-            add();
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
+                add();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -143,7 +154,7 @@ public class Activity_ContactList extends Activity implements AddContact {
     /**
      * Adds a contact to the List
      */
-    public void add(){
+    public void add() {
         final EditText txt = new EditText(this);
         new AlertDialog.Builder(this)
                 .setTitle("Add Contact")
@@ -179,23 +190,23 @@ public class Activity_ContactList extends Activity implements AddContact {
         ArrayList<User> users = new ArrayList<>();
 
         users = dbManager.loadUsers();
-        for(User u : users)
+        for (User u : users)
             contacts.add(u.getId());
     }
 
     /**
      * Updates the GUI with newly loaded Content.
      * Uses a Handler and a Runnable to be allowed to do so.
-     *
      */
-    public void addContact(String name) {
+    public void addContact(final String name) {
         handler.post(new Runnable() {
             public void run() {
-                 contacts.add("name");
+                contacts.add(name);
+                Collections.sort(contacts);
+                contactsAdapter.notifyDataSetChanged();
             }
         });
     }
-
 
     @Override
     public void onDestroy() {

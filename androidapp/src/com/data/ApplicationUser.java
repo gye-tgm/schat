@@ -30,8 +30,9 @@ public class ApplicationUser extends User {
 
     private SChatClient client;
     private AndroidSQLManager dbMangager;
+    private AddContact ac;
 
-    private final static String hostName = "192.168.1.2";
+    private final static String hostName = "62.178.242.13";
     // private final static String hostName = "62.178.242.13";
     private final static int portNumber = SChatServer.PORT_ADDRESS;
 
@@ -99,11 +100,11 @@ public class ApplicationUser extends User {
         dbMangager.insertUser(new User(publicKeyResponse.getRequestId(),
                 new KeyPair(publicKeyResponse.getPublicKey(), null), null));
         // contactList.addUser(publicKeyResponse.getRequestId());
-        if(ac!=null)
+        if (ac != null)
             ac.addContact(publicKeyResponse.getRequestId());
     }
-    private AddContact ac;
-    public void addObserver(AddContact ac){
+
+    public void setObserver(AddContact ac) {
         this.ac = ac;
     }
 
@@ -119,9 +120,9 @@ public class ApplicationUser extends User {
         }
 
         SharedPreferences shre = PreferenceManager.getDefaultSharedPreferences(activity); // set you own username
-        if(!shre.contains(USER_ID)) {
+        if (!shre.contains(USER_ID)) {
             SharedPreferences.Editor editor = shre.edit();
-            editor.putString(USER_ID, "Elias");
+            editor.putString(USER_ID, "Wolfram");
             editor.commit();
         }
 
