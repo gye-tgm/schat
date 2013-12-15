@@ -7,8 +7,11 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SealedObject;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.PrivateKey;
@@ -22,6 +25,8 @@ import java.security.PublicKey;
 public class SecureMessage extends Message implements Serializable {
 
     private byte[] header;
+
+    private byte[] iv;
 
     private SealedObject sealedContent;
 
@@ -39,7 +44,8 @@ public class SecureMessage extends Message implements Serializable {
 
         try {
             Cipher c = Cryptography.getSymmCipher();
-            c.init(Cipher.ENCRYPT_MODE, key, Cryptography.gen_symm_IV());
+            iv = Cryptography.gen_symm_IV().getIV();
+            c.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));
             sealedContent = new SealedObject(m.getContent(), c);
         }
         catch(IllegalBlockSizeException e) {}
@@ -60,7 +66,8 @@ public class SecureMessage extends Message implements Serializable {
 
         try {
             Cipher c = Cryptography.getSymmCipher();
-            c.init(Cipher.ENCRYPT_MODE, skey, Cryptography.gen_symm_IV());
+            iv = Cryptography.gen_symm_IV().getIV();
+            c.init(Cipher.ENCRYPT_MODE, skey, new IvParameterSpec(iv));
             sealedContent = new SealedObject(m.getContent(), c);
 
             header = Cryptography.wrap(pkey, skey);
@@ -68,7 +75,9 @@ public class SecureMessage extends Message implements Serializable {
         catch(IllegalBlockSizeException e) {}
         catch(InvalidAlgorithmParameterException e) {}
         catch(InvalidKeyException e) {}
-        catch(IOException e) {}
+        catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -79,7 +88,21 @@ public class SecureMessage extends Message implements Serializable {
      * @throws Exception if something went wrong, transmission was not successful
      */
     public <C extends Content> Message<C> decrypt(SecretKey key) throws Exception {
-        return new Message<C>(timestamp, sender, receiver, (C)sealedContent.getObject(key));
+        Message<C> message = null;
+
+        try {
+            // message = new Message<C>(timestamp, sender, receiver, (C)sealedContent.getObject(key));
+            Cipher cipher = Cryptography.getSymmCipher();
+            cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
+            message = new Message<C>(timestamp, sender, receiver, (C)sealedContent.getObject(cipher));
+        }
+        catch(Exception e) {
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+            String s = errors.toString();
+            System.out.println(s);
+        }
+        return message;
     }
 
     /**
