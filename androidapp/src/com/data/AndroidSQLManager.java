@@ -15,6 +15,7 @@ import javax.crypto.SecretKey;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -66,7 +67,12 @@ public class AndroidSQLManager implements DatabaseManager {
         Cursor c = db.query(USER, null, ID + " = ?", new String[]{id}, null, null, null); // SELECT * FROM user WHERE id = ?; ? = id
         if(c.moveToNext()) {
             PublicKey pub_key = Cryptography.getPublicKeyFromBytes(c.getBlob(c.getColumnIndex(PUB_KEY)));
-            SecretKey symm_key = Cryptography.getSecretKeyFromBytes(c.getBlob(c.getColumnIndex(SYMM_KEY)));
+            byte[] skey = c.getBlob(c.getColumnIndex(SYMM_KEY));
+            SecretKey symm_key;
+            if(skey.length == 0) // check if loaded SecretKey is null
+                symm_key = null;
+            else
+                symm_key = Cryptography.getSecretKeyFromBytes(c.getBlob(c.getColumnIndex(SYMM_KEY)));
             user = new User(id, new KeyPair(pub_key, null), symm_key);
         }
 
@@ -95,7 +101,10 @@ public class AndroidSQLManager implements DatabaseManager {
         SQLiteStatement st = db.compileStatement(query);
         st.bindString(1, user.getId());
         st.bindBlob(2, user.getPublicKey().getEncoded());
-        st.bindBlob(3, user.getSecretKey().getEncoded());
+        if(user.getSecretKey() != null)
+            st.bindBlob(3, user.getSecretKey().getEncoded());
+        else
+            st.bindBlob(3, new byte[0]); // value must not be null
 
         st.executeInsert();
     }
@@ -108,7 +117,12 @@ public class AndroidSQLManager implements DatabaseManager {
         while(c.moveToNext()) {
             String id = c.getString(c.getColumnIndex(ID));
             PublicKey pub_key = Cryptography.getPublicKeyFromBytes(c.getBlob(c.getColumnIndex(PUB_KEY)));
-            SecretKey symm_key = Cryptography.getSecretKeyFromBytes(c.getBlob(c.getColumnIndex(SYMM_KEY)));
+            byte[] skey = c.getBlob(c.getColumnIndex(SYMM_KEY));
+            SecretKey symm_key;
+            if(skey.length == 0) // check if loaded SecretKey is null
+                symm_key = null;
+            else
+                symm_key = Cryptography.getSecretKeyFromBytes(c.getBlob(c.getColumnIndex(SYMM_KEY)));
             users.add(new User(id, new KeyPair(pub_key, null), symm_key));
         }
 
