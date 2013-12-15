@@ -8,8 +8,8 @@ package crypto;
 public class CryptoConstants {
 
     public static final String symm_alg = "AES";
-    public static final String symm_mode = "CTR";
-    public static final String symm_padding = "NoPadding";
+    public static final String symm_mode = "CBC";
+    public static final String symm_padding = "PKCS5Padding";
     public static final int symm_keylength = 128;
 
     public static final String asymm_alg = "RSA";

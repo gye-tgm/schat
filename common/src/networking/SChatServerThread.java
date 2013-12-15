@@ -93,7 +93,7 @@ public class SChatServerThread extends Thread {
     public void run() {
         boolean isRunning = true;
 
-        sendStoredMessages();
+        // sendStoredMessages();
 
         while (isRunning) {
             try {

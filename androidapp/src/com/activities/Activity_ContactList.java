@@ -6,35 +6,27 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import com.data.AndroidSQLManager;
 import com.data.ApplicationUser;
 import com.security.PRNGFixes;
 import com.services.MessageService;
-import crypto.Cryptography;
 import data.User;
 
-import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.security.KeyPair;
-import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.Collections;
-
-/* todo: add options menu handling */
+import java.util.*;
 
 /**
  * The main activity of the S/Chat-Application. It displays and manages the list of all available contacts.
  *
- * @author Wolfram Soyka (0.2)
- * @version 2.12.2013: 0.2
+ * @author Elias Frantar
+ * @version 15.12.2013
  */
 public class Activity_ContactList extends Activity {
     private ListView contactList; // the GUI element
 
-    private ArrayList<String> contacts; // the stored contacts
+    private ArrayList<String> contacts = new ArrayList<>(); // the stored contacts
     private ArrayAdapter<String> contactsAdapter; // to automatically update the ListView with onDataSetChanged
     private Intent start_chat;
     private Context context;
@@ -52,16 +44,16 @@ public class Activity_ContactList extends Activity {
 
         PRNGFixes.apply(); // apply all PRG security fixes
 
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.layout_contactlist);
+        context = this;
+
         try {
             me = ApplicationUser.getInstance();
             me.initialize(this);
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_contactlist);
-        context = this;
 
         service = new Intent(getApplicationContext(), MessageService.class);
         startService(service);
@@ -140,9 +132,6 @@ public class Activity_ContactList extends Activity {
      * @param contactIndex the index of the contact in the list
      */
     private void deleteContact(int contactIndex) {
-
-        /* todo: maybe add animation */
-
         contacts.remove(contactIndex);
         contactsAdapter.notifyDataSetChanged();
     }
@@ -163,18 +152,7 @@ public class Activity_ContactList extends Activity {
                                 String newUser = txt.getText().toString();
                                 if (!newUser.equals("")) {
                                     if (!dbManager.userExists(newUser)) {
-                                        /* todo: replace keygen with keyrequests */
-                                        PublicKey pkey = Cryptography.gen_asymm_key().getPublic();
-                                        SecretKey skey = Cryptography.gen_symm_key();
-                                        User u = new User(newUser, new KeyPair(pkey, null), skey);
-                                        dbManager.insertUser(u);
-
-                                        contacts.add(newUser);
-                                        Collections.sort(contacts);
-                                        // Refreshes the content
-                                        contactsAdapter.notifyDataSetChanged();
-                                        // Shows toast
-                                        Toast.makeText(context, "Added " + newUser + " to contacts.", Toast.LENGTH_SHORT).show();
+                                        me.requestPublicKey(newUser);
                                     } else {
                                         Toast.makeText(context, "Contact already exists", Toast.LENGTH_SHORT).show();
                                     }
@@ -221,5 +199,4 @@ public class Activity_ContactList extends Activity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_contact, menu);
     }
-
 }

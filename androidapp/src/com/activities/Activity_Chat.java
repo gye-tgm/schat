@@ -12,6 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.data.AndroidSQLManager;
+import com.data.ApplicationUser;
 import com.data.ChatAdapter;
 import data.Message;
 import data.User;
@@ -33,13 +34,14 @@ public class Activity_Chat extends Activity {
     private ListView messageList;
     private ArrayList<Message<ChatContent>> messages; // the stored messages and timestamps
     private ChatAdapter messagesAdapter; // to automatically update the ListView with onDataSetChanged
-    private User you, notyou;
+    private User notyou;
     private ImageButton button_send;
     private Animation send_success, send_fail, send_all_fail;
     private LinearLayout lin;
     private boolean buttonOnly;
 
     private AndroidSQLManager dbManager;
+    private ApplicationUser me;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +49,12 @@ public class Activity_Chat extends Activity {
 
         //Get Users
         notyou = (User) getIntent().getSerializableExtra("notyou");
-        you = new User("Test");
+        try {
+            me = ApplicationUser.getInstance();
+            me.initialize(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         dbManager = new AndroidSQLManager();
         dbManager.connect();
@@ -66,7 +73,7 @@ public class Activity_Chat extends Activity {
         //Setting up List and Adapter
         messageList = (ListView) findViewById(R.id.view_chat);
         messages = new ArrayList<>();
-        messagesAdapter = new ChatAdapter(this, messages, you.getId());
+        messagesAdapter = new ChatAdapter(this, messages, me.getId());
         messageList.setAdapter(messagesAdapter); // set the data of the list
 
         //Hide keyboard when scrolling
@@ -155,7 +162,7 @@ public class Activity_Chat extends Activity {
                 lin.startAnimation(send_success);
             else
                 button_send.startAnimation(send_success);
-            addMessage(tmp);
+            sendMessage(tmp);
             text.setText("");
         }
     }
@@ -166,7 +173,7 @@ public class Activity_Chat extends Activity {
      * @param text New Messages Text
      */
     public void addMessage(String text) {
-        Message<ChatContent> m = new Message<>(Calendar.getInstance().getTime(), you.getName(), notyou.getName(), new ChatContent(text));
+        Message<ChatContent> m = new Message<>(Calendar.getInstance().getTime(), me.getName(), notyou.getName(), new ChatContent(text));
         messages.add(m);
         dbManager.insertMessage(m);
         messagesAdapter.notifyDataSetChanged();
@@ -174,7 +181,8 @@ public class Activity_Chat extends Activity {
     }
 
     public void sendMessage(String text) {
-
+        me.sendMessage(new ChatContent(text), notyou.getId());
+        addMessage(text);
     }
 
     /**

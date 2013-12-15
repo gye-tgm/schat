@@ -1,6 +1,15 @@
 package com.data;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.widget.EditText;
+import android.widget.Toast;
+import com.activities.Activity_Chat;
+import com.activities.Activity_ContactList;
 import com.security.AndroidKeyPairManager;
 import crypto.Cryptography;
 import crypto.Envelope;
@@ -24,10 +33,12 @@ import java.security.KeyPair;
 public class ApplicationUser extends User {
     private static ApplicationUser instance = null;
 
+    private final String USER_ID = "id";
+
     private SChatClient client;
     private AndroidSQLManager dbMangager;
 
-    private final static String hostName = "62.178.242.13";
+    private final static String hostName = "192.168.1.2";
     // private final static String hostName = "62.178.242.13";
     private final static int portNumber = SChatServer.PORT_ADDRESS;
 
@@ -84,26 +95,38 @@ public class ApplicationUser extends User {
         client.sendMessage(content, receiver_id);
     }
 
+    public void requestPublicKey(String id) {
+        client.sendPublicKeyRequest(id);
+    }
+
     @Override
     public void registerUser(Envelope envelope) {
         SecretKey secretKey1 = envelope.getUnwrappedKey(keyPair.getPrivate());
         PublicKeyResponse publicKeyResponse = envelope.<PublicKeyResponse>decryptMessage(secretKey1).getContent();
         dbMangager.insertUser(new User(publicKeyResponse.getRequestId(),
                 new KeyPair(publicKeyResponse.getPublicKey(), null), null));
+        // contactList.addUser(publicKeyResponse.getRequestId());
     }
 
     public void initialize(Activity activity) {
-        if (!dbMangager.userExists(SChatServer.SERVER_ID)) {
+        if (!dbMangager.userExists(SChatServer.SERVER_ID)) { // save the server-key in the database
             User server = new User(SChatServer.SERVER_ID, new KeyPair(AndroidKeyPairManager.getServerPK(activity), null), Cryptography.gen_symm_key());
             dbMangager.insertUser(server);
         }
 
-        if (!AndroidKeyPairManager.isKeyPairAlreadySaved(activity)) {
+        if (!AndroidKeyPairManager.isKeyPairAlreadySaved(activity)) { // generate your own keypair
             KeyPair keyPair1 = Cryptography.gen_asymm_key();
             AndroidKeyPairManager.saveKeyPair(activity, keyPair1);
         }
 
+        SharedPreferences shre = PreferenceManager.getDefaultSharedPreferences(activity); // set you own username
+        if(!shre.contains(USER_ID)) {
+            SharedPreferences.Editor editor = shre.edit();
+            editor.putString(USER_ID, "Elias");
+            editor.commit();
+        }
+
         keyPair = AndroidKeyPairManager.getKeyPairFormSharedPref(activity);
-        id = "Gary";
+        id = shre.getString(USER_ID, "");
     }
 }
