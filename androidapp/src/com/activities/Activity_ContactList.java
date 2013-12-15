@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.*;
 import android.widget.*;
+import com.data.AddContact;
 import com.data.AndroidSQLManager;
 import com.data.ApplicationUser;
 import com.security.PRNGFixes;
@@ -15,7 +17,7 @@ import com.services.MessageService;
 import data.User;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * The main activity of the S/Chat-Application. It displays and manages the list of all available contacts.
@@ -23,13 +25,14 @@ import java.util.*;
  * @author Elias Frantar
  * @version 15.12.2013
  */
-public class Activity_ContactList extends Activity {
+public class Activity_ContactList extends Activity implements AddContact {
     private ListView contactList; // the GUI element
 
     private ArrayList<String> contacts = new ArrayList<>(); // the stored contacts
     private ArrayAdapter<String> contactsAdapter; // to automatically update the ListView with onDataSetChanged
     private Intent start_chat;
     private Context context;
+    private Handler handler;
 
     private Intent service;
     private AndroidSQLManager dbManager;
@@ -43,13 +46,14 @@ public class Activity_ContactList extends Activity {
     public void onCreate(Bundle savedInstanceState) {
 
         PRNGFixes.apply(); // apply all PRG security fixes
-
+        handler = new Handler();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_contactlist);
         context = this;
 
         try {
             me = ApplicationUser.getInstance();
+            me.addObserver(this);
             me.initialize(this);
         } catch (IOException e) {
             e.printStackTrace();
@@ -178,6 +182,20 @@ public class Activity_ContactList extends Activity {
         for(User u : users)
             contacts.add(u.getId());
     }
+
+    /**
+     * Updates the GUI with newly loaded Content.
+     * Uses a Handler and a Runnable to be allowed to do so.
+     *
+     */
+    public void addContact(String name) {
+        handler.post(new Runnable() {
+            public void run() {
+                 contacts.add("name");
+            }
+        });
+    }
+
 
     @Override
     public void onDestroy() {

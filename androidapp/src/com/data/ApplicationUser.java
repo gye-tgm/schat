@@ -1,15 +1,8 @@
 package com.data;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
-import android.widget.EditText;
-import android.widget.Toast;
-import com.activities.Activity_Chat;
-import com.activities.Activity_ContactList;
 import com.security.AndroidKeyPairManager;
 import crypto.Cryptography;
 import crypto.Envelope;
@@ -106,6 +99,12 @@ public class ApplicationUser extends User {
         dbMangager.insertUser(new User(publicKeyResponse.getRequestId(),
                 new KeyPair(publicKeyResponse.getPublicKey(), null), null));
         // contactList.addUser(publicKeyResponse.getRequestId());
+        if(ac!=null)
+            ac.addContact(publicKeyResponse.getRequestId());
+    }
+    private AddContact ac;
+    public void addObserver(AddContact ac){
+        this.ac = ac;
     }
 
     public void initialize(Activity activity) {
