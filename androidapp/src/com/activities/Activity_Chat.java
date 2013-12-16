@@ -136,6 +136,7 @@ public class Activity_Chat extends Activity {
         chat = dbManager.loadChat(notyou.getId());
 
         messages.addAll(chat);
+        messageList.setSelection(messagesAdapter.getCount() - 1);
     }
 
     /**
