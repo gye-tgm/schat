@@ -110,7 +110,9 @@ public class Activity_ContactList extends Activity implements AddContact {
 
         switch (item.getItemId()) {
             case R.id.option_deleteContact:
-                dbManager.removeUser(contacts.get(info.position));
+                String username = contacts.get(info.position);
+                dbManager.removeUser(username);
+                dbManager.deleteChat(username);
                 deleteContact(info.position); // delete the selected contact
                 return true;
             case R.id.option_editContact: // edit the selected contact
