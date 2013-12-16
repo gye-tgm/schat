@@ -222,6 +222,7 @@ public class Activity_Chat extends Activity {
     @Override
     public void onDestroy() {
         dbManager.disconnect();
+        notyou = new User("");
         super.onDestroy();
     }
 }
