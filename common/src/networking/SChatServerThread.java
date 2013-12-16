@@ -60,6 +60,7 @@ public class SChatServerThread extends Thread {
         if (server.findUser(login.getId())) {
             client = dbmanager.getUserFromGivenId(login.getId());
             server.addUser(client.getId(), out);
+            sendStoredMessages();
             return true;
         } else {
             return false;
@@ -75,26 +76,27 @@ public class SChatServerThread extends Thread {
         return client != null;
     }
 
-
+    /**
+     * Sends the stored messages to the user.
+     * <p/>
+     * The stored messages are the messages, that were not successfully sent to the user because of some
+     * network error or because the user was offline at the sending time.
+     * They are saved in the database and will be erased after being sent successfully.
+     */
     public void sendStoredMessages() {
         ArrayList<Envelope> envelopes = dbmanager.loadEncryptedMessagesFromReceiver(client.getId());
-        int i = 0;
-        for (; i < envelopes.size(); i++)
-            if (!sendEnvelope(envelopes.get(i)))
+        for (Envelope e : envelopes) {
+            if (!sendEnvelope(e))
                 break;
-        while (i-- > 0) {
-            // remove from database
+            dbmanager.removeEncryptedMessage(e);
         }
     }
 
     /**
-     * Run the main logic of this server
+     * Runs the main logic of this server
      */
     public void run() {
         boolean isRunning = true;
-
-        // sendStoredMessages();
-
         while (isRunning) {
             try {
                 Envelope envelope = (Envelope) in.readObject();
@@ -107,7 +109,6 @@ public class SChatServerThread extends Thread {
                         }
                         break;
                     case LOGIN:
-                        // envelope.de
                         Message<Login> loginMessage = envelope.<Login>decryptMessage(secretKey, server.getKeyPair().getPublic());
                         if (!handleLogin(loginMessage.getContent()))
                             isRunning = false;
@@ -120,14 +121,13 @@ public class SChatServerThread extends Thread {
                     case PUBLIC_KEY_REQUEST:
                         handlePublicKeyRequest(envelope);
                         break;
-
                 }
             } catch (IOException e) {
                 System.err.println("Connection to " + client + " closed.");
-                break;
+                isRunning = false;
             } catch (ClassNotFoundException e) {
                 System.err.println("Class not found: " + e.getMessage());
-                break;
+                isRunning = false;
             }
         }
         // Close and kill everything
@@ -139,8 +139,13 @@ public class SChatServerThread extends Thread {
         server.eraseUser(client.getId());
     }
 
+    /**
+     * Handles the public key request
+     *
+     * @param envelope
+     */
     private void handlePublicKeyRequest(Envelope envelope) {
-        secretKey = envelope.getUnwrappedKey(server.getKeyPair().getPrivate());
+        secretKey = envelope.getUnwrappedKey(server.getKeyPair().getPrivate()); // Still needed in the first version.
         PublicKeyRequest pkRequest = envelope.<PublicKeyRequest>decryptMessage(secretKey, client.getPublicKey()).getContent();
         PublicKey requestPK = dbmanager.getPublicKeyFromId(pkRequest.getRequestId());
         Message<PublicKeyResponse> pkResponse = new Message<PublicKeyResponse>(Calendar.getInstance().getTime(), SChatServer.SERVER_ID,
@@ -149,10 +154,20 @@ public class SChatServerThread extends Thread {
         sendEnvelope(new Envelope(pkResponse, secretKey, senderPk, server.getKeyPair().getPrivate()));
     }
 
+    /**
+     * Handles the redirecting of the messages
+     *
+     * @param envelope
+     */
     private void handleRedirecting(Envelope envelope) {
         redirectMessage(envelope);
     }
 
+    /**
+     * Redirects the message to the receiver.
+     *
+     * @param envelope
+     */
     public void redirectMessage(Envelope envelope) {
         if (!sendEnvelope(envelope)) {
             dbmanager.insertEncryptedMessage(envelope);

@@ -10,7 +10,6 @@ import java.security.KeyPair;
 import java.security.PublicKey;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -145,7 +144,7 @@ public class SQLiteManager implements DatabaseManager {
     /**
      * Returns a list of all users in the lexicographical order from the database.
      *
-     * @return all users in the lexicographical order as a list,
+     * @return all users in the lexicographical order
      */
     public ArrayList<User> loadUsers() {
         String sql = "SELECT id, public_key, symmetric_key FROM user ORDER BY id ASC";
@@ -167,10 +166,10 @@ public class SQLiteManager implements DatabaseManager {
     }
 
     /**
-     * Get a connection from the driver manager
+     * Gets a connection from the driver manager
      *
-     * @return a connection
-     * @throws SQLException
+     * @return a connection to an SQLite database
+     * @throws SQLException will be thrown if an sql exception occurs
      */
     public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(url);
@@ -183,18 +182,31 @@ public class SQLiteManager implements DatabaseManager {
      * @return if the operation was successful
      */
     public boolean removeUser(String id) {
-        executeQuery(String.format("DELETE FROM user WHERE id = '%s'", id)); // TODO: check if an SQL injection can occur?!
+        try (
+                Connection conn = getConnection();
+                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM user WHERE id = ?")
+        ) {
+            pstmt.setString(1, id);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
         return true;
     }
 
-
+    /**
+     * Inserts the encrypted message to the database.
+     *
+     * @param envelope the envelope to insert
+     */
     public void insertEncryptedMessage(Envelope envelope) {
         try (
                 Connection connection = getConnection();
                 PreparedStatement pstmt = connection.prepareStatement("INSERT INTO message VALUES(?,?,?)");
         ) {
             pstmt.setString(1, envelope.getReceiver());
-            pstmt.setLong(2, Calendar.getInstance().getTimeInMillis());
+            pstmt.setLong(2, envelope.getTimestamp().getTime());
             try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
                  ObjectOutput out = new ObjectOutputStream(bos)
             ) {
@@ -209,15 +221,22 @@ public class SQLiteManager implements DatabaseManager {
         }
     }
 
+    /**
+     * Loads the stored envelopes from the database.
+     *
+     * @param id the id of the receiver
+     * @return the stored envelopes from the database.
+     */
     public ArrayList<Envelope> loadEncryptedMessagesFromReceiver(String id) {
         ArrayList<Envelope> ret = new ArrayList<>();
+        ResultSet rs = null;
         try (
                 Connection connection = getConnection();
                 PreparedStatement pstmt = connection.prepareStatement("SELECT content" +
                         " FROM message WHERE receiver_id = ? ORDER BY timestamp ASC")
         ) {
             pstmt.setString(1, id);
-            ResultSet rs = pstmt.executeQuery();
+            rs = pstmt.executeQuery();
             while (rs.next()) {
                 try (
                         ByteArrayInputStream bis = new ByteArrayInputStream(rs.getBytes(1));
@@ -230,11 +249,22 @@ public class SQLiteManager implements DatabaseManager {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (rs != null)
+                try {
+                    rs.close();
+                } catch (SQLException ignored) {
+                }
         }
         return ret;
     }
 
 
+    /**
+     * Inserts the given message.
+     *
+     * @param message the message
+     */
     @Override
     public void insertMessage(Message<ChatContent> message) {
         try (
@@ -251,15 +281,35 @@ public class SQLiteManager implements DatabaseManager {
         }
     }
 
+    /**
+     * Loads the messages from the given given receiver id.
+     *
+     * @param id the id of the receiver
+     * @return the messages from the given receiver id
+     */
     public ArrayList<Message<ChatContent>> loadMessagesFromReceiver(String id) {
         return loadMessagesFromUser("receiver_id", id);
     }
 
+    /**
+     * Loads the messages from the given sender id
+     *
+     * @param id the id of the sender id
+     * @return the messages from the given sender id
+     */
     public ArrayList<Message<ChatContent>> loadMessagesFromSender(String id) {
         return loadMessagesFromUser("sender_id", id);
     }
 
 
+    /**
+     * Loads the message from the given user.
+     * One must specify whether the given user is the receiver or the sender.
+     *
+     * @param who "receiver_id" or "sender_id"
+     * @param id  the id of the corresponding user
+     * @return the corresponding messages to the given set of user data
+     */
     public ArrayList<Message<ChatContent>> loadMessagesFromUser(String who, String id) {
         ArrayList<Message<ChatContent>> ret = new ArrayList<>();
 
@@ -281,5 +331,23 @@ public class SQLiteManager implements DatabaseManager {
             e.printStackTrace();
         }
         return ret;
+    }
+
+    /**
+     * Removes the encrypted message
+     *
+     * @param e the encrypted message to delete
+     */
+    public void removeEncryptedMessage(Envelope e) {
+        try (
+                Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement("DELETE FROM message WHERE receiver_id = ? AND timestamp = ?")
+        ) {
+            stmt.setString(1, e.getReceiver());
+            stmt.setLong(2, e.getTimestamp().getTime());
+            stmt.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 }
