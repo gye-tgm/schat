@@ -140,6 +140,7 @@ public class SChatServerThread extends Thread {
     }
 
     private void handlePublicKeyRequest(Envelope envelope) {
+        secretKey = envelope.getUnwrappedKey(server.getKeyPair().getPrivate());
         PublicKeyRequest pkRequest = envelope.<PublicKeyRequest>decryptMessage(secretKey, client.getPublicKey()).getContent();
         PublicKey requestPK = dbmanager.getPublicKeyFromId(pkRequest.getRequestId());
         Message<PublicKeyResponse> pkResponse = new Message<PublicKeyResponse>(Calendar.getInstance().getTime(), SChatServer.SERVER_ID,
@@ -163,6 +164,7 @@ public class SChatServerThread extends Thread {
      * @return whether the sending was successful or not
      */
     public boolean sendEnvelope(Envelope envelope) {
+        System.out.println(envelope.getSender() + " sending to " + envelope.getReceiver());
         ObjectOutputStream out = server.getObjectOutputStreamById(envelope.getReceiver());
         if (out == null)
             return false;
@@ -189,8 +191,9 @@ public class SChatServerThread extends Thread {
         Login login = registration.getLogin();
 
         if (dbmanager.userExists(login.getId())) {
-            System.err.println("Registration failed because id already exists");
-            return false;
+            // System.err.println("Registration failed because id already exists");
+            handleLogin(registration.getLogin());
+            return true;
         }
         client = new User(login.getId(), new KeyPair(registration.getPublicKey(), null), secretKey);
         dbmanager.insertUser(client);
