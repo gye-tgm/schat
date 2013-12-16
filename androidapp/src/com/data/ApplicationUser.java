@@ -36,8 +36,8 @@ public class ApplicationUser extends User {
     private SChatClient client;
     private AndroidSQLManager dbMangager;
 
-
-    private final static String hostName = "62.178.242.13";
+    private final static String hostName = "85.10.240.108";
+    // private final static String hostName = "62.178.242.13";
     // private final static String hostName = "192.168.1.4";
     private final static int portNumber = SChatServer.PORT_ADDRESS;
 
@@ -124,7 +124,8 @@ public class ApplicationUser extends User {
     }
     @Override
     public void receiveMessage(Envelope e) {
-        PublicKey senderPublicKey = dbMangager.getPublicKeyFromId(e.getSender()); // Load from database
+        User sender = dbMangager.getUserFromGivenId(e.getSender());
+        PublicKey senderPublicKey = sender.getPublicKey();
         SecretKey secretKey1 = e.getUnwrappedKey(keyPair.getPrivate());
         Message<ChatContent> message = e.<ChatContent>decryptMessage(secretKey1, senderPublicKey);
         if(message != null) {
