@@ -205,4 +205,13 @@ public class AndroidSQLManager implements DatabaseManager {
         return messages;
     }
 
+    public boolean deleteChat(String id) {
+        String query = "DELETE FROM " + MESSAGE + " WHERE " + SENDER + " = ? OR " + RECEIVER + " = ?;";
+        SQLiteStatement st = db.compileStatement(query);
+        st.bindString(1, id);
+        st.bindString(2, id);
+
+        return (st.executeUpdateDelete() > 0);
+    }
+
 }
