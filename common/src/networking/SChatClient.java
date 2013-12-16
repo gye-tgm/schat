@@ -1,5 +1,6 @@
 package networking;
 
+import crypto.Cryptography;
 import crypto.Envelope;
 import data.Content;
 import data.DatabaseManager;
@@ -115,7 +116,7 @@ public class SChatClient extends Thread {
     public Envelope encrypt(Message<? extends Content> message) {
         String receiverId = message.getReceiver();
         User receiver = manager.getUserFromGivenId(receiverId);
-        return new Envelope(message, receiver.getSecretKey(), receiver.getPublicKey(), client.getKeyPair().getPrivate());
+        return new Envelope(message, Cryptography.gen_symm_key(), receiver.getPublicKey(), client.getKeyPair().getPrivate());
     }
 
     public void sendPublicKeyRequest(String id) {

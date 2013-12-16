@@ -37,8 +37,8 @@ public class ApplicationUser extends User {
     private AndroidSQLManager dbMangager;
 
 
-    //private final static String hostName = "62.178.242.13";
-    private final static String hostName = "192.168.1.4";
+    private final static String hostName = "62.178.242.13";
+    // private final static String hostName = "192.168.1.4";
     private final static int portNumber = SChatServer.PORT_ADDRESS;
 
     private Activity_ContactList activity_contactList;
