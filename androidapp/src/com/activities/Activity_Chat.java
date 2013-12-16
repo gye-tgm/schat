@@ -4,10 +4,7 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.ContextMenu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -15,6 +12,7 @@ import android.widget.*;
 import com.data.AndroidSQLManager;
 import com.data.ApplicationUser;
 import com.data.ChatAdapter;
+import com.services.MessageService;
 import data.Message;
 import data.User;
 import data.contents.ChatContent;
@@ -42,6 +40,7 @@ public class Activity_Chat extends Activity {
     private LinearLayout lin;
     private Handler handler;
     private boolean buttonOnly;
+    EditText text;
 
     private AndroidSQLManager dbManager;
     private ApplicationUser me;
@@ -73,6 +72,7 @@ public class Activity_Chat extends Activity {
         send_fail = AnimationUtils.loadAnimation(this, R.anim.send_fail);
         send_all_fail = AnimationUtils.loadAnimation(this, R.anim.send_all_fail);
         lin = (LinearLayout) findViewById(R.id.layout_chat_linlay);
+        text = (EditText)findViewById(R.id.eingabe);
         handler = new Handler();
 
         //Setting up List and Adapter
@@ -155,7 +155,6 @@ public class Activity_Chat extends Activity {
      */
     @SuppressWarnings("unused")
     public void sendMessagePressed(View v) {
-        EditText text = (EditText) findViewById(R.id.eingabe);
         String tmp = text.getText().toString().trim();
         if (tmp.equals("")) {
             if (!buttonOnly)
@@ -194,11 +193,16 @@ public class Activity_Chat extends Activity {
      * Updates the GUI with newly loaded Content.
      * Uses a Handler and a Runnable to be allowed to do so.
      */
-    public void receiveMessage(final Message<ChatContent> message) {
+    public void receiveMessage(final Message<ChatContent> message, final MessageService notificationService) {
         handler.post(new Runnable() {
             public void run() {
-                messages.add(message);
-                messagesAdapter.notifyDataSetChanged();
+                if(message.getSender().equals(notyou.getId())) {
+                    messages.add(message);
+                    messagesAdapter.notifyDataSetChanged();
+                    messageList.setSelection(messagesAdapter.getCount() - 1);
+                }
+                else
+                    notificationService.receiveMessage(message);
             }
         });
     }
