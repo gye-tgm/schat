@@ -53,14 +53,6 @@ public class Activity_ContactList extends Activity implements AddContact {
         setContentView(R.layout.layout_contactlist);
         context = this;
 
-        try {
-            me = ApplicationUser.getInstance();
-            me.initialize(this);
-            me.setActivity_contactList(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         service = new Intent(getApplicationContext(), MessageService.class);
         startService(service);
 
@@ -74,6 +66,7 @@ public class Activity_ContactList extends Activity implements AddContact {
         try {
             me = ApplicationUser.getInstance();
             me.initialize(this);
+            me.setActivity_contactList(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
