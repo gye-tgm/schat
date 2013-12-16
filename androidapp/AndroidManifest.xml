@@ -12,7 +12,8 @@
 			android:targetSdkVersion = "16" />
 	<application
 			android:label = "@string/app_name"
-			android:icon = "@drawable/ic_launcher">
+			android:icon = "@drawable/ic_launcher"
+			>
 		<activity
 				android:name = "com.activities.Activity_ContactList"
 				android:label = "@string/app_name">
@@ -23,7 +24,8 @@
 		</activity>
 		<activity
 				android:name = ".Activity_Chat"
-				android:label = "@string/chat_with" />
+				android:label = "@string/chat_with"
+				android:windowSoftInputMode="adjustPan"/>
 
 		<intent-filter>
 			<action android:name = "android.intent.action.MAIN" />
