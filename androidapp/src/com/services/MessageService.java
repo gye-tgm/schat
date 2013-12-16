@@ -95,7 +95,7 @@ public class MessageService extends Service {
         n.flags |= Notification.FLAG_AUTO_CANCEL;
 
         nm.notify(nr, n);
-        nr++;
+        // nr++;
     }
 
     public void receiveMessage(final Message<ChatContent> message) {
