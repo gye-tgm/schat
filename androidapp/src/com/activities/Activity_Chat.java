@@ -226,4 +226,10 @@ public class Activity_Chat extends Activity {
         notyou = new User("");
         super.onDestroy();
     }
+
+    @Override
+    public void onPause() {
+        notyou = new User("");
+        super.onPause();
+    }
 }
