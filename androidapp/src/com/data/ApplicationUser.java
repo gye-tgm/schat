@@ -3,9 +3,13 @@ package com.data;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import com.activities.Activity_Chat;
+import com.activities.Activity_ContactList;
 import com.security.AndroidKeyPairManager;
+import com.services.MessageService;
 import crypto.Cryptography;
 import crypto.Envelope;
+import data.Message;
 import data.User;
 import data.contents.ChatContent;
 import data.contents.PublicKeyResponse;
@@ -15,10 +19,11 @@ import networking.SChatServer;
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.security.KeyPair;
+import java.security.PublicKey;
 
 /**
- * @author Gary Ye
- * @version 12/2/13
+ * @author Gary Ye, Elias Frantar, Wolfram Soyka
+ * @version 12/16/13
  *          One has to specify the following data:
  *          - host name (default: server name)
  *          - port ( default: port number )
@@ -31,9 +36,14 @@ public class ApplicationUser extends User {
     private SChatClient client;
     private AndroidSQLManager dbMangager;
 
-    private final static String hostName = "192.168.1.2";
-    // private final static String hostName = "62.178.242.13";
+
+    //private final static String hostName = "62.178.242.13";
+    private final static String hostName = "192.168.1.4";
     private final static int portNumber = SChatServer.PORT_ADDRESS;
+
+    private Activity_ContactList activity_contactList;
+    private Activity_Chat activity_chat;
+    private MessageService messageService;
 
     private ApplicationUser() throws IOException {
         this(hostName, portNumber);
@@ -56,6 +66,16 @@ public class ApplicationUser extends User {
             }
         }
         return instance;
+    }
+
+    public void setActivity_contactList(Activity_ContactList activity_contactList) {
+        this.activity_contactList = activity_contactList;
+    }
+    public void setActivity_chat(Activity_Chat activity_chat) {
+        this.activity_chat = activity_chat;
+    }
+    public void setMessageService(MessageService messageService) {
+        this.messageService = messageService;
     }
 
     public void connect() {
@@ -99,12 +119,21 @@ public class ApplicationUser extends User {
         dbMangager.insertUser(new User(publicKeyResponse.getRequestId(),
                 new KeyPair(publicKeyResponse.getPublicKey(), null), null));
         // contactList.addUser(publicKeyResponse.getRequestId());
-        if(ac!=null)
-            ac.addContact(publicKeyResponse.getRequestId());
+        if(activity_contactList != null)
+            activity_contactList.addContact(publicKeyResponse.getRequestId());
     }
-    private AddContact ac;
-    public void addObserver(AddContact ac){
-        this.ac = ac;
+    @Override
+    public void receiveMessage(Envelope e) {
+        PublicKey senderPublicKey = dbMangager.getPublicKeyFromId(e.getSender()); // Load from database
+        SecretKey secretKey1 = e.getUnwrappedKey(keyPair.getPrivate());
+        Message<ChatContent> message = e.<ChatContent>decryptMessage(secretKey1, senderPublicKey);
+        if(message != null) {
+            dbMangager.insertMessage(message);
+            if(messageService != null)
+                messageService.receiveMessage(message);
+            if(activity_chat != null)
+                activity_chat.receiveMessage(message);
+        }
     }
 
     public void initialize(Activity activity) {

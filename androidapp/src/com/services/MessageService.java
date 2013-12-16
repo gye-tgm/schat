@@ -10,6 +10,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import com.activities.Activity_Chat;
@@ -18,6 +19,8 @@ import com.data.ApplicationUser;
 import data.Message;
 import data.User;
 import data.contents.ChatContent;
+
+import java.io.IOException;
 import java.util.Date;
 
 import static java.lang.Thread.sleep;
@@ -26,15 +29,16 @@ import static java.lang.Thread.sleep;
  *
  */
 public class MessageService extends Service {
-    private static NotificationManager nm; // the notification manager to throw notifications
+    private NotificationManager nm; // the notification manager to throw notifications
 
-    private static int nr = 0;
+    private int nr = 0;
 
     private ApplicationUser me;
 
-    private static Context activityContext;
-    private static Uri alarmSound;
-    private static Intent intent;
+    private Context activityContext;
+    private Uri alarmSound;
+    private Intent intent;
+    private Handler handler;
 
     @Override
     public void onCreate() {
@@ -50,15 +54,12 @@ public class MessageService extends Service {
         protected Object doInBackground(Object... objects) {
             try {
 
-                me = ApplicationUser.getInstance();
                 me.connect();
                 me.registerToServer();
-                // me.sendMessage(new ChatContent("Hallo"), "Gary");
 
-            } catch (Exception e) {
             }
-
-            stopSelf();
+            catch (Exception e) {
+            }
 
             return new Object();
         }
@@ -68,10 +69,18 @@ public class MessageService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         new ReceiveMessages().execute(null);
 
+        handler = new Handler();
+        try {
+            me = ApplicationUser.getInstance();
+            me.setMessageService(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return START_STICKY;
     }
 
-    public static void throwNotification(Message<ChatContent> message) {
+    public void throwNotification(Message<ChatContent> message) {
         intent = new Intent(activityContext, Activity_Chat.class);
         intent.putExtra("notyou", new User(message.getSender()));
         PendingIntent pIntent = PendingIntent.getActivity(activityContext, 0, intent, 0);
@@ -87,6 +96,14 @@ public class MessageService extends Service {
 
         nm.notify(nr, n);
         nr++;
+    }
+
+    public void receiveMessage(final Message<ChatContent> message) {
+        handler.post(new Runnable() {
+            public void run() {
+               throwNotification(message);
+            }
+        });
     }
 
     /* we probably don't even need it, added it anyway because it was in the example */

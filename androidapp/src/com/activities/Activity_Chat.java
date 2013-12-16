@@ -3,6 +3,7 @@ package com.activities;
 import android.app.Activity;
 import android.content.ClipData;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,6 +23,7 @@ import networking.SChatClient;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Random;
 
 /**
@@ -38,6 +40,7 @@ public class Activity_Chat extends Activity {
     private ImageButton button_send;
     private Animation send_success, send_fail, send_all_fail;
     private LinearLayout lin;
+    private Handler handler;
     private boolean buttonOnly;
 
     private AndroidSQLManager dbManager;
@@ -52,6 +55,7 @@ public class Activity_Chat extends Activity {
         try {
             me = ApplicationUser.getInstance();
             me.initialize(this);
+            me.setActivity_chat(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -69,6 +73,7 @@ public class Activity_Chat extends Activity {
         send_fail = AnimationUtils.loadAnimation(this, R.anim.send_fail);
         send_all_fail = AnimationUtils.loadAnimation(this, R.anim.send_all_fail);
         lin = (LinearLayout) findViewById(R.id.layout_chat_linlay);
+        handler = new Handler();
 
         //Setting up List and Adapter
         messageList = (ListView) findViewById(R.id.view_chat);
@@ -183,6 +188,19 @@ public class Activity_Chat extends Activity {
     public void sendMessage(String text) {
         me.sendMessage(new ChatContent(text), notyou.getId());
         addMessage(text);
+    }
+
+    /**
+     * Updates the GUI with newly loaded Content.
+     * Uses a Handler and a Runnable to be allowed to do so.
+     */
+    public void receiveMessage(final Message<ChatContent> message) {
+        handler.post(new Runnable() {
+            public void run() {
+                messages.add(message);
+                messagesAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     /**

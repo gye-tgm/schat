@@ -47,6 +47,7 @@ public class Activity_ContactList extends Activity implements AddContact {
     public void onCreate(Bundle savedInstanceState) {
 
         PRNGFixes.apply(); // apply all PRG security fixes
+
         handler = new Handler();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_contactlist);
@@ -55,7 +56,7 @@ public class Activity_ContactList extends Activity implements AddContact {
         try {
             me = ApplicationUser.getInstance();
             me.initialize(this);
-            me.setObserver(this);
+            me.setActivity_contactList(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -211,6 +212,7 @@ public class Activity_ContactList extends Activity implements AddContact {
     @Override
     public void onDestroy() {
         dbManager.disconnect();
+        stopService(service);
         super.onDestroy();
     }
 
