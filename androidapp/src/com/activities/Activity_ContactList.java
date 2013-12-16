@@ -15,6 +15,7 @@ import com.data.ApplicationUser;
 import com.security.PRNGFixes;
 import com.services.MessageService;
 import data.User;
+import networking.SChatServer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -187,7 +188,8 @@ public class Activity_ContactList extends Activity implements AddContact {
 
         users = dbManager.loadUsers();
         for (User u : users)
-            contacts.add(u.getId());
+            if (!u.getId().equals(SChatServer.SERVER_ID))
+                contacts.add(u.getId());
     }
 
     /**
