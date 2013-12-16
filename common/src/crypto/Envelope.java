@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.*;
+import java.util.Date;
 
 /**
  * Instances of this class will be sent over the web. This class contains a signed and sealed message. It provides easier access to those attributes.
@@ -152,6 +153,16 @@ public class Envelope implements Serializable {
         deserializeIfNecessary();
 
         return sec_message.getReceiver();
+    }
+
+    /**
+     * Returns the timestamp of this message.
+     * @return the timestamp of the message contained in this envelope
+     */
+    public Date getTimestamp() {
+        deserializeIfNecessary();
+
+        return sec_message.getTimestamp();
     }
 
     /**
