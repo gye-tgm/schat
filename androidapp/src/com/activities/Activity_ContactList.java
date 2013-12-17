@@ -56,32 +56,6 @@ public class Activity_ContactList extends Activity implements AddContact {
 
         service = new Intent(getApplicationContext(), MessageService.class);
         startService(service);
-
-        /* make all GUI-elements available */
-        contactList = (ListView) findViewById(R.id.view_contactlist);
-        registerForContextMenu(contactList); // register all list items for the context menu
-
-        contacts = new ArrayList<String>();
-        contactsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, contacts); // simple_List_item_1 is the android default
-        contactList.setAdapter(contactsAdapter); // set the data of the list
-
-        contactList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-                                    long arg3) {
-                dbManager.disconnect();
-                start_chat = new Intent(context, Activity_Chat.class);
-                User tmp = new User(contacts.get(arg2));
-                start_chat.putExtra("notyou", tmp);
-                startActivity(start_chat);
-            }
-
-        });
-
-        dbManager = new AndroidSQLManager();
-        dbManager.connect();
-        loadContacts(); // load all contacts into the list
     }
     @Override
     public void onStart() {
@@ -97,6 +71,30 @@ public class Activity_ContactList extends Activity implements AddContact {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+                /* make all GUI-elements available */
+        contactList = (ListView) findViewById(R.id.view_contactlist);
+        registerForContextMenu(contactList); // register all list items for the context menu
+
+        contacts = new ArrayList<String>();
+        contactsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, contacts); // simple_List_item_1 is the android default
+        contactList.setAdapter(contactsAdapter); // set the data of the list
+
+
+        contactList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+                                    long arg3) {
+                start_chat = new Intent(context, Activity_Chat.class);
+                User tmp = new User(contacts.get(arg2));
+                start_chat.putExtra("notyou", tmp);
+                startActivity(start_chat);
+            }
+
+        });
+
+        loadContacts(); // load all contacts into the list
     }
     @Override
     public void onPause() {
@@ -115,7 +113,7 @@ public class Activity_ContactList extends Activity implements AddContact {
             case R.id.option_deleteContact:
                 String username = contacts.get(info.position);
                 dbManager.removeUser(username);
-                // dbManager.deleteChat(username);
+                dbManager.deleteChat(username);
                 deleteContact(info.position); // delete the selected contact
                 return true;
             case R.id.option_editContact: // edit the selected contact
