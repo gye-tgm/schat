@@ -37,7 +37,7 @@ public class ApplicationUser extends User {
     private AndroidSQLManager dbMangager;
 
     private final static String hostName = "85.10.240.108";
-    // private final static String hostName = "62.178.242.13";
+    //private final static String hostName = "62.178.242.13";
     // private final static String hostName = "192.168.1.4";
     private final static int portNumber = SChatServer.PORT_ADDRESS;
 
@@ -78,15 +78,20 @@ public class ApplicationUser extends User {
         this.messageService = messageService;
     }
 
-    public void connect() throws IOException {
-           client = new SChatClient(this, hostName, portNumber, dbMangager);
-    }
-    public boolean isConnected() {
-        return client.isConnected();
+    public void connect() {
+        try {
+            client = new SChatClient(this, hostName, portNumber, dbMangager);
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
-    public boolean registerToServer() throws IOException {
-        client.registerToServer();
+    public boolean registerToServer() {
+        try {
+            client.registerToServer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return true;
     }
 
@@ -109,17 +114,13 @@ public class ApplicationUser extends User {
 
     @Override
     public void registerUser(Envelope envelope) {
-        try {
-            SecretKey secretKey1 = envelope.getUnwrappedKey(keyPair.getPrivate());
-            PublicKeyResponse publicKeyResponse = envelope.<PublicKeyResponse>decryptMessage(secretKey1).getContent();
-            dbMangager.insertUser(new User(publicKeyResponse.getRequestId(), new KeyPair(publicKeyResponse.getPublicKey(), null), null));
-            // contactList.addUser(publicKeyResponse.getRequestId());
-            if(activity_contactList != null)
-                activity_contactList.addContact(publicKeyResponse.getRequestId());
-        }
-        catch(Exception e) {
-            activity_contactList.printError("Adding user failed!");
-        }
+        SecretKey secretKey1 = envelope.getUnwrappedKey(keyPair.getPrivate());
+        PublicKeyResponse publicKeyResponse = envelope.<PublicKeyResponse>decryptMessage(secretKey1).getContent();
+        dbMangager.insertUser(new User(publicKeyResponse.getRequestId(),
+                new KeyPair(publicKeyResponse.getPublicKey(), null), null));
+        // contactList.addUser(publicKeyResponse.getRequestId());
+        if(activity_contactList != null)
+            activity_contactList.addContact(publicKeyResponse.getRequestId());
     }
     @Override
     public void receiveMessage(Envelope e) {
@@ -149,11 +150,11 @@ public class ApplicationUser extends User {
         }
 
         SharedPreferences shre = PreferenceManager.getDefaultSharedPreferences(activity); // set you own username
-        if(!shre.contains(USER_ID)) {
-            SharedPreferences.Editor editor = shre.edit();
-            editor.putString(USER_ID, "Elias");
-            editor.commit();
-        }
+        /** if(!shre.contains(USER_ID)) {
+         SharedPreferences.Editor editor = shre.edit();
+         editor.putString(USER_ID, "Wolfram");
+         editor.commit();
+         } */
 
         keyPair = AndroidKeyPairManager.getKeyPairFormSharedPref(activity);
         id = shre.getString(USER_ID, "");
