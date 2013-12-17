@@ -114,13 +114,17 @@ public class ApplicationUser extends User {
 
     @Override
     public void registerUser(Envelope envelope) {
-        SecretKey secretKey1 = envelope.getUnwrappedKey(keyPair.getPrivate());
-        PublicKeyResponse publicKeyResponse = envelope.<PublicKeyResponse>decryptMessage(secretKey1).getContent();
-        dbMangager.insertUser(new User(publicKeyResponse.getRequestId(),
-                new KeyPair(publicKeyResponse.getPublicKey(), null), null));
-        // contactList.addUser(publicKeyResponse.getRequestId());
-        if(activity_contactList != null)
-            activity_contactList.addContact(publicKeyResponse.getRequestId());
+        try {
+            SecretKey secretKey1 = envelope.getUnwrappedKey(keyPair.getPrivate());
+            PublicKeyResponse publicKeyResponse = envelope.<PublicKeyResponse>decryptMessage(secretKey1).getContent();
+            dbMangager.insertUser(new User(publicKeyResponse.getRequestId(), new KeyPair(publicKeyResponse.getPublicKey(), null), null));
+            // contactList.addUser(publicKeyResponse.getRequestId());
+            if(activity_contactList != null)
+                activity_contactList.addContact(publicKeyResponse.getRequestId());
+        }
+        catch(Exception e) {
+            activity_contactList.printError("Adding user failed!");
+        }
     }
     @Override
     public void receiveMessage(Envelope e) {

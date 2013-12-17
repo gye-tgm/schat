@@ -61,17 +61,6 @@ public class Activity_ContactList extends Activity implements AddContact {
         contactList = (ListView) findViewById(R.id.view_contactlist);
         registerForContextMenu(contactList); // register all list items for the context menu
 
-        dbManager = new AndroidSQLManager();
-        dbManager.connect(this);
-
-        try {
-            me = ApplicationUser.getInstance();
-            me.initialize(this);
-            me.setActivity_contactList(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         contacts = new ArrayList<String>();
         contactsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, contacts); // simple_List_item_1 is the android default
         contactList.setAdapter(contactsAdapter); // set the data of the list
@@ -94,6 +83,26 @@ public class Activity_ContactList extends Activity implements AddContact {
         dbManager.connect();
         loadContacts(); // load all contacts into the list
     }
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        dbManager = new AndroidSQLManager();
+        dbManager.connect(this);
+
+        try {
+            me = ApplicationUser.getInstance();
+            me.initialize(this);
+            me.setActivity_contactList(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        dbManager.disconnect();
+    }
 
     /**
      * Handels the ContextMenu actions.
@@ -106,7 +115,7 @@ public class Activity_ContactList extends Activity implements AddContact {
             case R.id.option_deleteContact:
                 String username = contacts.get(info.position);
                 dbManager.removeUser(username);
-                dbManager.deleteChat(username);
+                // dbManager.deleteChat(username);
                 deleteContact(info.position); // delete the selected contact
                 return true;
             case R.id.option_editContact: // edit the selected contact
@@ -202,6 +211,13 @@ public class Activity_ContactList extends Activity implements AddContact {
                 contacts.add(name);
                 Collections.sort(contacts);
                 contactsAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+    public void printError(final String s) {
+        handler.post(new Runnable() {
+            public void run() {
+                Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
             }
         });
     }
