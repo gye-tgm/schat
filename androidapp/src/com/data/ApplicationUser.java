@@ -31,7 +31,7 @@ import java.security.PublicKey;
 public class ApplicationUser extends User {
     private static ApplicationUser instance = null;
 
-    private final String USER_ID = "id";
+    public static final String USER_ID = "id";
 
     private SChatClient client;
     private AndroidSQLManager dbMangager;
@@ -150,13 +150,11 @@ public class ApplicationUser extends User {
         }
 
         SharedPreferences shre = PreferenceManager.getDefaultSharedPreferences(activity); // set you own username
-        /** if(!shre.contains(USER_ID)) {
-         SharedPreferences.Editor editor = shre.edit();
-         editor.putString(USER_ID, "Wolfram");
-         editor.commit();
-         } */
-
         keyPair = AndroidKeyPairManager.getKeyPairFormSharedPref(activity);
         id = shre.getString(USER_ID, "");
+    }
+
+    public boolean isConnected() {
+        return client.isConnected();
     }
 }
