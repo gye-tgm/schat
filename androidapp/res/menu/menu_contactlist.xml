@@ -1,9 +1,4 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-		>
-	<item
-			android:id="@+id/connected_to_Server"
-			android:actionLayout="@layout/connection_no"
-			android:showAsAction="always" />
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 <item
 		android:id="@+id/action_addContact"
 		android:title="@string/add"
