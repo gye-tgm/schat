@@ -4,10 +4,7 @@ import crypto.Envelope;
 import data.Message;
 import data.SQLiteManager;
 import data.User;
-import data.contents.Login;
-import data.contents.PublicKeyRequest;
-import data.contents.PublicKeyResponse;
-import data.contents.Registration;
+import data.contents.*;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
@@ -50,6 +47,7 @@ public class SChatServerThread extends Thread {
         this.dbmanager = new SQLiteManager(SChatServer.SERVER_DB);
     }
 
+
     /**
      * Handle the login of the user and check whether it was successful or not.
      *
@@ -60,11 +58,26 @@ public class SChatServerThread extends Thread {
         if (server.findUser(login.getId())) {
             client = dbmanager.getUserFromGivenId(login.getId());
             server.addUser(client.getId(), out);
+
             sendStoredMessages();
+            sendLoginSuccess(true);
             return true;
         } else {
+            sendLoginSuccess(false);
             return false;
         }
+    }
+
+    /**
+     * Sends to server whether the login was successful or not
+     *
+     * @param success
+     */
+    public void sendLoginSuccess(boolean success) {
+        Message<LoginSuccess> pkResponse = new Message<>(Calendar.getInstance().getTime(), SChatServer.SERVER_ID,
+                client.getId(), new LoginSuccess(success));
+        PublicKey senderPk = dbmanager.getPublicKeyFromId(client.getId());
+        sendEnvelope(new Envelope(pkResponse, secretKey, senderPk, server.getKeyPair().getPrivate()));
     }
 
     /**
@@ -100,6 +113,8 @@ public class SChatServerThread extends Thread {
         while (isRunning) {
             try {
                 Envelope envelope = (Envelope) in.readObject();
+                this.secretKey = envelope.getUnwrappedKey(server.getKeyPair().getPrivate());
+
                 switch (envelope.getType()) {
                     case CHAT_MESSAGE:
                         if (!isLoggedIn()) {
@@ -201,14 +216,11 @@ public class SChatServerThread extends Thread {
      * @return if the registration was successful or not
      */
     private boolean handleRegistration(Envelope envelope) {
-        this.secretKey = envelope.getUnwrappedKey(server.getKeyPair().getPrivate());
         Registration registration = envelope.<Registration>decryptMessage(secretKey).getContent();
         Login login = registration.getLogin();
-
         if (dbmanager.userExists(login.getId())) {
             // System.err.println("Registration failed because id already exists");
-            handleLogin(registration.getLogin());
-            return true;
+            return handleLogin(registration.getLogin());
         }
         client = new User(login.getId(), new KeyPair(registration.getPublicKey(), null), secretKey);
         dbmanager.insertUser(client);
