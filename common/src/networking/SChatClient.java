@@ -13,7 +13,6 @@ import data.contents.Registration;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.security.PublicKey;
 import java.util.Calendar;
 
 /**
@@ -74,7 +73,7 @@ public class SChatClient extends Thread {
 
 
     public boolean isConnected() {
-        return socket.isConnected();
+        return socket.isConnected() && !socket.isClosed();
     }
 
     /**
