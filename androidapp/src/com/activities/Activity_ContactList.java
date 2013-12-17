@@ -5,8 +5,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.*;
 import android.widget.*;
 import com.data.AddContact;
@@ -35,6 +37,7 @@ public class Activity_ContactList extends Activity implements AddContact {
     private Intent start_chat;
     private Context context;
     private Handler handler;
+    private SharedPreferences sp;
 
     private Intent service;
     private AndroidSQLManager dbManager;
@@ -48,6 +51,11 @@ public class Activity_ContactList extends Activity implements AddContact {
     public void onCreate(Bundle savedInstanceState) {
 
         PRNGFixes.apply(); // apply all PRG security fixes
+
+        sp = PreferenceManager.getDefaultSharedPreferences(this); // set you own username
+
+        if (!sp.contains(ApplicationUser.USER_ID))
+            setUsername();
 
         handler = new Handler();
         super.onCreate(savedInstanceState);
@@ -126,6 +134,31 @@ public class Activity_ContactList extends Activity implements AddContact {
         }
     }
 
+    private void setUsername() {
+        final EditText txt = new EditText(this);
+        new AlertDialog.Builder(this)
+                .setTitle("Set your name")
+                .setView(txt)
+                .setPositiveButton("Set",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                @SuppressWarnings("unchecked")
+                                String name = txt.getText().toString();
+                                if (!name.equals("") && !name.equals(SChatServer.SERVER_ID)) { // TODO check if name is taken already
+                                    if (!dbManager.userExists(name)) { //for time being you can only not have the same name as someone in your contact list
+                                        SharedPreferences.Editor editor = sp.edit();
+                                        editor.putString(ApplicationUser.USER_ID, name);
+                                        editor.commit();
+                                    } else {
+                                        Toast.makeText(context, "Name already taken", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+                        }
+                ).show();
+    }
+
     /**
      * Creates the OptionsMenu of this Activity
      */
@@ -196,9 +229,10 @@ public class Activity_ContactList extends Activity implements AddContact {
         ArrayList<User> users = new ArrayList<>();
 
         users = dbManager.loadUsers();
-        for (User u : users)
+        for (User u : users) {
             if (!u.getId().equals(SChatServer.SERVER_ID))
                 contacts.add(u.getId());
+        }
     }
 
     /**
