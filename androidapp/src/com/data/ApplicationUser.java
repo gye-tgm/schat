@@ -78,20 +78,15 @@ public class ApplicationUser extends User {
         this.messageService = messageService;
     }
 
-    public void connect() {
-        try {
-            client = new SChatClient(this, hostName, portNumber, dbMangager);
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+    public void connect() throws IOException {
+           client = new SChatClient(this, hostName, portNumber, dbMangager);
+    }
+    public boolean isConnected() {
+        return client.isConnected();
     }
 
-    public boolean registerToServer() {
-        try {
-            client.registerToServer();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public boolean registerToServer() throws IOException {
+        client.registerToServer();
         return true;
     }
 

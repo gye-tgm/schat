@@ -73,6 +73,10 @@ public class SChatClient extends Thread {
     }
 
 
+    public boolean isConnected() {
+        return socket.isConnected();
+    }
+
     /**
      * Send the given ChatContent to the server with the given
      * receiver id.

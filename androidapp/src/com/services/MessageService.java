@@ -13,6 +13,7 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 import com.activities.Activity_Chat;
 import com.activities.R;
 import com.data.ApplicationUser;
@@ -39,6 +40,7 @@ public class MessageService extends Service {
     private Uri alarmSound;
     private Intent intent;
     private Handler handler;
+    private boolean stop;
 
     @Override
     public void onCreate() {
@@ -52,15 +54,24 @@ public class MessageService extends Service {
 
         @Override
         protected Object doInBackground(Object... objects) {
-            try {
+            while(!stop) {
+                try {
 
-                me.connect();
-                me.registerToServer();
+                    me.connect();
+                    me.registerToServer();
+                    printMessage("S/Chat connected");
 
+                    while(me.isConnected() && !stop)
+                        sleep(1000);
+
+                }
+                catch (Exception e) {
+                    printMessage("S/Chat could not connect!");
+                }
+                try {
+                    sleep(5000);
+                } catch (InterruptedException e) {}
             }
-            catch (Exception e) {
-            }
-
             return new Object();
         }
     }
@@ -76,6 +87,7 @@ public class MessageService extends Service {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        stop = false;
 
         return START_STICKY;
     }
@@ -102,6 +114,14 @@ public class MessageService extends Service {
         handler.post(new Runnable() {
             public void run() {
                throwNotification(message);
+            }
+        });
+    }
+
+    public void printMessage(final String s) {
+        handler.post(new Runnable() {
+            public void run() {
+                Toast.makeText(activityContext, s, Toast.LENGTH_SHORT).show();
             }
         });
     }
