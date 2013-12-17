@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import com.data.AddContact;
@@ -105,7 +106,9 @@ public class Activity_ContactList extends Activity implements AddContact {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        //checkConnection();
     }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -125,9 +128,6 @@ public class Activity_ContactList extends Activity implements AddContact {
                 dbManager.removeUser(username);
                 // dbManager.deleteChat(username);
                 deleteContact(info.position); // delete the selected contact
-                return true;
-            case R.id.option_editContact: // edit the selected contact
-                /* todo: implement contact editing */
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -276,5 +276,24 @@ public class Activity_ContactList extends Activity implements AddContact {
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_contact, menu);
+    }
+//Doesnt work
+    public void checkConnection() {
+        while (true) {
+            if (me != null) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                }
+
+                if (me.isConnected()) {
+                    setTitle("connected");
+
+                } else {
+                    setTitle("notConnected");
+
+                }
+            } else Log.e("fucking shit", "");
+        }
     }
 }
