@@ -64,13 +64,13 @@ public class MessageService extends Service {
                     while(me.isConnected() && !stop)
                         sleep(1000);
 
+                    printMessage("S/Chat disconnected!");
                 }
                 catch (Exception e) {
-                    printMessage("S/Chat could not connect!");
                 }
                 try {
                     sleep(5000);
-                } catch (InterruptedException e) {}
+                } catch (InterruptedException e1) {}
             }
             return new Object();
         }

@@ -49,6 +49,8 @@ public class SChatClientListener extends Thread {
                     case PUBLIC_KEY_RESPONSE:
                         receiver.registerUser(envelope);
                         break;
+                    case LOGIN_SUCCESS:
+                        break;
                     default:
                         System.err.println("Unknown envelope type!");
                         isRunning = false;
