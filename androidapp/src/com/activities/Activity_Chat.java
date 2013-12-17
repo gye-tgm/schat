@@ -34,7 +34,7 @@ public class Activity_Chat extends Activity {
     private ListView messageList;
     private ArrayList<Message<ChatContent>> messages; // the stored messages and timestamps
     private ChatAdapter messagesAdapter; // to automatically update the ListView with onDataSetChanged
-    private User notyou;
+    private User notyou, notyou_backup;
     private ImageButton button_send;
     private Animation send_success, send_fail, send_all_fail;
     private LinearLayout lin;
@@ -51,16 +51,7 @@ public class Activity_Chat extends Activity {
 
         //Get Users
         notyou = (User) getIntent().getSerializableExtra("notyou");
-        try {
-            me = ApplicationUser.getInstance();
-            me.initialize(this);
-            me.setActivity_chat(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        dbManager = new AndroidSQLManager();
-        dbManager.connect();
+        notyou_backup = notyou;
 
         //Set title
         setTitle(getString(R.string.chat_with) + " " + notyou.getName());
@@ -77,9 +68,6 @@ public class Activity_Chat extends Activity {
 
         //Setting up List and Adapter
         messageList = (ListView) findViewById(R.id.view_chat);
-        messages = new ArrayList<>();
-        messagesAdapter = new ChatAdapter(this, messages, me.getId());
-        messageList.setAdapter(messagesAdapter); // set the data of the list
 
         //Hide keyboard when scrolling
         messageList.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -94,9 +82,42 @@ public class Activity_Chat extends Activity {
 
         //Context menu
         registerForContextMenu(messageList);
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        notyou = notyou_backup; // if activity has been paused we need to apply the backup, to load the chat again
+
+        try {
+            me = ApplicationUser.getInstance();
+            me.initialize(this);
+            me.setActivity_chat(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        messages = new ArrayList<>();
+        messagesAdapter = new ChatAdapter(this, messages, me.getId());
+        messageList.setAdapter(messagesAdapter); // set the data of the list
+
+        dbManager = new AndroidSQLManager();
+        dbManager.connect();
 
         //Load Previous Messages
         loadMessages();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        notyou = new User("");
+        dbManager.disconnect();
     }
 
     /**
@@ -218,18 +239,5 @@ public class Activity_Chat extends Activity {
         ClipData clip = ClipData.newPlainText("S/Chat", messages.get(index).getContent().getMessage());
         clipboard.setPrimaryClip(clip);
         clipboard.setPrimaryClip(clip);
-    }
-
-    @Override
-    public void onDestroy() {
-        dbManager.disconnect();
-        notyou = new User("");
-        super.onDestroy();
-    }
-
-    @Override
-    public void onPause() {
-        notyou = new User("");
-        super.onPause();
     }
 }
