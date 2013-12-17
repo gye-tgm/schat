@@ -95,7 +95,7 @@ public class MessageService extends Service {
     public void throwNotification(Message<ChatContent> message) {
         intent = new Intent(activityContext, Activity_Chat.class);
         intent.putExtra("notyou", new User(message.getSender()));
-        PendingIntent pIntent = PendingIntent.getActivity(activityContext, 0, intent, 0);
+        PendingIntent pIntent = PendingIntent.getActivity(activityContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         Notification n = new Notification.Builder(activityContext)
                 .setContentTitle("SChat Message from: " + message.getSender())
