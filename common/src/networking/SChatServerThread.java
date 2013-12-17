@@ -142,7 +142,6 @@ public class SChatServerThread extends Thread {
                 isRunning = false;
             } catch (ClassNotFoundException e) {
                 System.err.println("Class not found: " + e.getMessage());
-                isRunning = false;
             }
         }
         // Close and kill everything

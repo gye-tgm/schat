@@ -67,6 +67,11 @@ public class SChatClientListener extends Thread {
             in.close();
         } catch (IOException ignored) {
         }
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
