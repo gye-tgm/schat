@@ -71,9 +71,11 @@ public class SChatClient extends Thread {
         listener.start();
     }
 
-
     public boolean isConnected() {
-        return socket.isConnected() && !socket.isClosed();
+        if(socket != null)
+            return socket.isConnected() && !socket.isClosed();
+        else
+            return false;
     }
 
     /**
