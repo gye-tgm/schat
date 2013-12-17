@@ -89,7 +89,7 @@ public class Activity_ContactList extends Activity implements AddContact {
         });
 
         dbManager = new AndroidSQLManager();
-        dbManager.connect();
+        dbManager.connect(this);
         loadContacts(); // load all contacts into the list
     }
     @Override
