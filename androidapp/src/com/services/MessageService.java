@@ -59,12 +59,14 @@ public class MessageService extends Service {
 
                     me.connect();
                     me.registerToServer();
-                    printMessage("S/Chat connected");
+                    if(me.isConnected()) {
+                        printMessage("S/Chat connected");
 
-                    while(me.isConnected() && !stop)
-                        sleep(1000);
+                        while(me.isConnected() && !stop)
+                            sleep(1000);
 
-                    printMessage("S/Chat disconnected!");
+                        printMessage("S/Chat disconnected!");
+                    }
                 }
                 catch (Exception e) {
                 }
